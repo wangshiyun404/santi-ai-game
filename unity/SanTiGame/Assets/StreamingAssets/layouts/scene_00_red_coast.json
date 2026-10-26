@@ -1,0 +1,559 @@
+{
+  "scene": "scene_00_red_coast",
+  "title": "红岸基地",
+  "unit": "meters",
+  "up": "Y",
+  "objects": [
+    {
+      "asset": "cliff",
+      "name": "Cliff",
+      "position": [
+        0.0,
+        -30.0,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dish_tower",
+      "name": "DishTower",
+      "position": [
+        0.0,
+        0.0,
+        25.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true,
+      "clue": "clue_antenna"
+    },
+    {
+      "asset": "barracks",
+      "name": "Barracks_0",
+      "position": [
+        0.0,
+        1.6,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        14.0,
+        3.2,
+        7.0
+      ],
+      "static": true,
+      "clue": "clue_control_room"
+    },
+    {
+      "asset": "barracks",
+      "name": "Barracks_1",
+      "position": [
+        0.0,
+        1.6,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        14.0,
+        3.2,
+        7.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "barracks",
+      "name": "Barracks_2",
+      "position": [
+        0.0,
+        1.6,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        14.0,
+        3.2,
+        7.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "barracks",
+      "name": "Barracks_3",
+      "position": [
+        0.0,
+        1.6,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        14.0,
+        3.2,
+        7.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_00",
+      "position": [
+        0.0,
+        1.868,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_01",
+      "position": [
+        0.0,
+        1.423,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_02",
+      "position": [
+        0.0,
+        1.383,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_03",
+      "position": [
+        0.0,
+        1.267,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_04",
+      "position": [
+        0.0,
+        1.331,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_05",
+      "position": [
+        0.0,
+        1.287,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_06",
+      "position": [
+        0.0,
+        1.543,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_07",
+      "position": [
+        0.0,
+        1.924,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_08",
+      "position": [
+        0.0,
+        1.233,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_09",
+      "position": [
+        0.0,
+        1.532,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_10",
+      "position": [
+        0.0,
+        1.439,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_11",
+      "position": [
+        0.0,
+        1.578,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_12",
+      "position": [
+        0.0,
+        1.889,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_13",
+      "position": [
+        0.0,
+        1.301,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_14",
+      "position": [
+        0.0,
+        1.879,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_15",
+      "position": [
+        0.0,
+        1.768,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_16",
+      "position": [
+        0.0,
+        1.792,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "larch",
+      "name": "Larch_17",
+      "position": [
+        0.0,
+        1.242,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "player_placeholder",
+      "name": "PlayerSpawn",
+      "position": [
+        0.0,
+        0.637,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": false,
+      "role": "player_spawn"
+    }
+  ],
+  "palette": {
+    "green": "#4B5A3A",
+    "rust": "#8B3A2F",
+    "blue": "#1B2A4A",
+    "warm": "#F2B866",
+    "concrete": "#8A8A82",
+    "snow": "#DDE3EA"
+  },
+  "lighting": {
+    "sunAngle": [
+      8,
+      0,
+      250
+    ],
+    "intensity": 1.2,
+    "sunColor": "#FF9A59",
+    "ambient": "#1B2A4A",
+    "fog": {
+      "color": "#2A3B5C",
+      "start": 60,
+      "end": 400
+    }
+  },
+  "clues": [
+    {
+      "id": "clue_antenna",
+      "subtitle": "红岸基地，1971 年。",
+      "narration": "vo_00_redcoast.wav"
+    },
+    {
+      "id": "clue_control_room",
+      "subtitle": "发射。",
+      "narration": "vo_00_transmit.wav"
+    },
+    {
+      "id": "clue_reply",
+      "subtitle": "不要回答！不要回答！！不要回答！！！",
+      "narration": "vo_00_do_not_answer.wav"
+    }
+  ],
+  "events": [
+    {
+      "id": "transmit_whiteout",
+      "trigger": "clue_control_room",
+      "duration": 3,
+      "loadScene": "scene_01_chaotic"
+    }
+  ]
+}

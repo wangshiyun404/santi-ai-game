@@ -1,0 +1,427 @@
+{
+  "scene": "scene_01_chaotic",
+  "title": "乱纪元·脱水",
+  "unit": "meters",
+  "up": "Y",
+  "objects": [
+    {
+      "asset": "ground_chaotic",
+      "name": "Ground_Chaotic",
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "pyramid",
+      "name": "Pyramid",
+      "position": [
+        40.0,
+        14.0,
+        180.0
+      ],
+      "rotation": [
+        -0.0,
+        -45.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true,
+      "clue": "clue_pyramid_follower"
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_00",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true,
+      "clue": "clue_dehydration"
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_01",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_02",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_03",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_04",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_05",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_06",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_07",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_08",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_09",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_10",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_11",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_12",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "dehydrated_roll",
+      "name": "DehydratedRoll_13",
+      "position": [
+        0.0,
+        0.22,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "player_placeholder",
+      "name": "PlayerSpawn",
+      "position": [
+        0.0,
+        0.637,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": false,
+      "role": "player_spawn"
+    },
+    {
+      "asset": "sun_sphere",
+      "name": "Sun_Chaotic",
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": false,
+      "role": "sun"
+    }
+  ],
+  "palette": {
+    "dust": "#8C8275",
+    "crack": "#4A433C",
+    "sun": "#FFFFFF",
+    "frost": "#B8C9D9",
+    "roll": "#A89A80",
+    "stone": "#6E665C"
+  },
+  "lighting": {
+    "sunAngle": [
+      35,
+      0,
+      160
+    ],
+    "intensity": 6,
+    "ambient": "#D9D6CF",
+    "fog": {
+      "color": "#D9D6CF",
+      "start": 120,
+      "end": 520
+    }
+  },
+  "clues": [
+    {
+      "id": "clue_dehydration",
+      "subtitle": "脱水——",
+      "narration": "vo_01_dehydration.wav"
+    },
+    {
+      "id": "clue_pyramid_follower",
+      "subtitle": "跟我来，大王在金字塔里等你。",
+      "narration": "vo_01_follower.wav"
+    },
+    {
+      "id": "clue_lakebed",
+      "subtitle": "乱纪元开始了。",
+      "narration": "vo_01_chaotic_begins.wav"
+    }
+  ],
+  "events": [
+    {
+      "id": "sun_fall",
+      "trigger": "player_reaches",
+      "at": [
+        0,
+        3,
+        60
+      ],
+      "duration": 20,
+      "to": {
+        "ambient": "#1B2A4A",
+        "ground": "#B8C9D9"
+      }
+    }
+  ]
+}

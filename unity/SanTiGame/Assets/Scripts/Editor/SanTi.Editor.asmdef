@@ -1,0 +1,1 @@
+{ "name": "SanTi.Editor", "rootNamespace": "SanTi.Editor", "references": ["SanTi.Runtime"], "includePlatforms": ["Editor"], "autoReferenced": true }
