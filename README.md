@@ -33,7 +33,7 @@ santi/
 | B 类几何体资产（地形、金字塔、脱水卷、干湖床、士兵、高台、远山、天线塔、营房、窗光、围栏、旗杆、云海、落叶松、悬崖、太阳） | ✅ 18 个 GLB |
 | 三个场景布局 JSON + 预览渲染 + 两轮盲审（review/round01–02） | ✅ 人列计算机 117 块方阵、36,512 名士兵，含中央核心块 |
 | Unity 工程：第三人称控制、跟随相机、线索/字幕系统、3 万士兵 GPU 实例化、乱纪元日落、三日凌空、场景切换、SceneBuilder | ✅ 代码就绪，待在编辑器中首次运行 |
-| A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ⏳ 等 API Key，或在网页端按 docs/tripo_prompts.md 手动生成 |
+| A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ⏳ API Key 已接通并验证；API 钱包余额 0，需在 platform.tripo3d.ai 单独充值（与网页版积分不互通），预计 ≤ 1500 积分 ≈ $15 |
 | 绑骨与动作（Auto-Rig Pro / Mixamo） | ⏳ |
 | 旁白音频（9 条，TTS，原著原句） | ✅ Assets/Resources/VO/*.wav |
 | WebGL / macOS 打包 | ⏳ |
@@ -47,6 +47,16 @@ santi/
 5. URP：Edit → Project Settings → Graphics 若 Default Render Pipeline 为空，在 Assets 里右键 Create → Rendering → URP Asset (with Universal Renderer) 并拖入。
 6. 菜单 **SanTi → Build All Scenes**。会生成 `Assets/Scenes/scene_00_red_coast.unity` 等三个场景并加入 Build Settings。
 7. 打开 `scene_00_red_coast` 按 Play：WASD 走动、鼠标环顾、靠近发光物件按 E。
+
+## Tripo 批量生成（API Key 已配置）
+
+```bash
+# 需在 Python 3.11 环境（/tmp/bpyenv）下运行；凭据由代理注入，不需要在命令里写 key
+pplx credentials run <tripo-handle> -- /tmp/bpyenv/bin/python scripts/tripo_batch.py --balance
+pplx credentials run <tripo-handle> -- /tmp/bpyenv/bin/python scripts/tripo_batch.py docs/tripo_manifest.json
+pplx credentials run <tripo-handle> -- /tmp/bpyenv/bin/python scripts/tripo_batch.py docs/tripo_manifest.json --only dish_tower,char_player
+```
+生成结果落在 `assets/tripo/<name>.glb`，经 Blender 检查比例后覆盖到 Unity `Assets/Models/`。
 
 ## 替换为 Tripo 资产的流程
 

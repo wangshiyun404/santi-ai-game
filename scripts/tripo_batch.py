@@ -10,7 +10,7 @@ manifest.json 示例见 ../docs/tripo_manifest.json
   GET  https://api.tripo3d.ai/v2/openapi/task/{task_id}   status: queued/running/success/failed..., output.pbr_model
 模型版本: 道具 H3.1 = "v3.1-20260211"；角色低面四边面 = "P1-20260311"（Smart Mesh P 系列，可选 quad=True）
 """
-import json, os, sys, time, urllib.request, urllib.error, mimetypes, uuid
+import json, os, sys, time, mimetypes
 
 API = "https://api.tripo3d.ai/v2/openapi"
 KEY = os.environ.get("TRIPO_API_KEY", "")
@@ -18,26 +18,20 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "..", "assets", "tripo")
 os.makedirs(OUT, exist_ok=True)
 
-def _req(method, url, data=None, headers=None, raw=None, ctype=None):
-    h = {"Authorization": f"Bearer {KEY}"}
-    if headers: h.update(headers)
-    body = raw if raw is not None else (json.dumps(data).encode() if data is not None else None)
-    if body is not None and raw is None: h["Content-Type"] = "application/json"
-    if ctype: h["Content-Type"] = ctype
-    r = urllib.request.Request(url, data=body, method=method, headers=h)
-    try:
-        with urllib.request.urlopen(r, timeout=120) as resp:
-            return json.loads(resp.read().decode())
-    except urllib.error.HTTPError as e:
-        raise SystemExit(f"HTTP {e.code} {url}: {e.read().decode()[:500]}")
+def _req(method, url, data=None, files=None):
+    import requests
+    h = {"Authorization": f"Bearer {KEY}"} if KEY else {}   # 无 KEY 时依赖 HTTPS 代理注入鉴权
+    r = requests.request(method, url, json=data if files is None else None, files=files, headers=h, timeout=180)
+    if r.status_code >= 400:
+        raise SystemExit(f"HTTP {r.status_code} {url}: {r.text[:500]}")
+    res = r.json()
+    if res.get("code", 0) != 0:
+        raise SystemExit(f"Tripo error {res.get('code')}: {res.get('message')} — {res.get('suggestion','')}")
+    return res
 
 def upload_image(path):
-    boundary = uuid.uuid4().hex
-    mime = mimetypes.guess_type(path)[0] or "image/png"
-    with open(path, "rb") as f: content = f.read()
-    body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{os.path.basename(path)}\"\r\n"
-            f"Content-Type: {mime}\r\n\r\n").encode() + content + f"\r\n--{boundary}--\r\n".encode()
-    res = _req("POST", f"{API}/upload", raw=body, ctype=f"multipart/form-data; boundary={boundary}")
+    with open(path, "rb") as f:
+        res = _req("POST", f"{API}/upload", files={"file": (os.path.basename(path), f, mimetypes.guess_type(path)[0] or "image/png")})
     return res["data"]["image_token"]
 
 def create_task(item):
@@ -68,16 +62,25 @@ def wait(task_id, every=6, timeout=1200):
     raise SystemExit("timeout " + task_id)
 
 def download(url, path):
-    urllib.request.urlretrieve(url, path)
+    import requests
+    with requests.get(url, stream=True, timeout=300) as r:
+        r.raise_for_status()
+        with open(path, "wb") as f:
+            for chunk in r.iter_content(1 << 16): f.write(chunk)
+
+def balance():
+    return _req("GET", f"{API}/user/balance")["data"]
 
 def main():
     args = sys.argv[1:]
+    if args and args[0] == "--balance":
+        print(balance()); return
     if not args: raise SystemExit(__doc__)
     manifest = json.load(open(args[0], encoding="utf-8"))
     only = None; dry = "--dry" in args
     if "--only" in args: only = set(args[args.index("--only") + 1].split(","))
     items = [i for i in manifest["assets"] if not only or i["name"] in only]
-    if not KEY and not dry: raise SystemExit("TRIPO_API_KEY 未设置")
+    if not KEY and not dry and not os.environ.get("HTTPS_PROXY"): raise SystemExit("TRIPO_API_KEY 未设置")
     print(f"{len(items)} assets")
     tasks = {}
     for it in items:
