@@ -25,6 +25,26 @@
       "static": true
     },
     {
+      "asset": "mountains",
+      "name": "Mountains",
+      "position": [
+        -504.764,
+        33.888,
+        732.285
+      ],
+      "rotation": [
+        -0.0,
+        -42.58,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
       "asset": "platform",
       "name": "Platform",
       "position": [
@@ -639,36 +659,6 @@
       {
         "origin": [
           -32.0,
-          139.2
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "white"
-      },
-      {
-        "origin": [
-          -32.0,
-          164.0
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "checker"
-      },
-      {
-        "origin": [
-          -32.0,
-          188.8
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "checker"
-      },
-      {
-        "origin": [
-          -32.0,
           213.6
         ],
         "cols": 20,
@@ -759,36 +749,6 @@
       {
         "origin": [
           0.0,
-          139.2
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "rows"
-      },
-      {
-        "origin": [
-          0.0,
-          164.0
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "rows"
-      },
-      {
-        "origin": [
-          0.0,
-          188.8
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "white"
-      },
-      {
-        "origin": [
-          0.0,
           213.6
         ],
         "cols": 20,
@@ -870,36 +830,6 @@
         "origin": [
           32.0,
           114.4
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "black"
-      },
-      {
-        "origin": [
-          32.0,
-          139.2
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "white"
-      },
-      {
-        "origin": [
-          32.0,
-          164.0
-        ],
-        "cols": 20,
-        "rows": 14,
-        "spacing": 1.2,
-        "pattern": "white"
-      },
-      {
-        "origin": [
-          32.0,
-          188.8
         ],
         "cols": 20,
         "rows": 14,
@@ -1405,6 +1335,17 @@
         "rows": 14,
         "spacing": 1.2,
         "pattern": "rows"
+      },
+      {
+        "origin": [
+          -36.0,
+          135.2
+        ],
+        "cols": 72,
+        "rows": 56,
+        "spacing": 1.2,
+        "pattern": "checker",
+        "core": true
       }
     ],
     "flipWaveSpeed": 6.0

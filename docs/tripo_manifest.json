@@ -1,0 +1,108 @@
+{
+ "assets": [
+  {
+   "name": "dish_tower",
+   "prompt": "Giant shallow parabolic radar dish antenna with a four-leg feed support, mounted on a cylindrical concrete tower with a railing deck and a domed base, 1970s military radio telescope, grey and steel colors Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 8000,
+   "image": "concept/03_red_coast.png"
+  },
+  {
+   "name": "control_console",
+   "prompt": "1970s military control console desk with rows of toggle switches, round analog gauges, and one large red transmit button under a hinged cover, olive green metal panels Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 4000,
+   "image": "concept/03c_red_coast_console.png"
+  },
+  {
+   "name": "jeep",
+   "prompt": "1970s Chinese military jeep BJ212 with canvas top, olive green Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 3000
+  },
+  {
+   "name": "pyramid",
+   "prompt": "Ancient stone pyramid with a single dark doorway at the base and worn faceted stone blocks, sand-grey Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 2000
+  },
+  {
+   "name": "dehydrated_roll",
+   "prompt": "A dehydrated human body rolled up like a dried parchment scroll, wrinkled leather, pale tan, lying flat Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 2000
+  },
+  {
+   "name": "bamboo_slips",
+   "prompt": "Ancient Chinese bamboo slip scroll partially unrolled, bound with dark cord Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 1500
+  },
+  {
+   "name": "sand_table",
+   "prompt": "Ancient military sand table on a wooden stand showing a miniature grid formation of soldiers carved in relief Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 3000
+  },
+  {
+   "name": "bronze_sword",
+   "prompt": "Qin dynasty bronze sword with a long straight blade and a simple hilt, dark bronze Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 800
+  },
+  {
+   "name": "rock_small",
+   "prompt": "A small faceted desert boulder, grey-brown Low-poly stylized, faceted flat-shaded surfaces, muted colors, no text.",
+   "model_version": "v3.1-20260211",
+   "face_limit": 300
+  },
+  {
+   "name": "char_player",
+   "prompt": "Adult wearing a long tattered desert cloak with hood down and wrapped boots Low-poly stylized human in T-pose, faceless head with simple planes, flat shading, quad topology.",
+   "model_version": "P1-20260311",
+   "face_limit": 8000,
+   "quad": true,
+   "image": "concept/04_character_tpose.png"
+  },
+  {
+   "name": "char_ye_wenjie",
+   "prompt": "Young woman in a 1970s thick padded military-green cotton coat and fur hat Low-poly stylized human in T-pose, faceless head with simple planes, flat shading, quad topology.",
+   "model_version": "P1-20260311",
+   "face_limit": 8000,
+   "quad": true
+  },
+  {
+   "name": "char_follower",
+   "prompt": "Elderly man in an ancient Chinese robe and tall hat with a long beard as a faceted block Low-poly stylized human in T-pose, faceless head with simple planes, flat shading, quad topology.",
+   "model_version": "P1-20260311",
+   "face_limit": 6000,
+   "quad": true
+  },
+  {
+   "name": "char_von_neumann",
+   "prompt": "Man in a dark 1940s suit with round glasses as simple geometry Low-poly stylized human in T-pose, faceless head with simple planes, flat shading, quad topology.",
+   "model_version": "P1-20260311",
+   "face_limit": 6000,
+   "quad": true
+  },
+  {
+   "name": "char_qin",
+   "prompt": "Emperor in black and gold ceremonial robe with a flat-top crown and hanging bead rods Low-poly stylized human in T-pose, faceless head with simple planes, flat shading, quad topology.",
+   "model_version": "P1-20260311",
+   "face_limit": 6000,
+   "quad": true
+  },
+  {
+   "name": "soldier_black",
+   "prompt": "Ancient Qin soldier standing at attention holding a flagpole upright with a square black flag, armor as simple faceted plates, extremely low poly, flat shading",
+   "model_version": "P1-20260311",
+   "face_limit": 600
+  },
+  {
+   "name": "soldier_white",
+   "prompt": "Ancient Qin soldier standing at attention holding a flagpole upright with a square white flag, armor as simple faceted plates, extremely low poly, flat shading",
+   "model_version": "P1-20260311",
+   "face_limit": 600
+  }
+ ]
+}

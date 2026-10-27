@@ -127,11 +127,91 @@
       "static": true
     },
     {
+      "asset": "window_lights",
+      "name": "WindowLights",
+      "position": [
+        -34.2,
+        1.7,
+        -8.53
+      ],
+      "rotation": [
+        -90.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        0.8,
+        0.02
+      ],
+      "static": true
+    },
+    {
+      "asset": "fence_ring",
+      "name": "FenceRing",
+      "position": [
+        54.0,
+        1.1,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "flagpole",
+      "name": "Flagpole",
+      "position": [
+        10.0,
+        0.0,
+        -22.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true
+    },
+    {
+      "asset": "cloud_sea",
+      "name": "CloudSea",
+      "position": [
+        -101.706,
+        -28.662,
+        316.775
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        0.28,
+        0.841
+      ],
+      "static": true
+    },
+    {
       "asset": "larch",
       "name": "Larch_00",
       "position": [
         0.0,
-        1.868,
+        1.496,
         0.0
       ],
       "rotation": [
@@ -151,7 +231,7 @@
       "name": "Larch_01",
       "position": [
         0.0,
-        1.423,
+        1.87,
         0.0
       ],
       "rotation": [
@@ -171,7 +251,7 @@
       "name": "Larch_02",
       "position": [
         0.0,
-        1.383,
+        1.609,
         0.0
       ],
       "rotation": [
@@ -191,7 +271,7 @@
       "name": "Larch_03",
       "position": [
         0.0,
-        1.267,
+        1.76,
         0.0
       ],
       "rotation": [
@@ -211,7 +291,7 @@
       "name": "Larch_04",
       "position": [
         0.0,
-        1.331,
+        1.324,
         0.0
       ],
       "rotation": [
@@ -231,7 +311,7 @@
       "name": "Larch_05",
       "position": [
         0.0,
-        1.287,
+        1.355,
         0.0
       ],
       "rotation": [
@@ -251,7 +331,7 @@
       "name": "Larch_06",
       "position": [
         0.0,
-        1.543,
+        1.666,
         0.0
       ],
       "rotation": [
@@ -271,7 +351,7 @@
       "name": "Larch_07",
       "position": [
         0.0,
-        1.924,
+        1.27,
         0.0
       ],
       "rotation": [
@@ -291,7 +371,7 @@
       "name": "Larch_08",
       "position": [
         0.0,
-        1.233,
+        1.821,
         0.0
       ],
       "rotation": [
@@ -311,7 +391,7 @@
       "name": "Larch_09",
       "position": [
         0.0,
-        1.532,
+        1.42,
         0.0
       ],
       "rotation": [
@@ -331,7 +411,7 @@
       "name": "Larch_10",
       "position": [
         0.0,
-        1.439,
+        1.796,
         0.0
       ],
       "rotation": [
@@ -351,7 +431,7 @@
       "name": "Larch_11",
       "position": [
         0.0,
-        1.578,
+        1.839,
         0.0
       ],
       "rotation": [
@@ -371,7 +451,7 @@
       "name": "Larch_12",
       "position": [
         0.0,
-        1.889,
+        1.747,
         0.0
       ],
       "rotation": [
@@ -391,7 +471,7 @@
       "name": "Larch_13",
       "position": [
         0.0,
-        1.301,
+        1.566,
         0.0
       ],
       "rotation": [
@@ -411,7 +491,7 @@
       "name": "Larch_14",
       "position": [
         0.0,
-        1.879,
+        1.753,
         0.0
       ],
       "rotation": [
@@ -431,7 +511,7 @@
       "name": "Larch_15",
       "position": [
         0.0,
-        1.768,
+        1.721,
         0.0
       ],
       "rotation": [
@@ -451,7 +531,7 @@
       "name": "Larch_16",
       "position": [
         0.0,
-        1.792,
+        1.676,
         0.0
       ],
       "rotation": [
@@ -471,7 +551,7 @@
       "name": "Larch_17",
       "position": [
         0.0,
-        1.242,
+        1.843,
         0.0
       ],
       "rotation": [

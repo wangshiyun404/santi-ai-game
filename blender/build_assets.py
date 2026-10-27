@@ -202,6 +202,103 @@ def make_sun(name, radius=30, hexcol="#FFFFFF", strength=6):
     set_mat(o, mat("sun", hexcol, emission=strength))
     return o
 
+
+def make_fence_ring(name, radius=52, posts=36, mat_post=None, mat_wire=None):
+    """铁丝网围栏：木桩 + 三道细线（圆环近似）"""
+    parts = []
+    for i in range(posts):
+        a = 2 * math.pi * i / posts
+        bpy.ops.mesh.primitive_cylinder_add(vertices=4, radius=0.08, depth=2.2, location=(math.cos(a) * radius, math.sin(a) * radius, 1.1))
+        p = bpy.context.object; set_mat(p, mat_post); parts.append(p)
+    for z in (0.8, 1.4, 2.0):
+        bpy.ops.mesh.primitive_torus_add(major_segments=posts, minor_segments=3, major_radius=radius, minor_radius=0.02, location=(0, 0, z))
+        t = bpy.context.object; set_mat(t, mat_wire); parts.append(t)
+    bpy.ops.object.select_all(action="DESELECT")
+    for p in parts: p.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
+    o = bpy.context.object; o.name = name; flat(o)
+    return o
+
+def make_flagpole(name, h=16, mat_pole=None, mat_flag=None):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.08, depth=h, location=(0, 0, h / 2))
+    pole = bpy.context.object; set_mat(pole, mat_pole)
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(1.3, 0, h - 1.0))
+    flag = bpy.context.object; flag.scale = (3.2, 0.02, 2.1); flag.rotation_euler = (math.radians(90), 0, 0)
+    set_mat(flag, mat_flag)
+    bpy.ops.object.select_all(action="DESELECT"); pole.select_set(True); flag.select_set(True)
+    bpy.context.view_layer.objects.active = pole; bpy.ops.object.join()
+    o = bpy.context.object; o.name = name; flat(o)
+    return o
+
+def make_cloud_sea(name, inner=75, outer=420, count=160, z=-28, mat_=None):
+    """云海：悬崖下方一圈压扁的低细分球"""
+    parts = []
+    for i in range(count):
+        a = random.uniform(0, 2 * math.pi); r = random.uniform(inner, outer)
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=random.uniform(12, 30), location=(math.cos(a) * r, math.sin(a) * r, z + random.uniform(-3, 3)))
+        c = bpy.context.object; c.scale = (1, random.uniform(0.8, 1.3), 0.28); parts.append(c)
+    bpy.ops.object.select_all(action="DESELECT")
+    for p in parts: p.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
+    o = bpy.context.object; o.name = name; flat(o)
+    if mat_: set_mat(o, mat_)
+    return o
+
+def make_window_lights(name, barracks_specs, mat_):
+    """营房暖色窗光：贴在墙面上的小自发光面片"""
+    parts = []
+    for (x, y, rz, w, d) in barracks_specs:
+        for k in range(3):
+            lx = -w * 0.3 + k * w * 0.3
+            bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 0, 0))
+            q = bpy.context.object; q.scale = (1.0, 0.02, 0.8); q.rotation_euler = (math.radians(90), 0, 0)
+            q.location = (lx, -d / 2 - 0.03, 1.7)
+            q.rotation_euler = (math.radians(90), 0, 0)
+            # 旋转到营房朝向并平移
+            rot = Euler((0, 0, math.radians(rz)))
+            q.location = Vector((x, y, 0)) + rot.to_matrix() @ Vector((lx, -d / 2 - 0.03, 1.7))
+            q.rotation_euler = (math.radians(90), 0, math.radians(rz))
+            set_mat(q, mat_); parts.append(q)
+    bpy.ops.object.select_all(action="DESELECT")
+    for p in parts: p.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
+    o = bpy.context.object; o.name = name
+    return o
+
+def make_mountain_range(name, count=11, y=760, mat_=None):
+    parts = []
+    for i in range(count):
+        x = -480 + i * (960 / (count - 1)) + random.uniform(-30, 30)
+        h = random.uniform(45, 110)
+        bpy.ops.mesh.primitive_cone_add(vertices=random.choice([5, 6, 7]), radius1=h * random.uniform(1.1, 1.6), depth=h, location=(x, y + random.uniform(-40, 40), h / 2))
+        c = bpy.context.object; c.rotation_euler = (0, 0, random.uniform(0, math.pi)); parts.append(c)
+    bpy.ops.object.select_all(action="DESELECT")
+    for p in parts: p.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
+    o = bpy.context.object; o.name = name; flat(o)
+    if mat_: set_mat(o, mat_)
+    return o
+
+def make_cracked_ground(name, size=600, cuts=48, jitter=0.5, mat_a=None, mat_b=None, curve_radius=2600):
+    """龟裂大地：随机面片用深色材质形成板块感；远处按 z -= d^2/R 下弯模拟小行星地平线"""
+    o = make_ground(name, size=size, cuts=cuts, jitter=jitter, mat_=mat_a)
+    o.data.materials.append(mat_b)
+    for p in o.data.polygons:
+        if random.random() < 0.22: p.material_index = 1
+    for v in o.data.vertices:
+        d2 = v.co.x ** 2 + v.co.y ** 2
+        v.co.z -= d2 / (2 * curve_radius)
+    return o
+
+def make_lakebed(name, radius=38, mat_=None):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=11, radius=radius, depth=0.3, location=(0, 0, -0.1))
+    o = bpy.context.object; o.name = name
+    bm = bmesh.new(); bm.from_mesh(o.data)
+    for v in bm.verts: v.co.xy *= random.uniform(0.85, 1.12)
+    bm.to_mesh(o.data); bm.free(); flat(o)
+    if mat_: set_mat(o, mat_)
+    return o
+
 # ---------- 布局与渲染 ----------
 def add_sun_light(angle_deg=(60, 0, 30), energy=4, color=(1, 1, 1)):
     bpy.ops.object.light_add(type="SUN")
@@ -263,8 +360,10 @@ def write_layout(scene_id, title, entries, extras):
 def build_scene_chaotic():
     clear_scene(); P = PAL["chaotic"]
     entries = []
-    ground = make_ground("Ground_Chaotic", size=600, cuts=48, jitter=0.5, mat_=mat("dust", P["dust"]))
+    ground = make_cracked_ground("Ground_Chaotic", size=600, cuts=150, jitter=0.25, mat_a=mat("dust", P["dust"]), mat_b=mat("crack", P["crack"]))
     export_glb(ground, "ground_chaotic"); entries.append({"asset": "ground_chaotic", "name": ground.name, **to_unity(ground), "static": True})
+    lake = make_lakebed("DryLakebed", mat_=mat("lake", "#6F6759")); lake.location = (70, 60, 0.05)
+    export_glb(lake, "dry_lakebed"); entries.append({"asset": "dry_lakebed", "name": lake.name, **to_unity(lake), "static": True, "clue": "clue_lakebed"})
 
     pyr = make_pyramid("Pyramid", mat_=mat("stone", P["stone"]))
     pyr.location = (40, 180, 14)
@@ -289,7 +388,8 @@ def build_scene_chaotic():
 
     add_sun_light((35, 0, 160), energy=3.5, color=(1, 0.98, 0.95))
     set_world("#D9D6CF", 0.45)
-    add_camera((-3, -4, 2.4), (10, 60, 6), lens=24)
+    add_camera((-3, -4, 2.6), (10, 60, 4), lens=24)
+    bpy.context.scene.view_settings.exposure = -1.0
     render(os.path.join(OUT_PREVIEW, "scene_01_chaotic.png"))
     write_layout("scene_01_chaotic", "乱纪元·脱水", entries, {
         "palette": P,
@@ -324,10 +424,13 @@ def build_scene_computer():
                 continue  # 留空作为"寄存器"空位
             pattern = random.choice(["checker", "rows", "black", "white"])
             blocks.append({"origin": [gx * (bx * 1.2 + gap), gy * (by * 1.2 + gap) + 40], "cols": bx, "rows": by, "spacing": 1.2, "pattern": pattern})
+    # 中央"核心"方阵：参考图 02b 中间更大的一块，对应 CPU
+    blocks = [b for b in blocks if not (-1 <= round(b["origin"][0] / (bx * 1.2 + gap)) <= 1 and 4 <= round((b["origin"][1] - 40) / (by * 1.2 + gap)) <= 6)]
+    blocks.append({"origin": [-(bx * 1.2 + gap) - 4, 4 * (by * 1.2 + gap) + 36], "cols": 72, "rows": 56, "spacing": 1.2, "pattern": "checker", "core": True})
     # Blender 预览：只放前 3 排，低成本
     proto_b = make_soldier_with_flag("pb", P["black"], P["cloth"]); proto_w = make_soldier_with_flag("pw", P["white"], P["cloth"])
     for blk in blocks:
-        if blk["origin"][1] > 150: continue
+        if blk["origin"][1] > 220: continue
         ox, oy = blk["origin"]
         for c in range(0, blk["cols"], 2):
             for r in range(0, blk["rows"], 2):
@@ -337,6 +440,8 @@ def build_scene_computer():
                 bpy.context.collection.objects.link(inst)
     bpy.data.objects.remove(proto_b); bpy.data.objects.remove(proto_w)
 
+    mts = make_mountain_range("Mountains", mat_=mat("mountain", "#4E5868")); export_glb(mts, "mountains")
+    entries.append({"asset": "mountains", "name": mts.name, **to_unity(mts), "static": True})
     plat = make_platform("Platform", mat_=mat("stone", P["stone"])); plat.location = (-150, 20, 0)
     export_glb(plat, "platform"); entries.append({"asset": "platform", "name": plat.name, **to_unity(plat), "static": True, "clue": "clue_von_neumann"})
     for i, nm in enumerate(["VonNeumann", "Newton", "QinShiHuang"]):
@@ -381,9 +486,19 @@ def build_scene_red_coast():
     export_glb(dish, "dish_tower"); entries.append({"asset": "dish_tower", "name": dish.name, **to_unity(dish), "static": True, "clue": "clue_antenna"})
 
     bar_proto = make_barracks("Barracks", pal=P); export_glb(bar_proto, "barracks"); bpy.data.objects.remove(bar_proto)
-    for i, (x, y, rz) in enumerate([(-30, -5, 0), (28, -10, 8), (-18, -32, -12), (24, 18, 90)]):
+    bspecs = [(-30, -5, 0), (28, -10, 8), (-18, -32, -12), (24, 18, 90)]
+    for i, (x, y, rz) in enumerate(bspecs):
         b = make_barracks(f"Barracks_{i}", pal=P); b.location = (x, y, 0); b.rotation_euler = (0, 0, math.radians(rz))
+        if i in (1, 3): b.scale = (1.6, 1, 1)
         entries.append({"asset": "barracks", "name": b.name, **to_unity(b), "static": True, **({"clue": "clue_control_room"} if i == 0 else {})})
+    win = make_window_lights("WindowLights", [(x, y, rz, 14, 7) for (x, y, rz) in bspecs], mat("warm", P["warm"], emission=5))
+    export_glb(win, "window_lights"); entries.append({"asset": "window_lights", "name": win.name, **to_unity(win), "static": True})
+    fence = make_fence_ring("FenceRing", radius=54, mat_post=mat("wood", "#3E3027"), mat_wire=mat("steel", "#6B6F75"))
+    export_glb(fence, "fence_ring"); entries.append({"asset": "fence_ring", "name": fence.name, **to_unity(fence), "static": True})
+    pole = make_flagpole("Flagpole", mat_pole=mat("steel", "#9A9EA3"), mat_flag=mat("flag_red", "#C8321E")); pole.location = (10, -22, 0)
+    export_glb(pole, "flagpole"); entries.append({"asset": "flagpole", "name": pole.name, **to_unity(pole), "static": True})
+    clouds = make_cloud_sea("CloudSea", mat_=mat("cloud", "#C9D3DE")); export_glb(clouds, "cloud_sea")
+    entries.append({"asset": "cloud_sea", "name": clouds.name, **to_unity(clouds), "static": True})
 
     tree_proto = make_larch("Larch", pal=P); export_glb(tree_proto, "larch"); bpy.data.objects.remove(tree_proto)
     for i in range(18):
@@ -395,9 +510,9 @@ def build_scene_red_coast():
     fig = make_capsule_figure("PlayerSpawn", mat_=mat("coat", "#2F3A2B")); fig.location = (-8, -40, 0)
     entries.append({"asset": "player_placeholder", "name": "PlayerSpawn", **to_unity(fig), "static": False, "role": "player_spawn"})
 
-    add_sun_light((8, 0, 250), energy=1.2, color=(1.0, 0.6, 0.35))
-    set_world("#1B2A4A", 0.5)
-    add_camera((-45, -70, 14), (0, 20, 22), lens=30)
+    add_sun_light((8, 0, 250), energy=1.6, color=(1.0, 0.6, 0.35))
+    set_world("#1B2A4A", 0.7)
+    add_camera((-70, -95, 12), (0, 20, 20), lens=30)
     render(os.path.join(OUT_PREVIEW, "scene_00_red_coast.png"))
     write_layout("scene_00_red_coast", "红岸基地", entries, {
         "palette": P,

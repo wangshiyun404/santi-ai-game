@@ -19,6 +19,9 @@ namespace SanTi.Editor
         const string ModelDir = "Assets/Models";
         const string SceneDir = "Assets/Scenes";
         const string MatDir = "Assets/Materials";
+        // 碰撞规则：大而不规则的用 MeshCollider；远景/装饰/发光面片不加碰撞（围栏若用 BoxCollider 会把整个高地封死）
+        static readonly System.Collections.Generic.HashSet<string> MeshColliderAssets = new() { "platform", "cliff", "pyramid", "fence_ring", "dry_lakebed", "dish_tower" };
+        static readonly System.Collections.Generic.HashSet<string> NoCollider = new() { "cloud_sea", "window_lights", "sun_sphere", "mountains" };
 
         [MenuItem("SanTi/Build Scene From Layout/scene_00_red_coast")] static void B0() => Build("scene_00_red_coast");
         [MenuItem("SanTi/Build Scene From Layout/scene_01_chaotic")] static void B1() => Build("scene_01_chaotic");
@@ -80,7 +83,8 @@ namespace SanTi.Editor
                 // 碰撞：地面/平台/悬崖用 MeshCollider，其余用包围盒
                 foreach (var mf in go.GetComponentsInChildren<MeshFilter>())
                 {
-                    if (o.asset.StartsWith("ground") || o.asset == "platform" || o.asset == "cliff" || o.asset == "pyramid")
+                    if (NoCollider.Contains(o.asset)) continue;
+                    if (o.asset.StartsWith("ground") || MeshColliderAssets.Contains(o.asset))
                         mf.gameObject.AddComponent<MeshCollider>();
                     else if (o.@static && mf.GetComponent<Collider>() == null) mf.gameObject.AddComponent<BoxCollider>();
                 }

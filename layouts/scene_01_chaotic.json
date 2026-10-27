@@ -25,6 +25,27 @@
       "static": true
     },
     {
+      "asset": "dry_lakebed",
+      "name": "DryLakebed",
+      "position": [
+        70.0,
+        0.05,
+        60.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "static": true,
+      "clue": "clue_lakebed"
+    },
+    {
       "asset": "pyramid",
       "name": "Pyramid",
       "position": [

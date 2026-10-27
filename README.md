@@ -7,6 +7,9 @@
 santi/
 ├── docs/PRD.md                 产品需求与关卡设计（第 1 天产出）
 ├── docs/tripo_prompts.md       A 类资产的 Tripo 提示词与参数
+├── docs/tripo_manifest.json    Tripo 批量生成清单（16 项）
+├── scripts/tripo_batch.py      Tripo 批量生成脚本（上传→建任务→轮询→下载 GLB）
+├── audio/vo/                   旁白 TTS 源文件（txt + mp3）
 ├── concept/                    视觉锚点图（4 张，GPT Image 生成）
 ├── blender/build_assets.py     B 类几何体资产 + 场景布局 + 预览渲染脚本（bpy 5.0）
 ├── assets/glb/                 12 个低多边形 GLB 资产（Y-up，1 unit = 1 m）
@@ -20,18 +23,19 @@ santi/
     └── Assets/StreamingAssets/layouts/*.json
 ```
 
-## 当前进度（第 1 天结束）
+## 当前进度（第 2 天结束）
 
 | 环节 | 状态 |
 |---|---|
 | PRD、关卡表、色板 | ✅ docs/PRD.md |
 | 视觉锚点图（红岸、乱纪元、人列计算机、角色 T-Pose） | ✅ concept/ |
-| B 类几何体资产（地形、金字塔、脱水卷、士兵、高台、天线塔、营房、落叶松、悬崖、太阳） | ✅ 12 个 GLB |
-| 三个场景布局 JSON + 预览渲染 + 第 1 轮盲审 | ✅ |
+| 多视角参考图（三场景俯视图 + 红岸主控台特写） | ✅ concept/*b_*, 03c |
+| B 类几何体资产（地形、金字塔、脱水卷、干湖床、士兵、高台、远山、天线塔、营房、窗光、围栏、旗杆、云海、落叶松、悬崖、太阳） | ✅ 18 个 GLB |
+| 三个场景布局 JSON + 预览渲染 + 两轮盲审（review/round01–02） | ✅ 人列计算机 117 块方阵、36,512 名士兵，含中央核心块 |
 | Unity 工程：第三人称控制、跟随相机、线索/字幕系统、3 万士兵 GPU 实例化、乱纪元日落、三日凌空、场景切换、SceneBuilder | ✅ 代码就绪，待在编辑器中首次运行 |
-| A 类资产（Tripo）：抛物面天线、主控台、脱水人、竹简、沙盘、角色 | ⏳ 需在 Tripo 中生成（提示词见 docs/tripo_prompts.md） |
+| A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ⏳ 等 API Key，或在网页端按 docs/tripo_prompts.md 手动生成 |
 | 绑骨与动作（Auto-Rig Pro / Mixamo） | ⏳ |
-| 旁白音频 | ⏳ 放入 Assets/Resources/VO/ |
+| 旁白音频（9 条，TTS，原著原句） | ✅ Assets/Resources/VO/*.wav |
 | WebGL / macOS 打包 | ⏳ |
 
 ## 在 Mac 上跑起来（一次性准备）
