@@ -9,13 +9,16 @@ santi/
 ├── docs/tripo_prompts.md       A 类资产的 Tripo 提示词与参数
 ├── docs/tripo_manifest.json    Tripo 批量生成清单（16 项）
 ├── scripts/tripo_batch.py      Tripo 批量生成脚本（上传→建任务→轮询→下载 GLB）
+├── scripts/tripo_rig.py        Tripo v3 绑骨 + 预设动画重定向
+├── scripts/apply_tripo_layout.py  布局接入 Tripo 资产
 ├── audio/vo/                   旁白 TTS 源文件（txt + mp3）
 ├── concept/                    视觉锚点图（4 张，GPT Image 生成）
 ├── blender/build_assets.py     B 类几何体资产 + 场景布局 + 预览渲染脚本（bpy 5.0）
 ├── assets/glb/                 12 个低多边形 GLB 资产（Y-up，1 unit = 1 m）
 ├── layouts/scene_*.json        三个场景的布局、光照、线索、事件数据
 ├── preview/                    Blender Cycles 预览（供盲审对照）
-├── review/round01.md           盲审记录
+├── review/round01–03*.md       盲审记录（第 3 轮为 Tripo 资产质检）
+├── assets/tripo/               Tripo 原始 GLB、任务 id、绑骨/动画输出
 └── unity/SanTiGame/            Unity 6.3 LTS 工程（URP + glTFast）
     ├── Assets/Scripts/Runtime  控制器、相机、线索、字幕、士兵实例化、纪元事件
     ├── Assets/Scripts/Editor   SceneBuilder：读 JSON 自动搭场景
@@ -23,7 +26,7 @@ santi/
     └── Assets/StreamingAssets/layouts/*.json
 ```
 
-## 当前进度（第 2 天结束）
+## 当前进度（第 3 天）
 
 | 环节 | 状态 |
 |---|---|
@@ -33,8 +36,8 @@ santi/
 | B 类几何体资产（地形、金字塔、脱水卷、干湖床、士兵、高台、远山、天线塔、营房、窗光、围栏、旗杆、云海、落叶松、悬崖、太阳） | ✅ 18 个 GLB |
 | 三个场景布局 JSON + 预览渲染 + 两轮盲审（review/round01–02） | ✅ 人列计算机 117 块方阵、36,512 名士兵，含中央核心块 |
 | Unity 工程：第三人称控制、跟随相机、线索/字幕系统、3 万士兵 GPU 实例化、乱纪元日落、三日凌空、场景切换、SceneBuilder | ✅ 代码就绪，待在编辑器中首次运行 |
-| A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ⏳ API Key 已接通并验证；API 钱包余额 0，需在 platform.tripo3d.ai 单独充值（与网页版积分不互通），预计 ≤ 1500 积分 ≈ $15 |
-| 绑骨与动作（Auto-Rig Pro / Mixamo） | ⏳ |
+| A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ✅ 16 件全部生成并通过第 3 轮盲审（4 件重做一次），已按真实尺寸归一化导入 Unity（review/round03_tripo.md） |
+| 绑骨与动作（改用 Tripo v3 自动绑骨 + 预设动画，scripts/tripo_rig.py） | ✅ 玩家 idle/walk/run，4 名 NPC + 黑旗士兵 idle；Assets/Models/Anim/*.glb，CharacterAnimator 驱动 |
 | 旁白音频（9 条，TTS，原著原句） | ✅ Assets/Resources/VO/*.wav |
 | WebGL / macOS 打包 | ⏳ |
 
@@ -56,13 +59,21 @@ pplx credentials run <tripo-handle> -- /tmp/bpyenv/bin/python scripts/tripo_batc
 pplx credentials run <tripo-handle> -- /tmp/bpyenv/bin/python scripts/tripo_batch.py docs/tripo_manifest.json
 pplx credentials run <tripo-handle> -- /tmp/bpyenv/bin/python scripts/tripo_batch.py docs/tripo_manifest.json --only dish_tower,char_player
 ```
-生成结果落在 `assets/tripo/<name>.glb`，经 Blender 检查比例后覆盖到 Unity `Assets/Models/`。
+生成结果落在 `assets/tripo/<name>.glb`，任务 id 记录在 `assets/tripo/tasks.json`。
 
-## 替换为 Tripo 资产的流程
+## Tripo 资产进入 Unity 的流程（已跑通）
 
-1. 在 Tripo 中按 `docs/tripo_prompts.md` 生成模型（道具 H3.1，角色 Smart Mesh P2.0），导出 GLB。
-2. 用 **相同文件名** 覆盖 `unity/SanTiGame/Assets/Models/<asset>.glb`（如 `dish_tower.glb`），Unity 会自动重新导入，场景中引用无需改动。
-3. 若尺寸不对，在 Blender 中缩放到 1 unit = 1 m 再导出，或在 layout JSON 里改 `scale`。
+```bash
+/tmp/bpyenv/bin/python blender/review_tripo.py          # 三视角渲染 → review/tripo/，人工/盲审
+/tmp/bpyenv/bin/python blender/normalize_tripo.py       # 缩放到真实尺寸、原点归脚底、朝向 +Z → 覆盖 unity/.../Assets/Models/<name>.glb
+python3 scripts/apply_tripo_layout.py                   # 布局接入：修正原点、NPC 换成角色模型、新增主控台/吉普/沙盘/青铜剑/竹简/碎石
+pplx credentials run <tripo-v3-handle> -- /tmp/bpyenv/bin/python scripts/tripo_rig.py   # 绑骨 + 预设动画 → assets/tripo/anim/
+cp assets/tripo/anim/<name>_anim.glb unity/SanTiGame/Assets/Models/Anim/<name>.glb
+```
+
+- `Assets/Models/<name>.glb`：静态资产，1 unit = 1 m，原点在底部中心，正面朝 +Z，SceneBuilder 直接按 layout 摆放。
+- `Assets/Models/Anim/<name>.glb`：带骨骼与动画的角色，保持 Tripo 原始归一化（1 m 高、朝 −X），由 `SceneBuilder.InstantiateCharacter` 统一缩放到身高表并转向，再挂 `CharacterAnimator`（玩家按速度切 idle/walk/run，NPC 循环 idle）。
+- 重新生成某件资产后只需同名覆盖，Unity 自动重新导入，场景引用不变。
 
 ## 迭代流程（Sac 的两个工程动作）
 

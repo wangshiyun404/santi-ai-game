@@ -1,0 +1,42 @@
+{
+ "char_player": {
+  "size_m": [
+   0.21,
+   0.6,
+   1.0
+  ],
+  "faces": 7664,
+  "quad_ratio": 0.0,
+  "height_axis": "Z"
+ },
+ "char_von_neumann": {
+  "size_m": [
+   0.17,
+   0.9,
+   1.0
+  ],
+  "faces": 5712,
+  "quad_ratio": 0.0,
+  "height_axis": "Z"
+ },
+ "dish_tower": {
+  "size_m": [
+   0.79,
+   0.8,
+   1.0
+  ],
+  "faces": 7693,
+  "quad_ratio": 0.0,
+  "height_axis": "Z"
+ },
+ "control_console": {
+  "size_m": [
+   0.67,
+   1.0,
+   0.95
+  ],
+  "faces": 3444,
+  "quad_ratio": 0.0,
+  "height_axis": "Z"
+ }
+}

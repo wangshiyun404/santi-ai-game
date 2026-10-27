@@ -1,0 +1,44 @@
+
+== char_player  model_task=a38a1dcd  anims=['idle', 'walk', 'run']
+   riggable=True
+
+== char_ye_wenjie  model_task=536f912c  anims=['idle']
+   riggable=True
+   rig task 82fc0efe 已创建
+   ✓ rig → char_ye_wenjie_rig.glb  credits=25.0
+   retarget task 4c4b0e4f 已创建
+   ✓ anim → char_ye_wenjie_anim.glb  credits=10.0  output_keys=['model_url']
+
+== char_follower  model_task=e529556e  anims=['idle']
+   riggable=True
+   rig task f3e497d6 已创建
+   ✓ rig → char_follower_rig.glb  credits=25.0
+   retarget task 56911a7d 已创建
+   ✓ anim → char_follower_anim.glb  credits=10.0  output_keys=['model_url']
+
+== char_von_neumann  model_task=2fba3260  anims=['idle']
+   riggable=True
+   rig task 07e40bc5 已创建
+   ✓ rig → char_von_neumann_rig.glb  credits=25.0
+   retarget task f79a7e31 已创建
+   ✓ anim → char_von_neumann_anim.glb  credits=10.0  output_keys=['model_url']
+
+== char_qin  model_task=20ef1e58  anims=['idle']
+   riggable=True
+   rig task a477f0c1 已创建
+   ✓ rig → char_qin_rig.glb  credits=25.0
+   retarget task 838818cd 已创建
+   ✓ anim → char_qin_anim.glb  credits=10.0  output_keys=['model_url']
+
+== soldier_black  model_task=1f36f5d8  anims=['idle']
+   riggable=True
+   rig task 6bda3c84 已创建
+   ✓ rig → soldier_black_rig.glb  credits=25.0
+   retarget task 1158fac3 已创建
+   ✓ anim → soldier_black_anim.glb  credits=10.0  output_keys=['model_url']
+
+== soldier_white  model_task=7b76d73e  anims=['idle']
+   riggable=False
+   ✗ 不可绑骨，跳过
+
+done.

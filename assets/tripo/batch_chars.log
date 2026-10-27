@@ -1,0 +1,29 @@
+7 assets
+→ char_player  [P1-20260311]  img
+→ char_ye_wenjie  [P1-20260311]  txt
+→ char_follower  [P1-20260311]  txt
+→ char_von_neumann  [P1-20260311]  txt
+→ char_qin  [P1-20260311]  txt
+→ soldier_black  [P1-20260311]  txt
+! soldier_black 创建失败: HTTP 429 https://api.tripo3d.ai/v2/openapi/task: {"code":2000,"message":"You have exceeded the limit of generation","suggestion":"Try again later. You can also check `Retry-After` header."}
+→ soldier_white  [P1-20260311]  txt
+! soldier_white 创建失败: HTTP 429 https://api.tripo3d.ai/v2/openapi/task: {"code":2000,"message":"You have exceeded the limit of generation","suggestion":"Try again later. You can also check `Retry-After` header."}
+   3b8d0dbc running 17%
+   3b8d0dbc running 25%
+   3b8d0dbc running 33%
+   3b8d0dbc running 43%
+   3b8d0dbc running 51%
+   3b8d0dbc running 60%
+   3b8d0dbc running 68%
+   3b8d0dbc running 78%
+   3b8d0dbc running 86%
+✓ char_player → /home/user/workspace/santi/scripts/../assets/tripo/char_player.glb  (3160 KB)  credits=50  riggable=None
+✓ char_ye_wenjie → /home/user/workspace/santi/scripts/../assets/tripo/char_ye_wenjie.glb  (2937 KB)  credits=40  riggable=None
+   e529556e running 84%
+✓ char_follower → /home/user/workspace/santi/scripts/../assets/tripo/char_follower.glb  (2279 KB)  credits=40  riggable=None
+   89fc9e92 running 99%
+✓ char_von_neumann → /home/user/workspace/santi/scripts/../assets/tripo/char_von_neumann.glb  (2214 KB)  credits=40  riggable=None
+   20ef1e58 running 78%
+   20ef1e58 running 83%
+✓ char_qin → /home/user/workspace/santi/scripts/../assets/tripo/char_qin.glb  (2728 KB)  credits=40  riggable=None
+done. 下一步: 在 Blender 中检查比例/朝向并导出覆盖 unity/SanTiGame/Assets/Models/<name>.glb

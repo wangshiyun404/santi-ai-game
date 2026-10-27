@@ -17,6 +17,9 @@ namespace SanTi.Editor
     {
         const string LayoutDir = "Assets/StreamingAssets/layouts";
         const string ModelDir = "Assets/Models";
+        const string AnimDir = "Assets/Models/Anim";   // Tripo 绑骨+动画 GLB（原始 1 m 归一化、朝向 -X），由 InstantiateCharacter 统一缩放/转向
+        static readonly System.Collections.Generic.Dictionary<string, float> CharHeight = new()
+        { { "char_player", 1.72f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
         const string SceneDir = "Assets/Scenes";
         const string MatDir = "Assets/Materials";
         // 碰撞规则：大而不规则的用 MeshCollider；远景/装饰/发光面片不加碰撞（围栏若用 BoxCollider 会把整个高地封死）
@@ -68,7 +71,9 @@ namespace SanTi.Editor
 
                 GameObject go;
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{ModelDir}/{o.asset}.glb");
-                if (prefab != null) go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                GameObject charGo = o.role == "npc" && CharHeight.ContainsKey(o.asset) ? InstantiateCharacter(o.asset, null) : null;
+                if (charGo != null) go = charGo;
+                else if (prefab != null) go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
                 else
                 {   // 占位：Tripo 资产未就绪时用胶囊
                     go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -89,6 +94,7 @@ namespace SanTi.Editor
                     else if (o.@static && mf.GetComponent<Collider>() == null) mf.gameObject.AddComponent<BoxCollider>();
                 }
                 if (o.asset.StartsWith("ground")) groundRenderer = go.GetComponentInChildren<Renderer>();
+                if (o.role == "npc") { var cap = go.AddComponent<CapsuleCollider>(); cap.height = 1.7f; cap.center = new Vector3(0, 0.85f, 0); cap.radius = 0.35f; }
                 if (o.role == "sun") { sunSphere = go.transform; foreach (var c in go.GetComponentsInChildren<Collider>()) Object.DestroyImmediate(c); }
 
                 if (!string.IsNullOrEmpty(o.clue))
@@ -111,8 +117,17 @@ namespace SanTi.Editor
             // ---- 玩家 + 相机 ----
             player = new GameObject("Player") { tag = "Player" };
             var cc = player.AddComponent<CharacterController>(); cc.height = 1.7f; cc.center = new Vector3(0, 0.85f, 0); cc.radius = 0.3f;
-            var body = GameObject.CreatePrimitive(PrimitiveType.Capsule); body.name = "Body_Placeholder"; Object.DestroyImmediate(body.GetComponent<Collider>());
-            body.transform.SetParent(player.transform); body.transform.localPosition = new Vector3(0, 0.85f, 0); body.transform.localScale = new Vector3(0.5f, 0.85f, 0.5f);
+            GameObject body = InstantiateCharacter("char_player", cc);
+            if (body != null)
+            {
+                body.name = "Body_CharPlayer";
+                body.transform.SetParent(player.transform); body.transform.localPosition = Vector3.zero; body.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                body = GameObject.CreatePrimitive(PrimitiveType.Capsule); body.name = "Body_Placeholder"; Object.DestroyImmediate(body.GetComponent<Collider>());
+                body.transform.SetParent(player.transform); body.transform.localPosition = new Vector3(0, 0.85f, 0); body.transform.localScale = new Vector3(0.5f, 0.85f, 0.5f);
+            }
             body.GetComponent<Renderer>().sharedMaterial = FlatMaterial("cloak", new Color(0.23f, 0.2f, 0.17f));
             var spawnPos = playerSpawn ? playerSpawn.position : Vector3.zero;
             player.transform.position = spawnPos + Vector3.up * 0.5f;
@@ -157,6 +172,41 @@ namespace SanTi.Editor
             if (prefab == null) { Debug.LogWarning("Missing GLB: " + glbPath); return; }
             var mf = prefab.GetComponentInChildren<MeshFilter>(); var mr = prefab.GetComponentInChildren<MeshRenderer>();
             mesh = mf ? mf.sharedMesh : null; mat = mr ? mr.sharedMaterial : null;
+        }
+
+        /// <summary>
+        /// 实例化角色：优先 Assets/Models/Anim/&lt;name&gt;.glb（Tripo 绑骨动画，Legacy Animation，剪辑 idle/walk/run），
+        /// 否则退回 Assets/Models/&lt;name&gt;.glb（静态 T-Pose）。返回带 CharacterAnimator 的父物体；两者都没有时返回 null。
+        /// </summary>
+        static GameObject InstantiateCharacter(string name, CharacterController controller)
+        {
+            var animPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{AnimDir}/{name}.glb");
+            var staticPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{ModelDir}/{name}.glb");
+            if (animPrefab == null && staticPrefab == null) return null;
+            var root = new GameObject(name);
+            if (animPrefab != null)
+            {
+                var inst = (GameObject)PrefabUtility.InstantiatePrefab(animPrefab);
+                inst.transform.SetParent(root.transform);
+                // Tripo 重定向输出会带一个 Icosphere 辅助网格，去掉
+                foreach (var t in inst.GetComponentsInChildren<Transform>(true))
+                    if (t != null && t.name.StartsWith("Icosphere")) { Object.DestroyImmediate(t.gameObject); break; }
+                // 1 m 归一化 → 目标身高；原始朝向 -X（glTFast 翻转 X 轴后）→ 绕 Y +90° 面向 +Z
+                float h = 1f; var rends = inst.GetComponentsInChildren<Renderer>();
+                if (rends.Length > 0) { var b = rends[0].bounds; foreach (var r in rends) b.Encapsulate(r.bounds); h = Mathf.Max(0.1f, b.size.y); }
+                float target = CharHeight.TryGetValue(name, out var th) ? th : 1.7f;
+                inst.transform.localScale = Vector3.one * (target / h);
+                inst.transform.localRotation = Quaternion.Euler(0, 90f, 0);
+                inst.transform.localPosition = Vector3.zero;
+                var ca = root.AddComponent<CharacterAnimator>();
+                ca.anim = inst.GetComponentInChildren<Animation>(); ca.controller = controller;
+            }
+            else
+            {
+                var inst = (GameObject)PrefabUtility.InstantiatePrefab(staticPrefab);
+                inst.transform.SetParent(root.transform); inst.transform.localPosition = Vector3.zero; inst.transform.localRotation = Quaternion.identity;
+            }
+            return root;
         }
 
         static Material FlatMaterial(string name, Color c, bool emissive = false)

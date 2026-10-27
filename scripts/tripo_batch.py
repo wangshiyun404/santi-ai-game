@@ -38,8 +38,11 @@ def create_task(item):
     payload = {"model_version": item.get("model_version", "v3.1-20260211"),
                "texture": item.get("texture", True), "pbr": item.get("pbr", True)}
     if item.get("face_limit"): payload["face_limit"] = item["face_limit"]
-    if item.get("quad"): payload["quad"] = True
-    if item.get("image"):
+    if item.get("quad") and not payload["model_version"].startswith("P"): payload["quad"] = True
+    if item.get("multiview"):
+        payload["type"] = "multiview_to_model"
+        payload["files"] = [{"type": "png", "file_token": upload_image(os.path.join(ROOT, "..", p))} for p in item["multiview"]]
+    elif item.get("image"):
         payload["type"] = "image_to_model"
         payload["file"] = {"type": "png", "file_token": upload_image(os.path.join(ROOT, "..", item["image"]))}
         if item.get("prompt"): payload["prompt"] = item["prompt"]  # 部分版本支持图+文
@@ -63,7 +66,8 @@ def wait(task_id, every=6, timeout=1200):
 
 def download(url, path):
     import requests
-    with requests.get(url, stream=True, timeout=300) as r:
+    sess = requests.Session(); sess.trust_env = False   # 模型文件在独立存储域名上，签名 URL 无需鉴权，绕过凭据代理
+    with sess.get(url, stream=True, timeout=300) as r:
         r.raise_for_status()
         with open(path, "wb") as f:
             for chunk in r.iter_content(1 << 16): f.write(chunk)
@@ -75,6 +79,13 @@ def main():
     args = sys.argv[1:]
     if args and args[0] == "--balance":
         print(balance()); return
+    if args and args[0] == "--redownload":
+        log = json.load(open(os.path.join(OUT, "tasks.json")))
+        for name, it in log.items():
+            res = _req("GET", f"{API}/task/{it['task_id']}")["data"]
+            url = res["output"].get("pbr_model") or res["output"].get("model")
+            if url: download(url, os.path.join(OUT, f"{name}.glb")); print("✓", name, res.get("consumed_credit"))
+        return
     if not args: raise SystemExit(__doc__)
     manifest = json.load(open(args[0], encoding="utf-8"))
     only = None; dry = "--dry" in args
@@ -83,16 +94,27 @@ def main():
     if not KEY and not dry and not os.environ.get("HTTPS_PROXY"): raise SystemExit("TRIPO_API_KEY 未设置")
     print(f"{len(items)} assets")
     tasks = {}
+    log_path = os.path.join(OUT, "tasks.json")
+    log = json.load(open(log_path)) if os.path.exists(log_path) else {}
     for it in items:
-        print(f"→ {it['name']}  [{it.get('model_version','v3.1-20260211')}]  {'img' if it.get('image') else 'txt'}")
+        print(f"→ {it['name']}  [{it.get('model_version','v3.1-20260211')}]  {'img' if it.get('image') else 'txt'}", flush=True)
         if dry: continue
-        tasks[it["name"]] = create_task(it)
+        try:
+            tasks[it["name"]] = create_task(it)
+        except SystemExit as e:
+            print(f"! {it['name']} 创建失败: {e}", flush=True); continue
+        log[it["name"]] = {"task_id": tasks[it["name"]]}; json.dump(log, open(log_path, "w"), indent=1)
     for name, tid in tasks.items():
         res = wait(tid)
         url = res["output"].get("pbr_model") or res["output"].get("model")
+        log[name].update({"status": res["status"], "consumed_credit": res.get("consumed_credit"), "riggable": res["output"].get("riggable"), "url": url})
+        json.dump(log, open(log_path, "w"), indent=1)
         dst = os.path.join(OUT, f"{name}.glb")
-        download(url, dst)
-        print(f"✓ {name} → {dst}  ({os.path.getsize(dst)//1024} KB)  riggable={res['output'].get('riggable')}")
+        try:
+            download(url, dst)
+            print(f"✓ {name} → {dst}  ({os.path.getsize(dst)//1024} KB)  credits={res.get('consumed_credit')}  riggable={res['output'].get('riggable')}")
+        except Exception as e:
+            print(f"! {name} 下载失败（URL 已记录在 tasks.json，可用 --redownload 重试）: {e}")
     print("done. 下一步: 在 Blender 中检查比例/朝向并导出覆盖 unity/SanTiGame/Assets/Models/<name>.glb")
 
 if __name__ == "__main__":

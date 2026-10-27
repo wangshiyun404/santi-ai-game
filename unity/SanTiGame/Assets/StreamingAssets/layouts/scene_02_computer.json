@@ -66,7 +66,7 @@
       "clue": "clue_von_neumann"
     },
     {
-      "asset": "npc_placeholder",
+      "asset": "char_von_neumann",
       "name": "VonNeumann",
       "position": [
         0.0,
@@ -74,9 +74,9 @@
         0.0
       ],
       "rotation": [
-        -0.0,
-        -0.0,
-        0.0
+        0,
+        20,
+        0
       ],
       "scale": [
         1.0,
@@ -87,7 +87,7 @@
       "role": "npc"
     },
     {
-      "asset": "npc_placeholder",
+      "asset": "char_follower",
       "name": "Newton",
       "position": [
         0.0,
@@ -95,9 +95,9 @@
         0.0
       ],
       "rotation": [
-        -0.0,
-        -0.0,
-        0.0
+        0,
+        20,
+        0
       ],
       "scale": [
         1.0,
@@ -108,7 +108,7 @@
       "role": "npc"
     },
     {
-      "asset": "npc_placeholder",
+      "asset": "char_qin",
       "name": "QinShiHuang",
       "position": [
         0.0,
@@ -116,9 +116,9 @@
         0.0
       ],
       "rotation": [
-        -0.0,
-        -0.0,
-        0.0
+        0,
+        20,
+        0
       ],
       "scale": [
         1.0,
@@ -148,6 +148,47 @@
       ],
       "static": false,
       "role": "player_spawn"
+    },
+    {
+      "asset": "sand_table",
+      "name": "SandTable",
+      "position": [
+        -150,
+        10,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "static": true
+    },
+    {
+      "asset": "bronze_sword",
+      "name": "BronzeSword",
+      "position": [
+        -146,
+        10,
+        21
+      ],
+      "rotation": [
+        0,
+        60,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "static": true,
+      "clue": "clue_sword"
     }
   ],
   "palette": {
@@ -1365,6 +1406,11 @@
       "id": "clue_von_neumann",
       "subtitle": "这是一台计算机！",
       "narration": "vo_02_computer.wav"
+    },
+    {
+      "id": "clue_sword",
+      "subtitle": "朕的三千万大军，就是这台计算机。",
+      "narration": ""
     }
   ],
   "events": [

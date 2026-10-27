@@ -1,0 +1,9 @@
+
+== char_player  model_task=a38a1dcd  anims=['idle', 'walk', 'run']
+   riggable=True
+   rig task f6dbbc59 已创建
+   ✓ rig → char_player_rig.glb  credits=25.0
+   retarget task 294fd523 已创建
+   ✓ anim → char_player_anim.glb  credits=30.0  output_keys=['model_url']
+
+done.

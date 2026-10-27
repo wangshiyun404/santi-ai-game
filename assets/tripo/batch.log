@@ -1,0 +1,11 @@
+15 assets
+→ dish_tower  [v3.1-20260211]  img
+→ control_console  [v3.1-20260211]  img
+→ jeep  [v3.1-20260211]  txt
+→ pyramid  [v3.1-20260211]  txt
+→ dehydrated_roll  [v3.1-20260211]  txt
+→ bamboo_slips  [v3.1-20260211]  txt
+→ sand_table  [v3.1-20260211]  txt
+→ bronze_sword  [v3.1-20260211]  txt
+→ char_player  [P1-20260311]  img
+HTTP 400 https://api.tripo3d.ai/v2/openapi/task: {"code":1004,"message":"One or more of your parameter is invalid, quad parameters are not supported for P1","suggestion":"Refer to the API documentation for parameter requirements"}

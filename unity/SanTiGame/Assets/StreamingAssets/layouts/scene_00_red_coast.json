@@ -29,13 +29,13 @@
       "name": "DishTower",
       "position": [
         0.0,
-        0.0,
+        0,
         25.0
       ],
       "rotation": [
-        -0.0,
-        -0.0,
-        0.0
+        0,
+        0,
+        0
       ],
       "scale": [
         1.0,
@@ -63,8 +63,7 @@
         3.2,
         7.0
       ],
-      "static": true,
-      "clue": "clue_control_room"
+      "static": true
     },
     {
       "asset": "barracks",
@@ -586,6 +585,68 @@
       ],
       "static": false,
       "role": "player_spawn"
+    },
+    {
+      "asset": "control_console",
+      "name": "ControlConsole",
+      "position": [
+        -30,
+        0,
+        -11.5
+      ],
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "static": true,
+      "clue": "clue_control_room"
+    },
+    {
+      "asset": "jeep",
+      "name": "Jeep",
+      "position": [
+        12,
+        0,
+        -34
+      ],
+      "rotation": [
+        0,
+        25,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "static": true
+    },
+    {
+      "asset": "char_ye_wenjie",
+      "name": "YeWenjie",
+      "position": [
+        -28.5,
+        0,
+        -13.5
+      ],
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "static": false,
+      "role": "npc"
     }
   ],
   "palette": {

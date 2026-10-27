@@ -1,0 +1,101 @@
+/home/user/workspace/santi/blender/review_tripo.py:15: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("W"); bpy.context.scene.world = w; w.use_nodes = True
+22:07:06 | INFO: Data are loaded, start creating Blender stuff
+22:07:06 | INFO: Blender create Mesh node tripo_mesh_157a3b07-6ec3-42a8-a2f0-01b52c857939
+22:07:06 | INFO: glTF import finished in 0.01s
+bamboo_slips {'size_m': [1.0, 0.28, 0.3], 'faces': 1235, 'quad_ratio': 0.0, 'height_axis': 'flat'}
+00:02.309  render           | Saved: '/home/user/workspace/santi/review/tripo/bamboo_slips_0.png'
+00:03.813  render           | Saved: '/home/user/workspace/santi/review/tripo/bamboo_slips_1.png'
+00:05.292  render           | Saved: '/home/user/workspace/santi/review/tripo/bamboo_slips_2.png'
+22:07:10 | INFO: Data are loaded, start creating Blender stuff
+22:07:10 | INFO: Blender create Mesh node tripo_mesh_072fdf88-713f-4d96-9dff-ebd888a1e964
+22:07:10 | INFO: glTF import finished in 0.01s
+bronze_sword {'size_m': [0.64, 0.94, 1.0], 'faces': 758, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+00:06.722  render           | Saved: '/home/user/workspace/santi/review/tripo/bronze_sword_0.png'
+00:08.128  render           | Saved: '/home/user/workspace/santi/review/tripo/bronze_sword_1.png'
+00:09.446  render           | Saved: '/home/user/workspace/santi/review/tripo/bronze_sword_2.png'
+22:07:15 | INFO: Data are loaded, start creating Blender stuff
+22:07:15 | INFO: Blender create Mesh node tripo_mesh_e529556e-7df8-4df7-b792-3a15d05a2491
+22:07:15 | INFO: glTF import finished in 0.01s
+char_follower {'size_m': [0.38, 0.9, 1.0], 'faces': 6016, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+00:10.990  render           | Saved: '/home/user/workspace/santi/review/tripo/char_follower_0.png'
+00:12.552  render           | Saved: '/home/user/workspace/santi/review/tripo/char_follower_1.png'
+00:13.979  render           | Saved: '/home/user/workspace/santi/review/tripo/char_follower_2.png'
+22:07:19 | INFO: Data are loaded, start creating Blender stuff
+22:07:19 | INFO: Blender create Mesh node tripo_mesh_3b8d0dbc-f93e-42a7-a01f-8a55d31614b1
+22:07:19 | INFO: glTF import finished in 0.02s
+char_player {'size_m': [0.47, 1.0, 0.56], 'faces': 7790, 'quad_ratio': 0.0, 'height_axis': 'flat'}
+00:15.507  render           | Saved: '/home/user/workspace/santi/review/tripo/char_player_0.png'
+00:17.009  render           | Saved: '/home/user/workspace/santi/review/tripo/char_player_1.png'
+00:18.410  render           | Saved: '/home/user/workspace/santi/review/tripo/char_player_2.png'
+22:07:24 | INFO: Data are loaded, start creating Blender stuff
+22:07:24 | INFO: Blender create Mesh node tripo_mesh_20ef1e58-97f4-41a0-8887-febc6ef6addb
+22:07:24 | INFO: glTF import finished in 0.01s
+char_qin {'size_m': [0.38, 0.87, 1.0], 'faces': 5511, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+00:19.972  render           | Saved: '/home/user/workspace/santi/review/tripo/char_qin_0.png'
+00:21.613  render           | Saved: '/home/user/workspace/santi/review/tripo/char_qin_1.png'
+00:23.053  render           | Saved: '/home/user/workspace/santi/review/tripo/char_qin_2.png'
+22:07:28 | INFO: Data are loaded, start creating Blender stuff
+22:07:28 | INFO: Blender create Mesh node tripo_mesh_89fc9e92-1ec7-4b6a-92e3-5e10084f2493
+22:07:28 | INFO: glTF import finished in 0.01s
+char_von_neumann {'size_m': [0.36, 1.0, 0.85], 'faces': 6183, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+00:24.605  render           | Saved: '/home/user/workspace/santi/review/tripo/char_von_neumann_0.png'
+00:26.870  render           | Saved: '/home/user/workspace/santi/review/tripo/char_von_neumann_1.png'
+00:29.788  render           | Saved: '/home/user/workspace/santi/review/tripo/char_von_neumann_2.png'
+22:07:35 | INFO: Data are loaded, start creating Blender stuff
+22:07:35 | INFO: Blender create Mesh node tripo_mesh_536f912c-d40a-4dbc-9269-9658cb7d6768
+22:07:35 | INFO: glTF import finished in 0.05s
+char_ye_wenjie {'size_m': [0.33, 0.92, 1.0], 'faces': 7824, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+00:32.933  render           | Saved: '/home/user/workspace/santi/review/tripo/char_ye_wenjie_0.png'
+00:36.171  render           | Saved: '/home/user/workspace/santi/review/tripo/char_ye_wenjie_1.png'
+00:38.849  render           | Saved: '/home/user/workspace/santi/review/tripo/char_ye_wenjie_2.png'
+22:07:44 | INFO: Data are loaded, start creating Blender stuff
+22:07:44 | INFO: Blender create Mesh node tripo_mesh_88bab4a9-8598-4121-8045-fd88b9b79a1f
+22:07:44 | INFO: glTF import finished in 0.02s
+control_console {'size_m': [0.74, 0.56, 1.0], 'faces': 3780, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+00:42.074  render           | Saved: '/home/user/workspace/santi/review/tripo/control_console_0.png'
+00:45.156  render           | Saved: '/home/user/workspace/santi/review/tripo/control_console_1.png'
+00:48.365  render           | Saved: '/home/user/workspace/santi/review/tripo/control_console_2.png'
+22:07:54 | INFO: Data are loaded, start creating Blender stuff
+22:07:54 | INFO: Blender create Mesh node tripo_mesh_ec659e76-03e8-41d5-a8f6-97b5d10f5795
+22:07:54 | INFO: glTF import finished in 0.01s
+dehydrated_roll {'size_m': [0.56, 1.0, 0.94], 'faces': 1866, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+00:51.832  render           | Saved: '/home/user/workspace/santi/review/tripo/dehydrated_roll_0.png'
+00:56.092  render           | Saved: '/home/user/workspace/santi/review/tripo/dehydrated_roll_1.png'
+00:59.435  render           | Saved: '/home/user/workspace/santi/review/tripo/dehydrated_roll_2.png'
+22:08:05 | INFO: Data are loaded, start creating Blender stuff
+22:08:05 | INFO: Blender create Mesh node tripo_mesh_edaddd00-ed69-4eea-9d96-bd12fd4789f5
+22:08:05 | INFO: glTF import finished in 0.03s
+dish_tower {'size_m': [1.0, 0.58, 0.71], 'faces': 7540, 'quad_ratio': 0.0, 'height_axis': 'flat'}
+01:03.203  render           | Saved: '/home/user/workspace/santi/review/tripo/dish_tower_0.png'
+01:06.510  render           | Saved: '/home/user/workspace/santi/review/tripo/dish_tower_1.png'
+01:09.576  render           | Saved: '/home/user/workspace/santi/review/tripo/dish_tower_2.png'
+22:08:15 | INFO: Data are loaded, start creating Blender stuff
+22:08:15 | INFO: Blender create Mesh node tripo_mesh_b9fb0d19-847a-4d27-ac71-8a0ab4dfb56b
+22:08:15 | INFO: glTF import finished in 0.02s
+jeep {'size_m': [1.0, 0.5, 0.57], 'faces': 2810, 'quad_ratio': 0.0, 'height_axis': 'flat'}
+01:13.254  render           | Saved: '/home/user/workspace/santi/review/tripo/jeep_0.png'
+01:16.620  render           | Saved: '/home/user/workspace/santi/review/tripo/jeep_1.png'
+01:19.942  render           | Saved: '/home/user/workspace/santi/review/tripo/jeep_2.png'
+22:08:25 | INFO: Data are loaded, start creating Blender stuff
+22:08:25 | INFO: Blender create Mesh node tripo_mesh_95aa67b4-768c-454f-ae13-2a70900e7559
+22:08:25 | INFO: glTF import finished in 0.01s
+pyramid {'size_m': [0.97, 0.95, 1.0], 'faces': 1825, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+01:23.959  render           | Saved: '/home/user/workspace/santi/review/tripo/pyramid_0.png'
+01:27.829  render           | Saved: '/home/user/workspace/santi/review/tripo/pyramid_1.png'
+01:31.319  render           | Saved: '/home/user/workspace/santi/review/tripo/pyramid_2.png'
+22:08:36 | INFO: Data are loaded, start creating Blender stuff
+22:08:36 | INFO: Blender create Mesh node tripo_mesh_ef75f4a8-eeba-4df4-8ef7-1b46243dd194
+22:08:36 | INFO: glTF import finished in 0.01s
+rock_small {'size_m': [0.97, 1.0, 0.96], 'faces': 253, 'quad_ratio': 0.0, 'height_axis': 'Z'}
+01:35.338  render           | Saved: '/home/user/workspace/santi/review/tripo/rock_small_0.png'
+01:39.113  render           | Saved: '/home/user/workspace/santi/review/tripo/rock_small_1.png'
+01:42.572  render           | Saved: '/home/user/workspace/santi/review/tripo/rock_small_2.png'
+22:08:48 | INFO: Data are loaded, start creating Blender stuff
+22:08:48 | INFO: Blender create Mesh node tripo_mesh_2a708842-9cb6-4089-b5bb-1f46d164e281
+22:08:48 | INFO: glTF import finished in 0.02s
+sand_table {'size_m': [1.0, 0.92, 0.46], 'faces': 2801, 'quad_ratio': 0.0, 'height_axis': 'flat'}
+01:46.604  render           | Saved: '/home/user/workspace/santi/review/tripo/sand_table_0.png'
+01:50.425  render           | Saved: '/home/user/workspace/santi/review/tripo/sand_table_1.png'
+01:53.953  render           | Saved: '/home/user/workspace/santi/review/tripo/sand_table_2.png'
+DONE
