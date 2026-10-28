@@ -14,10 +14,12 @@ santi/
 ├── audio/vo/                   旁白 TTS 源文件（txt + mp3）
 ├── concept/                    视觉锚点图（4 张，GPT Image 生成）
 ├── blender/build_assets.py     B 类几何体资产 + 场景布局 + 预览渲染脚本（bpy 5.0）
+├── blender/render_layout.py    用 Unity GLB + layout 复现 Unity 场景的"虚拟 Game 视图"（round04）
+├── scripts/coords.py           Blender ↔ Unity 坐标/欧拉角换算（glTFast 反转 X 轴）
 ├── assets/glb/                 12 个低多边形 GLB 资产（Y-up，1 unit = 1 m）
 ├── layouts/scene_*.json        三个场景的布局、光照、线索、事件数据
 ├── preview/                    Blender Cycles 预览（供盲审对照）
-├── review/round01–03*.md       盲审记录（第 3 轮为 Tripo 资产质检）
+├── review/round01–04*.md       盲审记录（第 3 轮 Tripo 质检，第 4 轮 Unity 布局复现）
 ├── assets/tripo/               Tripo 原始 GLB、任务 id、绑骨/动画输出
 └── unity/SanTiGame/            Unity 6.3 LTS 工程（URP + glTFast）
     ├── Assets/Scripts/Runtime  控制器、相机、线索、字幕、士兵实例化、纪元事件

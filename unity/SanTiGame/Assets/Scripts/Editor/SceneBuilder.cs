@@ -50,7 +50,7 @@ namespace SanTi.Editor
             {
                 var a = data.lighting.sunAngle ?? new[] { 50f, 0f, 30f };
                 // Blender 太阳欧拉角(近似) → Unity：俯仰取 90-x，偏航取 z
-                sunGo.transform.rotation = Quaternion.Euler(90f - a[0], a[2], 0f);
+                sunGo.transform.rotation = Quaternion.Euler(90f - a[0], 180f - a[2], 0f);   // Blender 太阳 (rx,0,rz) → Unity，见 scripts/coords.py sun_to_unity
                 sun.intensity = Mathf.Max(0.2f, data.lighting.intensity * 0.6f);
                 sun.color = ColorUtil.Hex(data.lighting.sunColor, Color.white);
                 RenderSettings.ambientMode = AmbientMode.Flat;
@@ -127,10 +127,11 @@ namespace SanTi.Editor
             {
                 body = GameObject.CreatePrimitive(PrimitiveType.Capsule); body.name = "Body_Placeholder"; Object.DestroyImmediate(body.GetComponent<Collider>());
                 body.transform.SetParent(player.transform); body.transform.localPosition = new Vector3(0, 0.85f, 0); body.transform.localScale = new Vector3(0.5f, 0.85f, 0.5f);
+                body.GetComponent<Renderer>().sharedMaterial = FlatMaterial("cloak", new Color(0.23f, 0.2f, 0.17f));
             }
-            body.GetComponent<Renderer>().sharedMaterial = FlatMaterial("cloak", new Color(0.23f, 0.2f, 0.17f));
             var spawnPos = playerSpawn ? playerSpawn.position : Vector3.zero;
-            player.transform.position = spawnPos + Vector3.up * 0.5f;
+            var spawnRot = playerSpawn ? Quaternion.Euler(0, playerSpawn.eulerAngles.y, 0) : Quaternion.identity;
+            player.transform.SetPositionAndRotation(spawnPos + Vector3.up * 0.5f, spawnRot);
             var ctrl = player.AddComponent<ThirdPersonController>();
 
             var camGo = new GameObject("Main Camera") { tag = "MainCamera" };
@@ -138,7 +139,7 @@ namespace SanTi.Editor
             cam.fieldOfView = 50f; cam.farClipPlane = 2000f;
             var follow = camGo.AddComponent<FollowCamera>(); follow.target = player.transform;
             ctrl.cameraTransform = camGo.transform;
-            camGo.transform.position = spawnPos + new Vector3(0, 2.5f, -6f);
+            camGo.transform.position = spawnPos + spawnRot * new Vector3(0, 2.5f, -6f);   // 出生点朝向的身后
 
             // ---- 管理器 / UI / 事件 ----
             var mgrGo = new GameObject("GameManager");

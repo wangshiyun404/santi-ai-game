@@ -44,7 +44,7 @@ namespace SanTi
                         "rows" => r % 2,
                         _ => (c + r) % 2,
                     };
-                    float yaw = 180f + (float)(rng.NextDouble() - 0.5) * 8f;
+                    float yaw = (float)(rng.NextDouble() - 0.5) * 8f;   // 面向 +Z（高台/秦始皇一侧）
                     _soldiers.Add(new Soldier { pos = p, basePattern = basePat, m = Matrix4x4.TRS(p, Quaternion.Euler(0, yaw, 0), Vector3.one) });
                 }
             }
@@ -71,7 +71,7 @@ namespace SanTi
                 {   // 三日凌空：方阵溃散（随机抖散并下沉）
                     float k = Mathf.Clamp01(_scatterT / 40f);
                     var jitter = new Vector3(Mathf.PerlinNoise(s.pos.x, s.pos.z) - 0.5f, -k * 1.5f, Mathf.PerlinNoise(s.pos.z, s.pos.x) - 0.5f) * k * 6f;
-                    m = Matrix4x4.TRS(s.pos + jitter, Quaternion.Euler(k * 70f * (Mathf.PerlinNoise(s.pos.x * 3, 0) - 0.5f), 180, 0), Vector3.one * (1f - k * 0.3f));
+                    m = Matrix4x4.TRS(s.pos + jitter, Quaternion.Euler(k * 70f * (Mathf.PerlinNoise(s.pos.x * 3, 0) - 0.5f), 0, 0), Vector3.one * (1f - k * 0.3f));
                 }
                 (white ? _white : _black).Add(m);
                 if (_black.Count == 1023) Flush(_black, blackMesh, blackMaterial);

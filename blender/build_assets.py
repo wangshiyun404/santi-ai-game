@@ -7,12 +7,13 @@
   preview/scene_XX.png      — Cycles 预览图（供盲审 Agent 对照参考图）
 """
 import bpy, bmesh, json, math, os, random, sys
-from mathutils import Vector, Euler
+from mathutils import Vector, Matrix, Euler
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT_GLB = os.path.join(ROOT, "..", "assets", "glb")
 OUT_LAYOUT = os.path.join(ROOT, "..", "layouts")
 OUT_PREVIEW = os.path.join(ROOT, "..", "preview")
+sys.path.insert(0, os.path.join(ROOT, "..", "scripts")); import coords
 for d in (OUT_GLB, OUT_LAYOUT, OUT_PREVIEW):
     os.makedirs(d, exist_ok=True)
 
@@ -53,19 +54,31 @@ def flat(obj):
     for p in obj.data.polygons:
         p.use_smooth = False
 
+def bake(o):
+    """把生成过程中的位移/旋转/缩放烘焙进网格，使物体变换为单位阵；之后再设置的 location/rotation 才进入 layout。"""
+    bpy.ops.object.select_all(action="DESELECT")
+    o.select_set(True); bpy.context.view_layer.objects.active = o
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    bpy.context.view_layer.update()
+    return o
+
 def set_mat(obj, m):
     obj.data.materials.clear()
     obj.data.materials.append(m)
 
 def export_glb(obj_or_list, name):
+    """导出为 GLB。单个物体时先把物体变换临时归零，使 GLB 内只含局部几何，世界变换完全交给 layout。"""
     objs = obj_or_list if isinstance(obj_or_list, list) else [obj_or_list]
     bpy.ops.object.select_all(action="DESELECT")
     for o in objs:
         o.select_set(True)
     bpy.context.view_layer.objects.active = objs[0]
+    saved = [(o, o.matrix_world.copy()) for o in objs] if len(objs) == 1 else []
+    for o, _ in saved: o.matrix_world = Matrix.Identity(4)
     path = os.path.join(OUT_GLB, f"{name}.glb")
     bpy.ops.export_scene.gltf(filepath=path, use_selection=True, export_format="GLB",
                               export_apply=True, export_yup=True)
+    for o, m in saved: o.matrix_world = m
     return path
 
 # ---------- 几何体生成器 ----------
@@ -77,7 +90,7 @@ def make_ground(name, size=400, cuts=60, jitter=0.35, mat_=None):
         v.co.z += random.uniform(-jitter, jitter) * (0.3 + d)  # 远处起伏更大
     flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 def make_pyramid(name, base=40, height=28, mat_=None):
     bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=base / math.sqrt(2), depth=height, location=(0, 0, height / 2))
@@ -85,7 +98,7 @@ def make_pyramid(name, base=40, height=28, mat_=None):
     o.rotation_euler = (0, 0, math.radians(45))
     flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 def make_dehydrated_roll(name, length=1.7, radius=0.22, mat_=None):
     bpy.ops.mesh.primitive_cylinder_add(vertices=7, radius=radius, depth=length, location=(0, 0, radius))
@@ -98,7 +111,7 @@ def make_dehydrated_roll(name, length=1.7, radius=0.22, mat_=None):
     bm.to_mesh(o.data); bm.free()
     flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 def make_capsule_figure(name, height=1.7, mat_=None):
     """占位角色（将来替换为 Tripo Smart Mesh 角色）"""
@@ -113,7 +126,7 @@ def make_capsule_figure(name, height=1.7, mat_=None):
     o = bpy.context.object; o.name = name
     flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 def make_soldier_with_flag(name, flag_hex, cloth_hex):
     """士兵基准（≤ 600 面）：身体 + 举起的旗杆 + 旗面"""
@@ -134,7 +147,7 @@ def make_soldier_with_flag(name, flag_hex, cloth_hex):
     bpy.ops.object.join()
     o = bpy.context.object; o.name = name
     flat(o)
-    return o
+    return bake(o)
 
 def make_platform(name, w=24, d=16, h=10, mat_=None):
     bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, h / 2))
@@ -146,7 +159,7 @@ def make_platform(name, w=24, d=16, h=10, mat_=None):
     bpy.context.view_layer.objects.active = o; bpy.ops.object.join()
     flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 def make_dish_tower(name, pal):
     """红岸巨型抛物面天线 + 混凝土塔"""
@@ -170,7 +183,7 @@ def make_dish_tower(name, pal):
     for o in (tower, deck, dish, feed): o.select_set(True)
     bpy.context.view_layer.objects.active = tower; bpy.ops.object.join()
     o = bpy.context.object; o.name = name; flat(o)
-    return o
+    return bake(o)
 
 def make_barracks(name, w=14, d=7, h=3.2, pal=None):
     bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, h / 2))
@@ -181,7 +194,7 @@ def make_barracks(name, w=14, d=7, h=3.2, pal=None):
     bpy.ops.object.select_all(action="DESELECT"); wall.select_set(True); roof.select_set(True)
     bpy.context.view_layer.objects.active = wall; bpy.ops.object.join()
     o = bpy.context.object; o.name = name; flat(o)
-    return o
+    return bake(o)
 
 def make_larch(name, h=9, pal=None):
     bpy.ops.mesh.primitive_cylinder_add(vertices=5, radius=0.18, depth=h * 0.35, location=(0, 0, h * 0.175))
@@ -194,13 +207,13 @@ def make_larch(name, h=9, pal=None):
     for p in parts: p.select_set(True)
     bpy.context.view_layer.objects.active = trunk; bpy.ops.object.join()
     o = bpy.context.object; o.name = name; flat(o)
-    return o
+    return bake(o)
 
 def make_sun(name, radius=30, hexcol="#FFFFFF", strength=6):
     bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=radius)
     o = bpy.context.object; o.name = name
     set_mat(o, mat("sun", hexcol, emission=strength))
-    return o
+    return bake(o)
 
 
 def make_fence_ring(name, radius=52, posts=36, mat_post=None, mat_wire=None):
@@ -217,7 +230,7 @@ def make_fence_ring(name, radius=52, posts=36, mat_post=None, mat_wire=None):
     for p in parts: p.select_set(True)
     bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
     o = bpy.context.object; o.name = name; flat(o)
-    return o
+    return bake(o)
 
 def make_flagpole(name, h=16, mat_pole=None, mat_flag=None):
     bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.08, depth=h, location=(0, 0, h / 2))
@@ -228,7 +241,7 @@ def make_flagpole(name, h=16, mat_pole=None, mat_flag=None):
     bpy.ops.object.select_all(action="DESELECT"); pole.select_set(True); flag.select_set(True)
     bpy.context.view_layer.objects.active = pole; bpy.ops.object.join()
     o = bpy.context.object; o.name = name; flat(o)
-    return o
+    return bake(o)
 
 def make_cloud_sea(name, inner=75, outer=420, count=160, z=-28, mat_=None):
     """云海：悬崖下方一圈压扁的低细分球"""
@@ -242,7 +255,7 @@ def make_cloud_sea(name, inner=75, outer=420, count=160, z=-28, mat_=None):
     bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
     o = bpy.context.object; o.name = name; flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 def make_window_lights(name, barracks_specs, mat_):
     """营房暖色窗光：贴在墙面上的小自发光面片"""
@@ -263,7 +276,7 @@ def make_window_lights(name, barracks_specs, mat_):
     for p in parts: p.select_set(True)
     bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
     o = bpy.context.object; o.name = name
-    return o
+    return bake(o)
 
 def make_mountain_range(name, count=11, y=760, mat_=None):
     parts = []
@@ -277,7 +290,7 @@ def make_mountain_range(name, count=11, y=760, mat_=None):
     bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join()
     o = bpy.context.object; o.name = name; flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 def make_cracked_ground(name, size=600, cuts=48, jitter=0.5, mat_a=None, mat_b=None, curve_radius=2600):
     """龟裂大地：随机面片用深色材质形成板块感；远处按 z -= d^2/R 下弯模拟小行星地平线"""
@@ -288,7 +301,7 @@ def make_cracked_ground(name, size=600, cuts=48, jitter=0.5, mat_a=None, mat_b=N
     for v in o.data.vertices:
         d2 = v.co.x ** 2 + v.co.y ** 2
         v.co.z -= d2 / (2 * curve_radius)
-    return o
+    return bake(o)
 
 def make_lakebed(name, radius=38, mat_=None):
     bpy.ops.mesh.primitive_cylinder_add(vertices=11, radius=radius, depth=0.3, location=(0, 0, -0.1))
@@ -297,7 +310,7 @@ def make_lakebed(name, radius=38, mat_=None):
     for v in bm.verts: v.co.xy *= random.uniform(0.85, 1.12)
     bm.to_mesh(o.data); bm.free(); flat(o)
     if mat_: set_mat(o, mat_)
-    return o
+    return bake(o)
 
 # ---------- 布局与渲染 ----------
 def add_sun_light(angle_deg=(60, 0, 30), energy=4, color=(1, 1, 1)):
@@ -337,14 +350,15 @@ def render(path, res=(960, 540), samples=24):
     bpy.ops.render.render(write_still=True)
 
 def to_unity(obj):
-    """Blender Z-up 右手系 → Unity Y-up 左手系（与 glTF 导出一致）"""
+    """Blender Z-up 右手系 → Unity Y-up 左手系：glTF 导出 (x,z,-y) 再经 glTFast 反转 X → (-x, z, -y)。见 scripts/coords.py"""
+    bpy.context.view_layer.update()
     p = obj.matrix_world.to_translation()
-    r = obj.matrix_world.to_euler()
+    r = obj.matrix_world.to_euler("XYZ")
     s = obj.matrix_world.to_scale()
     return {
-        "position": [round(p.x, 3), round(p.z, 3), round(p.y, 3)],
-        "rotation": [round(-math.degrees(r.x), 2), round(-math.degrees(r.z), 2), round(-math.degrees(r.y), 2)],
-        "scale": [round(s.x, 3), round(s.z, 3), round(s.y, 3)],
+        "position": coords.blender_pos_to_unity(p),
+        "rotation": coords.blender_euler_to_unity(r.x, r.y, r.z),
+        "scale": coords.blender_scale_to_unity(s),
     }
 
 def write_layout(scene_id, title, entries, extras):
@@ -378,7 +392,7 @@ def build_scene_chaotic():
         r.rotation_euler = (0, math.radians(90), random.uniform(0, math.pi))
         entries.append({"asset": "dehydrated_roll", "name": r.name, **to_unity(r), "static": True, **({"clue": "clue_dehydration"} if i == 0 else {})})
 
-    fig = make_capsule_figure("PlayerSpawn", mat_=mat("cloak", "#3A332C"))
+    fig = make_capsule_figure("PlayerSpawn", mat_=mat("cloak", "#3A332C")); fig.rotation_euler = (0, 0, math.pi)   # 面朝 +Y（金字塔）
     fig.location = (0, 12, 0)
     entries.append({"asset": "player_placeholder", "name": "PlayerSpawn", **to_unity(fig), "static": False, "role": "player_spawn"})
 
@@ -447,7 +461,7 @@ def build_scene_computer():
     for i, nm in enumerate(["VonNeumann", "Newton", "QinShiHuang"]):
         f = make_capsule_figure(nm, mat_=mat("cloak", "#2B2F38")); f.location = (-150 + i * 2.5 - 2.5, 20, 10)
         entries.append({"asset": "npc_placeholder", "name": nm, **to_unity(f), "static": False, "role": "npc"})
-    fig = make_capsule_figure("PlayerSpawn", mat_=mat("cloak", "#3A332C")); fig.location = (-120, 0, 0)
+    fig = make_capsule_figure("PlayerSpawn", mat_=mat("cloak", "#3A332C")); fig.location = (-120, 0, 0); fig.rotation_euler = (0, 0, math.pi)   # 面朝 +Y（方阵）
     entries.append({"asset": "player_placeholder", "name": "PlayerSpawn", **to_unity(fig), "static": False, "role": "player_spawn"})
 
     add_sun_light((70, 0, -120), energy=3, color=(0.85, 0.9, 1.0))
@@ -457,7 +471,8 @@ def build_scene_computer():
     write_layout("scene_02_computer", "人列计算机", entries, {
         "palette": P,
         "lighting": {"sunAngle": [70, 0, -120], "intensity": 3, "ambient": "#5F7A99", "fog": {"color": "#6F86A3", "start": 200, "end": 900}},
-        "formation": {"blackAsset": "soldier_black", "whiteAsset": "soldier_white", "blocks": blocks, "flipWaveSpeed": 6.0},
+        "formation": {"blackAsset": "soldier_black", "whiteAsset": "soldier_white", "flipWaveSpeed": 6.0,
+                      "blocks": [{**b, "origin": [round(-b["origin"][0] - (b["cols"] - 1) * b["spacing"], 3), round(-b["origin"][1] - (b["rows"] - 1) * b["spacing"], 3)]} for b in blocks]},
         "clues": [
             {"id": "clue_gate_soldier", "subtitle": "你是一个门电路。", "narration": "vo_02_gate.wav"},
             {"id": "clue_bus", "subtitle": "这是系统总线。", "narration": "vo_02_bus.wav"},
@@ -507,7 +522,7 @@ def build_scene_red_coast():
         t.location = (math.cos(ang) * rad, math.sin(ang) * rad, 0)
         entries.append({"asset": "larch", "name": t.name, **to_unity(t), "static": True})
 
-    fig = make_capsule_figure("PlayerSpawn", mat_=mat("coat", "#2F3A2B")); fig.location = (-8, -40, 0)
+    fig = make_capsule_figure("PlayerSpawn", mat_=mat("coat", "#2F3A2B")); fig.location = (-8, -40, 0); fig.rotation_euler = (0, 0, math.pi)   # 面朝 +Y（天线）
     entries.append({"asset": "player_placeholder", "name": "PlayerSpawn", **to_unity(fig), "static": False, "role": "player_spawn"})
 
     add_sun_light((8, 0, 250), energy=1.6, color=(1.0, 0.6, 0.35))

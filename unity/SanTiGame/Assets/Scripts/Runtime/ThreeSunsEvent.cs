@@ -25,7 +25,7 @@ namespace SanTi
                 go.name = "Sun_" + i; Destroy(go.GetComponent<Collider>());
                 go.transform.localScale = Vector3.one * (40f + i * 25f);
                 if (sunMaterial) go.GetComponent<Renderer>().sharedMaterial = sunMaterial;
-                go.transform.position = new Vector3(-200f + i * 250f, -60f, 900f);
+                go.transform.position = new Vector3(-200f + i * 250f, -60f, -900f)   // 山脉在 Unity -Z 侧（Blender +Y）;
                 suns[i] = go.transform;
             }
             SubtitleUI.Instance?.ShowSubtitle("三日凌空。", 6f);
