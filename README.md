@@ -44,7 +44,7 @@ santi/
 | Unity 真机：URP 配置、Legacy 动画、材质转换、曝光/环境光、第 5–6 轮盲审（review/round05_06_unity_real.md、round06_unity_board.jpg） | ✅ Mac 上 batchmode 一键流水线，三场景可玩 |
 | WebGL 打包 | ✅ dist/webgl/ 20 MB（贴图外置后从 145 MB 降下来），Gzip + 解压回退，任何静态托管可用 |
 | macOS 打包 | ✅ Pipeline.BuildMac → Builds/macOS/三体：三体游戏.app（通用二进制，135 MB；课堂离线兜底） |
-| 托管（国内可访问） | ⏳ 待定：Perplexity 预览链接已可玩（国内可达性待实测）；候选腾讯云 COS / 阿里云 OSS 静态站点（需账号）或 Cloudflare Pages |
+| 托管 | ✅ GitHub Pages：https://wangshiyun404.github.io/santi-ai-game/ （gh-pages 分支，`scripts/publish_pages.sh` 一键发布，源码仍私有）；Perplexity 预览链接并行。国内可达性待课堂实测；若慢则上腾讯云 COS |
 
 ## 在 Mac 上跑（已跑通，batchmode 一键）
 
@@ -67,7 +67,7 @@ GUI 方式：Unity Hub → Add 选择 `unity/SanTiGame` → 菜单 **SanTi → P
 1. 构建后把 `Builds/WebGL` 拷到 `dist/webgl/`，**保留 dist 里已打补丁的 `index.html` 和 `Build/WebGL.loader.js`**（或重新打补丁）：
    - loader.js：`void 0===window.caches` → `void 0===function(){try{return window.caches}catch(e){return void 0}}()`。否则在沙箱 iframe（无 allow-same-origin）里会卡在 0%。
    - index.html：`companyName: ""`、`productName: ""`（关闭 UnityCache/IndexedDB），标题与同人声明。
-2. 任何静态托管即可（已开解压回退，不依赖 Content-Encoding 头）；本地预览：`cd dist/webgl && python3 -m http.server 8080`。
+2. 发布：`./scripts/publish_pages.sh`（把 dist/webgl 追加提交到 gh-pages 并推送，1–2 分钟后生效）。任何静态托管都可用（已开解压回退，不依赖 Content-Encoding 头）；本地预览：`cd dist/webgl && python3 -m http.server 8080`。
 3. 新增 Tripo 资产后先跑 `python3 scripts/strip_glb_textures.py`（抽贴图 + 去内嵌），否则构建体积会回到 100 MB+。
 
 ## Tripo 批量生成（API Key 已配置）
