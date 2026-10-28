@@ -38,8 +38,8 @@ santi/
 | B 类几何体资产（地形、金字塔、脱水卷、干湖床、士兵、高台、远山、天线塔、营房、窗光、围栏、旗杆、云海、落叶松、悬崖、太阳） | ✅ 18 个 GLB |
 | 三个场景布局 JSON + 预览渲染 + 两轮盲审（review/round01–02） | ✅ 人列计算机 117 块方阵、36,512 名士兵，含中央核心块 |
 | Unity 工程：第三人称控制、跟随相机、线索/字幕系统、3 万士兵 GPU 实例化、乱纪元日落、三日凌空、场景切换、SceneBuilder | ✅ 代码就绪，待在编辑器中首次运行 |
-| A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ✅ 16 件全部生成并通过第 3 轮盲审（4 件重做一次），已按真实尺寸归一化导入 Unity（review/round03_tripo.md） |
-| 绑骨与动作（改用 Tripo v3 自动绑骨 + 预设动画，scripts/tripo_rig.py） | ✅ 玩家 idle/walk/run，4 名 NPC + 黑旗士兵 idle；Assets/Models/Anim/*.glb，CharacterAnimator 驱动 |
+| A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ✅ 17 件（含补做的牛顿）全部通过盲审，已按真实尺寸归一化导入 Unity（review/round03_tripo.md） |
+| 绑骨与动作（改用 Tripo v3 自动绑骨 + 预设动画，scripts/tripo_rig.py） | ✅ 玩家 idle/walk/run，5 名 NPC + 黑旗士兵 idle；Assets/Models/Anim/*.glb，CharacterAnimator 驱动 |
 | 旁白音频（9 条，TTS，原著原句） | ✅ Assets/Resources/VO/*.wav |
 | WebGL / macOS 打包 | ⏳ |
 

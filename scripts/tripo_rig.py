@@ -33,7 +33,7 @@ def save(): json.dump(STATE, open(STATE_PATH, "w", encoding="utf-8"), indent=1, 
 # 每个角色需要的动画
 PLAN = {
     "char_player": ["idle", "walk", "run"],
-    "char_ye_wenjie": ["idle"], "char_follower": ["idle"], "char_von_neumann": ["idle"], "char_qin": ["idle"],
+    "char_ye_wenjie": ["idle"], "char_follower": ["idle"], "char_von_neumann": ["idle"], "char_newton": ["idle"], "char_qin": ["idle"],
     "soldier_black": ["idle"], "soldier_white": ["idle"],
 }
 

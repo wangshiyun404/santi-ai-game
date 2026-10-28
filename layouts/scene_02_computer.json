@@ -87,7 +87,7 @@
       "role": "npc"
     },
     {
-      "asset": "char_follower",
+      "asset": "char_newton",
       "name": "Newton",
       "position": [
         150.0,
@@ -167,7 +167,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "bronze_sword",
@@ -188,6 +189,7 @@
         1.0
       ],
       "static": true,
+      "added_by": "apply_tripo_layout",
       "clue": "clue_sword"
     }
   ],
@@ -1290,7 +1292,8 @@
     {
       "id": "clue_sword",
       "subtitle": "朕的三千万大军，就是这台计算机。",
-      "narration": ""
+      "narration": "",
+      "added_by": "apply_tripo_layout"
     }
   ],
   "events": [

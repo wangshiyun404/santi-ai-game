@@ -10,7 +10,7 @@
 | jeep / pyramid / dehydrated_roll / bamboo_slips / sand_table / bronze_sword / rock_small | H3.1 | 文本 | ✅ | — | — |
 | char_player | P1 Smart Mesh | 4 视图 T-Pose 裁切（multiview_to_model） | ✗ | 单视图 → 4 个人并排 | ✅ 与设定图一致的斗篷 + 绑腿 + 短发，T-Pose |
 | char_von_neumann | P1 | 文本 | ✗ | 半身像、无腿 | ✅ 全身西装、眼镜 |
-| char_ye_wenjie / char_follower / char_qin | P1 | 文本 | ✅ | — | — |
+| char_ye_wenjie / char_follower / char_qin / char_newton（补做） | P1 | 文本 | ✅ | — | — |
 | soldier_black / soldier_white | P1 | 文本 | ✅（首发 429 并发限制，重试成功） | — | — |
 
 规律：
@@ -29,7 +29,7 @@
 输出 GLB 内含 Armature + 多段动画（glTFast 导入为 Legacy Animation，剪辑名 idle/walk/run），附带一个 Icosphere 辅助网格，SceneBuilder 实例化时删除。
 
 ## 积分
-rock 测试 20 + 道具 180 + 角色 210 + 士兵 80 + 重做 130 + 绑骨 6×25 + 动画 8×10 = 850；余额 650 / 1500。
+rock 测试 20 + 道具 180 + 角色 210 + 士兵 80 + 重做 130 + 绑骨 6×25 + 动画 8×10 = 850；补做牛顿 40 + 25 + 10 = 75；合计 925，余额 575 / 1500。
 
 ## 结论
-A 类资产全部就位（16 件 + 6 件带动画角色）。待办：牛顿角色（现用 char_follower 暂代）、士兵旗帜独立成子物体以便绑骨、Unity 编辑器首次运行后的 Game 视图盲审。
+A 类资产全部就位（16 件 + 6 件带动画角色）。待办：士兵旗帜独立成子物体以便绑骨、Unity 编辑器首次运行后的 Game 视图盲审。

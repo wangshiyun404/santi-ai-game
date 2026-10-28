@@ -407,7 +407,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -427,7 +428,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -447,7 +449,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -467,7 +470,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -487,7 +491,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -507,7 +512,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -527,7 +533,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -547,7 +554,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -567,7 +575,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -587,7 +596,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -607,7 +617,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -627,7 +638,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -647,7 +659,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -667,7 +680,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -687,7 +701,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -707,7 +722,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -727,7 +743,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -747,7 +764,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -767,7 +785,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -787,7 +806,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -807,7 +827,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -827,7 +848,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -847,7 +869,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -867,7 +890,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -887,7 +911,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "dehydrated_roll",
@@ -907,7 +932,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -927,7 +953,8 @@
         0.8983558206540384,
         0.8983558206540384
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -947,7 +974,8 @@
         0.5811050869493308,
         0.5811050869493308
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -967,7 +995,8 @@
         0.9819552764096281,
         0.9819552764096281
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -987,7 +1016,8 @@
         0.9027358013503937,
         0.9027358013503937
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1007,7 +1037,8 @@
         1.2285923885631735,
         1.2285923885631735
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1027,7 +1058,8 @@
         0.46479147186854824,
         0.46479147186854824
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1047,7 +1079,8 @@
         1.3574477454358793,
         1.3574477454358793
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1067,7 +1100,8 @@
         1.1611474788228509,
         1.1611474788228509
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1087,7 +1121,8 @@
         0.594763825326517,
         0.594763825326517
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1107,7 +1142,8 @@
         0.5815179187353136,
         0.5815179187353136
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1127,7 +1163,8 @@
         1.4491988528485837,
         1.4491988528485837
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1147,7 +1184,8 @@
         0.8168674552644419,
         0.8168674552644419
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1167,7 +1205,8 @@
         1.591723266045657,
         1.591723266045657
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1187,7 +1226,8 @@
         0.5226251400978021,
         0.5226251400978021
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1207,7 +1247,8 @@
         0.5937263326317178,
         0.5937263326317178
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1227,7 +1268,8 @@
         0.5759230466789089,
         0.5759230466789089
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1247,7 +1289,8 @@
         1.5742014912627673,
         1.5742014912627673
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1267,7 +1310,8 @@
         0.8400397501134147,
         0.8400397501134147
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1287,7 +1331,8 @@
         1.3348658696058129,
         1.3348658696058129
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1307,7 +1352,8 @@
         1.5819112607090693,
         1.5819112607090693
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1327,7 +1373,8 @@
         1.287847624450857,
         1.287847624450857
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1347,7 +1394,8 @@
         0.4347761808896385,
         0.4347761808896385
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1367,7 +1415,8 @@
         1.231026330040148,
         1.231026330040148
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1387,7 +1436,8 @@
         1.5856456698434322,
         1.5856456698434322
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1407,7 +1457,8 @@
         0.6722149920768736,
         0.6722149920768736
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1427,7 +1478,8 @@
         1.4803700054609372,
         1.4803700054609372
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1447,7 +1499,8 @@
         1.3595724938195923,
         1.3595724938195923
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1467,7 +1520,8 @@
         1.3387634609177081,
         1.3387634609177081
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1487,7 +1541,8 @@
         1.3469625172243318,
         1.3469625172243318
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1507,7 +1562,8 @@
         0.8750061940833378,
         0.8750061940833378
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1527,7 +1583,8 @@
         0.6040043919662746,
         0.6040043919662746
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1547,7 +1604,8 @@
         1.3678023784386355,
         1.3678023784386355
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1567,7 +1625,8 @@
         1.188721951283224,
         1.188721951283224
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1587,7 +1646,8 @@
         0.41709152578732667,
         0.41709152578732667
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1607,7 +1667,8 @@
         1.5203497660689123,
         1.5203497660689123
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1627,7 +1688,8 @@
         0.6532508047937786,
         0.6532508047937786
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1647,7 +1709,8 @@
         1.1037246017991542,
         1.1037246017991542
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1667,7 +1730,8 @@
         1.492020467578668,
         1.492020467578668
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1687,7 +1751,8 @@
         1.485156129450448,
         1.485156129450448
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1707,7 +1772,8 @@
         1.0381899549231206,
         1.0381899549231206
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1727,7 +1793,8 @@
         0.6197294647266385,
         0.6197294647266385
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1747,7 +1814,8 @@
         0.9681915189543477,
         0.9681915189543477
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1767,7 +1835,8 @@
         1.0220184552436442,
         1.0220184552436442
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1787,7 +1856,8 @@
         1.072355360300743,
         1.072355360300743
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1807,7 +1877,8 @@
         1.009256790150785,
         1.009256790150785
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1827,7 +1898,8 @@
         0.9318980722929268,
         0.9318980722929268
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1847,7 +1919,8 @@
         1.2312772030578751,
         1.2312772030578751
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1867,7 +1940,8 @@
         1.5298013530462011,
         1.5298013530462011
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1887,7 +1961,8 @@
         0.7115107529412289,
         0.7115107529412289
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1907,7 +1982,8 @@
         0.5645613230762219,
         0.5645613230762219
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1927,7 +2003,8 @@
         0.688766510143924,
         0.688766510143924
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1947,7 +2024,8 @@
         1.4764317194545202,
         1.4764317194545202
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1967,7 +2045,8 @@
         0.5715747975090847,
         0.5715747975090847
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -1987,7 +2066,8 @@
         1.5430049547027838,
         1.5430049547027838
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -2007,7 +2087,8 @@
         1.3989336033795374,
         1.3989336033795374
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -2027,7 +2108,8 @@
         0.8069393732065839,
         0.8069393732065839
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -2047,7 +2129,8 @@
         0.4233795136628718,
         0.4233795136628718
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -2067,7 +2150,8 @@
         0.7977974669703889,
         0.7977974669703889
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -2087,7 +2171,8 @@
         1.5820998929609194,
         1.5820998929609194
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "rock_small",
@@ -2107,7 +2192,8 @@
         0.7186771268122238,
         0.7186771268122238
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "bamboo_slips",
@@ -2128,6 +2214,7 @@
         1.0
       ],
       "static": true,
+      "added_by": "apply_tripo_layout",
       "clue": "clue_slips"
     },
     {
@@ -2149,6 +2236,7 @@
         1.0
       ],
       "static": false,
+      "added_by": "apply_tripo_layout",
       "role": "npc"
     }
   ],
@@ -2193,7 +2281,8 @@
     {
       "id": "clue_slips",
       "subtitle": "周文王的卦象，预测不了乱纪元。",
-      "narration": ""
+      "narration": "",
+      "added_by": "apply_tripo_layout"
     }
   ],
   "events": [

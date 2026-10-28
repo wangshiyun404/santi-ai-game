@@ -14,11 +14,11 @@ TARGETS = {
     "dish_tower": ("z", 40.0), "control_console": ("z", 1.3), "jeep": ("max", 3.8), "pyramid": ("z", 28.0),
     "dehydrated_roll": ("max", 1.7), "bamboo_slips": ("max", 0.6), "sand_table": ("max", 2.0), "bronze_sword": ("max", 0.9),
     "rock_small": ("max", 1.2), "char_player": ("z", 1.72), "char_ye_wenjie": ("z", 1.62), "char_follower": ("z", 1.65),
-    "char_von_neumann": ("z", 1.75), "char_qin": ("z", 1.78), "soldier_black": ("z", 1.75), "soldier_white": ("z", 1.75),
+    "char_von_neumann": ("z", 1.75), "char_newton": ("z", 1.70), "char_qin": ("z", 1.78), "soldier_black": ("z", 1.75), "soldier_white": ("z", 1.75),
 }
 
 # Tripo 输出的角色/车辆/主控台正面朝 +X；Blender -Y 导出后对应 glTF/Unity +Z（正前方），统一绕 Z 转 -90°
-FACE_PX = {"char_player", "char_ye_wenjie", "char_follower", "char_von_neumann", "char_qin", "soldier_black", "soldier_white", "jeep", "control_console"}
+FACE_PX = {"char_player", "char_ye_wenjie", "char_follower", "char_von_neumann", "char_newton", "char_qin", "soldier_black", "soldier_white", "jeep", "control_console"}
 
 def bbox(objs):
     mn = Vector((1e9,) * 3); mx = Vector((-1e9,) * 3)

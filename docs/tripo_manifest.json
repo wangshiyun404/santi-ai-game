@@ -101,6 +101,12 @@
    "prompt": "Ancient Qin soldier standing at attention holding a flagpole upright with a square white flag, armor as simple faceted plates, extremely low poly, flat shading",
    "model_version": "P1-20260311",
    "face_limit": 600
+  },
+  {
+   "name": "char_newton",
+   "prompt": "Full body standing man in T-pose, head to feet visible including legs and buckled shoes, 17th century English scientist Isaac Newton: long curly shoulder-length wig, long dark red justaucorps coat with wide cuffs, white cravat, knee breeches and stockings. Single character only. Low-poly stylized human in T-pose, faceless head with simple planes, flat shading.",
+   "model_version": "P1-20260311",
+   "face_limit": 6000
   }
  ]
 }

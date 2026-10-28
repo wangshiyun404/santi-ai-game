@@ -19,7 +19,7 @@ namespace SanTi.Editor
         const string ModelDir = "Assets/Models";
         const string AnimDir = "Assets/Models/Anim";   // Tripo 绑骨+动画 GLB（原始 1 m 归一化、朝向 -X），由 InstantiateCharacter 统一缩放/转向
         static readonly System.Collections.Generic.Dictionary<string, float> CharHeight = new()
-        { { "char_player", 1.72f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
+        { { "char_player", 1.72f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_newton", 1.70f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
         const string SceneDir = "Assets/Scenes";
         const string MatDir = "Assets/Materials";
         // 碰撞规则：大而不规则的用 MeshCollider；远景/装饰/发光面片不加碰撞（围栏若用 BoxCollider 会把整个高地封死）

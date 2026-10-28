@@ -605,6 +605,7 @@
         1.0
       ],
       "static": true,
+      "added_by": "apply_tripo_layout",
       "clue": "clue_control_room"
     },
     {
@@ -625,7 +626,8 @@
         1.0,
         1.0
       ],
-      "static": true
+      "static": true,
+      "added_by": "apply_tripo_layout"
     },
     {
       "asset": "char_ye_wenjie",
@@ -646,6 +648,7 @@
         1.0
       ],
       "static": false,
+      "added_by": "apply_tripo_layout",
       "role": "npc"
     }
   ],

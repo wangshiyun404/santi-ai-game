@@ -5,14 +5,19 @@ random.seed(7)
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 L = os.path.join(ROOT, "layouts"); U = os.path.join(ROOT, "unity", "SanTiGame", "Assets", "StreamingAssets", "layouts")
 
-def load(n): return json.load(open(os.path.join(L, n + ".json"), encoding="utf-8"))
+def load(n):
+    d = json.load(open(os.path.join(L, n + ".json"), encoding="utf-8"))
+    # 幂等：先清掉上次由本脚本添加的对象与线索（带 added_by 标记）
+    d["objects"] = [o for o in d["objects"] if o.get("added_by") != "apply_tripo_layout"]
+    d["clues"] = [c for c in d.get("clues", []) if c.get("added_by") != "apply_tripo_layout"]
+    return d
 def save(n, d):
     json.dump(d, open(os.path.join(L, n + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     shutil.copy(os.path.join(L, n + ".json"), os.path.join(U, n + ".json"))
 def obj(asset, name, bpos, rz=0.0, scale=1.0, **kw):
     """以 Blender 坐标 (x, y, z) 与绕 Z 朝向角 rz（度，0 = 模型正面朝 -Y）定义，统一换算到 Unity。"""
     return {"asset": asset, "name": name, "position": coords.blender_pos_to_unity(bpos),
-            "rotation": [0.0, coords.yaw_to_unity(rz), 0.0], "scale": [scale, scale, scale], "static": kw.pop("static", True), **kw}
+            "rotation": [0.0, coords.yaw_to_unity(rz), 0.0], "scale": [scale, scale, scale], "static": kw.pop("static", True), "added_by": "apply_tripo_layout", **kw}
 def ryaw(): return random.uniform(0, 360)
 def face_north(d):
     """玩家出生点面朝 Blender +Y（场景主体方向）"""
@@ -42,7 +47,7 @@ d["objects"] += rolls_extra + rocks + [
     obj("bamboo_slips", "BambooSlips", (38, 160, 0), 30, clue="clue_slips"),            # 金字塔门前
     obj("char_follower", "Follower", (44, 162, 0), 20, static=False, role="npc"),       # 面朝南迎向玩家
 ]
-d["clues"].append({"id": "clue_slips", "subtitle": "周文王的卦象，预测不了乱纪元。", "narration": ""})
+d["clues"].append({"id": "clue_slips", "subtitle": "周文王的卦象，预测不了乱纪元。", "narration": "", "added_by": "apply_tripo_layout"})
 face_north(d); save("scene_01_chaotic", d)
 
 # ---- 人列计算机 ----
@@ -50,12 +55,12 @@ d = load("scene_02_computer")
 for o in d["objects"]:
     if o["name"] == "VonNeumann": o["asset"] = "char_von_neumann"
     if o["name"] == "QinShiHuang": o["asset"] = "char_qin"
-    if o["name"] == "Newton": o["asset"] = "char_follower"   # 暂代，待生成牛顿
+    if o["name"] == "Newton": o["asset"] = "char_newton"
     if o.get("role") == "npc": o["rotation"] = [0, coords.yaw_to_unity(-20), 0]   # 面朝南（玩家从 -Y 侧上台）
 d["objects"] += [
     obj("sand_table", "SandTable", (-150, 24, 10), 0),
     obj("bronze_sword", "BronzeSword", (-146, 21, 10), 60, clue="clue_sword"),
 ]
-d["clues"].append({"id": "clue_sword", "subtitle": "朕的三千万大军，就是这台计算机。", "narration": ""})
+d["clues"].append({"id": "clue_sword", "subtitle": "朕的三千万大军，就是这台计算机。", "narration": "", "added_by": "apply_tripo_layout"})
 face_north(d); save("scene_02_computer", d)
 print("layouts patched")
