@@ -10,13 +10,13 @@ cd "$ROOT" || exit 1
 git checkout -- unity/SanTiGame/ProjectSettings/ProjectVersion.txt 2>/dev/null
 echo "START $(date +%T) $(git rev-parse --short HEAD)" > "$S"
 "$U" -batchmode -quit -projectPath "$P" -executeMethod SanTi.Editor.Pipeline.BuildScenes -logFile "$HOME/santi_scenes.log"
-echo "scenes_rc=$?" >> "$S"
+echo "scenes_rc=$?" >> "$S"; grep -c "\[SanTi\] Built Assets" "$HOME/santi_scenes.log" >> "$S"
 "$U" -batchmode -quit -projectPath "$P" -executeMethod SanTi.Editor.Pipeline.BuildWebGL -logFile "$HOME/santi_webgl.log"
-echo "webgl_rc=$?" >> "$S"
-if [ -f Builds/WebGL/Build/WebGL.data.unityweb ]; then
-  cp Builds/WebGL/Build/WebGL.data.unityweb Builds/WebGL/Build/WebGL.framework.js.unityweb Builds/WebGL/Build/WebGL.wasm.unityweb dist/webgl/Build/
+echo "webgl_rc=$?" >> "$S"; grep -o "Build completed with a result of [A-Za-z]*" "$HOME/santi_webgl.log" | tail -1 >> "$S"
+if [ -f unity/SanTiGame/Builds/WebGL/Build/WebGL.data.unityweb ] && [ unity/SanTiGame/Builds/WebGL/Build/WebGL.data.unityweb -nt "$S" ]; then
+  cp unity/SanTiGame/Builds/WebGL/Build/WebGL.data.unityweb unity/SanTiGame/Builds/WebGL/Build/WebGL.framework.js.unityweb unity/SanTiGame/Builds/WebGL/Build/WebGL.wasm.unityweb dist/webgl/Build/
   python3 - <<'EOF'
-s = open('Builds/WebGL/Build/WebGL.loader.js').read()
+s = open('unity/SanTiGame/Builds/WebGL/Build/WebGL.loader.js').read()
 s = s.replace('void 0===window.caches', 'void 0===function(){try{return window.caches}catch(e){return void 0}}()')
 open('dist/webgl/Build/WebGL.loader.js', 'w').write(s)
 EOF
