@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace SanTi.Editor
 {
@@ -51,10 +52,14 @@ namespace SanTi.Editor
                 var a = data.lighting.sunAngle ?? new[] { 50f, 0f, 30f };
                 // Blender 太阳欧拉角(近似) → Unity：俯仰取 90-x，偏航取 z
                 sunGo.transform.rotation = Quaternion.Euler(90f - a[0], 180f - a[2], 0f);   // Blender 太阳 (rx,0,rz) → Unity，见 scripts/coords.py sun_to_unity
-                sun.intensity = Mathf.Max(0.2f, data.lighting.intensity * 0.6f);
+                // 第 5 轮盲审：线性色彩空间下 ×0.6 仍过曝（乱纪元一片白），改为 ×0.5 并封顶 2.0；阴影面全黑 → 环境光改三色并提亮
+                sun.intensity = Mathf.Clamp(data.lighting.intensity * 0.5f, 0.3f, 2.0f);
                 sun.color = ColorUtil.Hex(data.lighting.sunColor, Color.white);
-                RenderSettings.ambientMode = AmbientMode.Flat;
-                RenderSettings.ambientLight = ColorUtil.Hex(data.lighting.ambient, Color.gray);
+                var amb = ColorUtil.Hex(data.lighting.ambient, Color.gray);
+                RenderSettings.ambientMode = AmbientMode.Trilight;
+                RenderSettings.ambientSkyColor = amb * 2.0f;
+                RenderSettings.ambientEquatorColor = amb * 1.4f;
+                RenderSettings.ambientGroundColor = amb * 0.7f;
                 if (data.lighting.fog != null)
                 {
                     RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear;
@@ -81,6 +86,7 @@ namespace SanTi.Editor
                     go.GetComponent<Renderer>().sharedMaterial = FlatMaterial("placeholder", new Color(0.2f, 0.2f, 0.22f));
                 }
                 go.name = o.name; go.transform.SetParent(root);
+                Mats.ConvertRenderers(go, o.asset);
                 go.transform.SetPositionAndRotation(o.Position, o.Rotation);
                 go.transform.localScale = o.Scale;
                 if (o.@static) { GameObjectUtility.SetStaticEditorFlags(go, StaticEditorFlags.BatchingStatic | StaticEditorFlags.OccludeeStatic); }
@@ -121,6 +127,7 @@ namespace SanTi.Editor
             if (body != null)
             {
                 body.name = "Body_CharPlayer";
+                Mats.ConvertRenderers(body, "char_player");
                 body.transform.SetParent(player.transform); body.transform.localPosition = Vector3.zero; body.transform.localRotation = Quaternion.identity;
             }
             else
@@ -131,12 +138,15 @@ namespace SanTi.Editor
             }
             var spawnPos = playerSpawn ? playerSpawn.position : Vector3.zero;
             var spawnRot = playerSpawn ? Quaternion.Euler(0, playerSpawn.eulerAngles.y, 0) : Quaternion.identity;
-            player.transform.SetPositionAndRotation(spawnPos + Vector3.up * 0.5f, spawnRot);
+            player.transform.SetPositionAndRotation(spawnPos + Vector3.up * 0.05f, spawnRot);   // 贴地放置（运行时由重力接管）
             var ctrl = player.AddComponent<ThirdPersonController>();
 
             var camGo = new GameObject("Main Camera") { tag = "MainCamera" };
             var cam = camGo.AddComponent<Camera>(); camGo.AddComponent<AudioListener>();
             cam.fieldOfView = 50f; cam.farClipPlane = 2000f;
+            var camData = camGo.AddComponent<UniversalAdditionalCameraData>();
+            camData.renderPostProcessing = true; camData.antialiasing = AntialiasingMode.FastApproximateAntialiasing;
+            var volGo = new GameObject("PostFX"); var vol = volGo.AddComponent<Volume>(); vol.isGlobal = true; vol.sharedProfile = Mats.PostFxProfile();
             var follow = camGo.AddComponent<FollowCamera>(); follow.target = player.transform;
             ctrl.cameraTransform = camGo.transform;
             {   // 与 FollowCamera.LateUpdate 相同的初始解：俯角 15°、距 6 m、高 2.5 m，使编辑态 Game 视图即为开场镜头
@@ -176,7 +186,7 @@ namespace SanTi.Editor
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(glbPath);
             if (prefab == null) { Debug.LogWarning("Missing GLB: " + glbPath); return; }
             var mf = prefab.GetComponentInChildren<MeshFilter>(); var mr = prefab.GetComponentInChildren<MeshRenderer>();
-            mesh = mf ? mf.sharedMesh : null; mat = mr ? mr.sharedMaterial : null;
+            mesh = mf ? mf.sharedMesh : null; mat = mr ? Mats.Convert(mr.sharedMaterial, Path.GetFileNameWithoutExtension(glbPath)) : null;
         }
 
         /// <summary>

@@ -27,6 +27,7 @@ namespace SanTi
 
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
+            if (GameState.AutoMove != Vector2.zero) { h = GameState.AutoMove.x; v = GameState.AutoMove.y; }
             Vector3 input = new Vector3(h, 0, v).normalized;
 
             Vector3 move = Vector3.zero;

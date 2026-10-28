@@ -7,6 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using SanTi;
 
 namespace SanTi.Editor
 {
@@ -47,6 +48,15 @@ namespace SanTi.Editor
             urp.shadowDistance = 150f;
             urp.supportsHDR = true;
             urp.msaaSampleCount = 4;
+            {   // 阴影：4 级级联 + 4096 贴图 + 软阴影（第 5 轮盲审：高台阴影边缘锯齿）
+                var so = new SerializedObject(urp);
+                so.FindProperty("m_ShadowCascadeCount").intValue = 4;
+                so.FindProperty("m_MainLightShadowmapResolution").intValue = 4096;
+                so.FindProperty("m_SoftShadowsSupported").boolValue = true;
+                so.FindProperty("m_ShadowDepthBias").floatValue = 1.0f;
+                so.FindProperty("m_ShadowNormalBias").floatValue = 1.0f;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
             EditorUtility.SetDirty(urp);
 
             bool wasUrp = GraphicsSettings.defaultRenderPipeline == urp;
@@ -145,6 +155,52 @@ namespace SanTi.Editor
             cam.targetTexture = prevRt; RenderTexture.active = prevActive;
             UnityEngine.Object.DestroyImmediate(tex); rt.Release(); UnityEngine.Object.DestroyImmediate(rt);
             Debug.Log("[SanTi] shot " + file);
+        }
+
+        // ---------- 3b. 运行态盲审截图（进入 Play Mode，跑完后自动退出编辑器） ----------
+        const string PlayCapKey = "santi_playcap";
+        [MenuItem("SanTi/Pipeline/3b Play-Mode Capture")]
+        public static void PlayCapture()
+        {
+            string outDir = Environment.GetEnvironmentVariable("SANTI_REVIEW_DIR");
+            if (string.IsNullOrEmpty(outDir)) outDir = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../review/unity"));
+            var scenes = Directory.GetFiles(SceneDir, "scene_*.unity").OrderBy(p => p).ToArray();
+            SessionState.SetBool(PlayCapKey, true);
+            SessionState.SetString(PlayCapKey + "_dir", outDir);
+            SessionState.SetString(PlayCapKey + "_scenes", string.Join(";", scenes));
+            SessionState.SetFloat(PlayCapKey + "_t0", (float)EditorApplication.timeSinceStartup);
+            EditorSceneManager.OpenScene(scenes[0], OpenSceneMode.Single);
+            Debug.Log("[SanTi] PlayCapture: entering play mode");
+            EditorApplication.EnterPlaymode();
+        }
+
+        [InitializeOnLoadMethod]
+        static void PlayCaptureHook()
+        {
+            if (!SessionState.GetBool(PlayCapKey, false)) return;
+            EditorApplication.playModeStateChanged += st =>
+            {
+                if (st == PlayModeStateChange.EnteredPlayMode) SpawnRunner();
+                if (st == PlayModeStateChange.EnteredEditMode && !SessionState.GetBool(PlayCapKey, false) && Application.isBatchMode)
+                { Debug.Log("[SanTi] PlayCapture: exiting editor"); EditorApplication.Exit(0); }
+            };
+            if (EditorApplication.isPlaying) EditorApplication.delayCall += SpawnRunner;
+            EditorApplication.update += () =>
+            {   // 安全阀：6 分钟没跑完就强退
+                if (Application.isBatchMode && SessionState.GetBool(PlayCapKey, false) && EditorApplication.timeSinceStartup - SessionState.GetFloat(PlayCapKey + "_t0", 0) > 360)
+                { Debug.LogError("[SanTi] PlayCapture timeout"); SessionState.SetBool(PlayCapKey, false); EditorApplication.Exit(2); }
+            };
+        }
+
+        static void SpawnRunner()
+        {
+            if (!EditorApplication.isPlaying || UnityEngine.Object.FindFirstObjectByType<PlayCaptureRunner>() != null) return;
+            var go = new GameObject("PlayCaptureRunner");
+            var r = go.AddComponent<PlayCaptureRunner>();
+            r.outDir = SessionState.GetString(PlayCapKey + "_dir", "review");
+            r.scenePaths = SessionState.GetString(PlayCapKey + "_scenes", "").Split(';');
+            PlayCaptureRunner.OnFinished = () => { SessionState.SetBool(PlayCapKey, false); EditorApplication.isPlaying = false; };
+            Debug.Log("[SanTi] PlayCapture: runner spawned for " + r.scenePaths.Length + " scenes");
         }
 
         // ---------- 4. WebGL ----------
