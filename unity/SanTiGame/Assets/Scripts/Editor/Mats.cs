@@ -18,6 +18,11 @@ namespace SanTi.Editor
         const string MatDir = "Assets/Materials";
         const string SettingsDir = "Assets/Settings";
         static readonly Dictionary<Material, Material> Cache = new();
+        /// <summary>B 类平涂材质的颜色覆盖（asset/materialName → 颜色）。第 5 轮：乱纪元地面 22% 深色面片在 Unity 里成了巨型棋盘，压低对比。</summary>
+        static readonly Dictionary<string, Color> ColorOverride = new()
+        {
+            { "ground_chaotic/crack", new Color(0.47f, 0.43f, 0.39f) },   // 原 #4A433C → 接近 dust(#8C8275) 的 #786E64
+        };
 
         public static void ConvertRenderers(GameObject go, string assetName)
         {
@@ -42,7 +47,8 @@ namespace SanTi.Editor
             var mrTex = GetTex(src, "metallicRoughnessTexture", "_MetallicGlossMap");
             var normalTex = GetTex(src, "normalTexture", "_BumpMap");
             float metal = GetFloat(src, 1f, "metallicFactor", "_Metallic");
-            bool needs = baseTex != null || mrTex != null || metal > 0.5f;
+            bool hasOverride = ColorOverride.TryGetValue(assetName + "/" + src.name, out var overrideColor);
+            bool needs = baseTex != null || mrTex != null || metal > 0.5f || hasOverride;
             if (!needs) { Cache[src] = src; return src; }
 
             Directory.CreateDirectory($"{MatDir}/Tripo");
@@ -53,7 +59,7 @@ namespace SanTi.Editor
             else dst.shader = lit;
 
             dst.SetTexture("_BaseMap", baseTex);
-            dst.SetColor("_BaseColor", GetColor(src, Color.white, "baseColorFactor", "_BaseColor", "_Color"));
+            dst.SetColor("_BaseColor", hasOverride ? overrideColor : GetColor(src, Color.white, "baseColorFactor", "_BaseColor", "_Color"));
             dst.SetFloat("_Metallic", 0f);
             dst.SetFloat("_Smoothness", 0.25f);
             dst.SetTexture("_MetallicGlossMap", null); dst.DisableKeyword("_METALLICSPECGLOSSMAP");

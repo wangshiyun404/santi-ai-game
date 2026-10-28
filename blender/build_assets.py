@@ -464,13 +464,13 @@ def build_scene_computer():
     fig = make_capsule_figure("PlayerSpawn", mat_=mat("cloak", "#3A332C")); fig.location = (-120, 0, 0); fig.rotation_euler = (0, 0, math.pi)   # 面朝 +Y（方阵）
     entries.append({"asset": "player_placeholder", "name": "PlayerSpawn", **to_unity(fig), "static": False, "role": "player_spawn"})
 
-    add_sun_light((70, 0, -120), energy=3, color=(0.85, 0.9, 1.0))
+    add_sun_light((70, 0, 60), energy=3, color=(0.85, 0.9, 1.0))   # 第 5 轮：高台阴影改为背离出生点（Unity +X/−Z）
     set_world("#5F7A99", 0.7)
     add_camera((-170, -30, 22), (0, 120, 0), lens=28)
     render(os.path.join(OUT_PREVIEW, "scene_02_computer.png"))
     write_layout("scene_02_computer", "人列计算机", entries, {
         "palette": P,
-        "lighting": {"sunAngle": [70, 0, -120], "intensity": 3, "ambient": "#5F7A99", "fog": {"color": "#6F86A3", "start": 200, "end": 900}},
+        "lighting": {"sunAngle": [70, 0, 60], "intensity": 3, "ambient": "#5F7A99", "fog": {"color": "#6F86A3", "start": 200, "end": 900}},
         "formation": {"blackAsset": "soldier_black", "whiteAsset": "soldier_white", "flipWaveSpeed": 6.0,
                       "blocks": [{**b, "origin": [round(-b["origin"][0] - (b["cols"] - 1) * b["spacing"], 3), round(-b["origin"][1] - (b["rows"] - 1) * b["spacing"], 3)]} for b in blocks]},
         "clues": [
