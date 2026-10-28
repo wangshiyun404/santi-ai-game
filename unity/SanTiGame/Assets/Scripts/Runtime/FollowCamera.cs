@@ -26,7 +26,12 @@ namespace SanTi
         void LateUpdate()
         {
             if (target == null) return;
-            if (!GameState.InputLocked)
+            if (GameState.AutoYawEnabled)
+            {
+                _yaw = Mathf.LerpAngle(_yaw, GameState.AutoYaw, 1f - Mathf.Exp(-GameState.AutoYawSpeed * Time.deltaTime));
+                pitch = Mathf.Lerp(pitch, 12f, Time.deltaTime);
+            }
+            else if (!GameState.InputLocked)
             {
                 _yaw += Input.GetAxis("Mouse X") * yawSensitivity;
                 pitch = Mathf.Clamp(pitch - Input.GetAxis("Mouse Y") * pitchSensitivity, minPitch, maxPitch);
