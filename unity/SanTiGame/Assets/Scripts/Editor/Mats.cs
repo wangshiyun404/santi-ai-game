@@ -21,7 +21,7 @@ namespace SanTi.Editor
         /// <summary>B 类平涂材质的颜色覆盖（asset/materialName → 颜色）。第 5 轮：乱纪元地面 22% 深色面片在 Unity 里成了巨型棋盘，压低对比。</summary>
         static readonly Dictionary<string, Color> ColorOverride = new()
         {
-            { "ground_chaotic/crack", new Color(0.47f, 0.43f, 0.39f) },   // 原 #4A433C → 接近 dust(#8C8275) 的 #786E64
+            { "ground_chaotic/crack", new Color(0.47f, 0.43f, 0.39f).gamma },   // 线性值≈dust(0.55) 的 85%；.gamma 与 glTFast 写入 _BaseColor 的 sRGB 约定一致
         };
 
         public static void ConvertRenderers(GameObject go, string assetName)

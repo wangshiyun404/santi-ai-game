@@ -53,10 +53,12 @@ namespace SanTi.Editor
                 // Blender 太阳欧拉角(近似) → Unity：俯仰取 90-x，偏航取 z
                 sunGo.transform.rotation = Quaternion.Euler(90f - a[0], 180f - a[2], 0f);   // Blender 太阳 (rx,0,rz) → Unity，见 scripts/coords.py sun_to_unity
                 // 第 5 轮盲审：线性色彩空间下 ×0.6 仍过曝（乱纪元一片白），改为 ×0.5 并封顶 2.0；阴影面全黑 → 环境光改三色并提亮
-                sun.intensity = Mathf.Clamp(data.lighting.intensity * 0.5f, 0.3f, 1.1f);
+                sun.intensity = Mathf.Clamp(data.lighting.intensity * 0.5f, 0.3f, 1.0f);
                 sun.color = ColorUtil.Hex(data.lighting.sunColor, Color.white);
                 var amb = ColorUtil.Hex(data.lighting.ambient, Color.gray);
-                float k = Mathf.Min(1.6f, 0.8f / Mathf.Max(0.05f, Mathf.Max(amb.r, Mathf.Max(amb.g, amb.b))));   // 亮环境（乱纪元白地）不再抬到 >1
+                // 第 6 轮：环境光峰值随太阳强度反向调整（直射 1.0 → 环境 0.3；黄昏 0.6 → 0.5），使地面辐照度 ≈1 不再过曝
+                float ambTarget = Mathf.Clamp(1.0f - sun.intensity * 0.7f, 0.25f, 0.5f);
+                float k = Mathf.Min(2.0f, ambTarget / Mathf.Max(0.05f, Mathf.Max(amb.r, Mathf.Max(amb.g, amb.b))));
                 RenderSettings.ambientMode = AmbientMode.Trilight;
                 RenderSettings.ambientSkyColor = amb * k;
                 RenderSettings.ambientEquatorColor = amb * (k * 0.75f);
