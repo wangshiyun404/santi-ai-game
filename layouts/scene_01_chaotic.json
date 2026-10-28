@@ -2299,6 +2299,12 @@
         "ambient": "#1B2A4A",
         "ground": "#B8C9D9"
       }
+    },
+    {
+      "id": "to_computer",
+      "trigger": "clue_pyramid_follower",
+      "duration": 3,
+      "loadScene": "scene_02_computer"
     }
   ]
 }

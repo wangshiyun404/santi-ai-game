@@ -627,7 +627,8 @@
         1.0
       ],
       "static": true,
-      "added_by": "apply_tripo_layout"
+      "added_by": "apply_tripo_layout",
+      "clue": "clue_reply"
     },
     {
       "asset": "char_ye_wenjie",
