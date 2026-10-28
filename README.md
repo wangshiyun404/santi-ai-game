@@ -3,6 +3,8 @@
 逆向 Sac《小王子》管线（PRD → 视觉锚点 → Tripo 资产 → Blender 搭建 → Unity 打包）的《三体》低多边形 3D 剧情探索游戏。
 非官方同人改编，教学/研究用途，原著 © 刘慈欣。
 
+许可：代码 MIT，内容 CC BY-NC 4.0（仅限非商业教学使用），详见 [LICENSE](LICENSE)。
+
 ```
 santi/
 ├── docs/PRD.md                 产品需求与关卡设计（第 1 天产出）

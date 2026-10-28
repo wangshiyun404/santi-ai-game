@@ -1,0 +1,25 @@
+《三体：三体游戏》许可说明 / License
+
+本仓库采用双许可证：
+
+1. 代码（unity/**/*.cs、scripts/、blender/*.py、tools/ 等源代码）
+   MIT License —— 见 LICENSE-CODE。可自由使用、修改、再分发，保留版权声明即可。
+
+2. 内容（layouts/、assets/ 下的参考图与 Tripo 生成模型、音频旁白、docs/ 文档、
+   review/ 看板图、dist/ 构建产物等非代码资源）
+   Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
+   —— 见 LICENSE-CONTENT。可用于非商业的教学、研究与再创作，须署名并注明改动；
+   不得用于商业用途。
+
+3. 关于原著
+   本项目是《三体》的非官方同人改编，仅供教学与研究使用。小说《三体》及其中人物、
+   情节、设定的著作权归原作者刘慈欣及相关权利人所有，本仓库不主张对原著任何权利。
+   仓库内由 AI 工具（Tripo、图像生成、TTS 等）生成的模型、图像与语音，其可版权性
+   在各法域下不同，使用者请自行评估；它们同样仅限非商业用途。
+
+4. 第三方
+   Unity 引擎与 URP 受 Unity 相关许可约束；glTFast 等依赖包遵循各自许可证。
+
+署名格式建议：
+「《三体：三体游戏》，王世赟（汕头大学），https://github.com/wangshiyun404/santi-ai-game ，
+CC BY-NC 4.0 / MIT；非官方同人改编，原著 © 刘慈欣。」
