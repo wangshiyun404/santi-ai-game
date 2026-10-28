@@ -233,5 +233,23 @@ namespace SanTi.Editor
             Debug.Log($"[SanTi] WebGL build {report.summary.result}: {report.summary.totalSize / 1024 / 1024} MB, {report.summary.totalErrors} errors, {report.summary.totalTime.TotalMinutes:F1} min → {outDir}");
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) EditorApplication.Exit(1);
         }
+
+        // ---------- 5. macOS 独立版（课堂离线兜底：双击即玩，不依赖网络/托管） ----------
+        [MenuItem("SanTi/Pipeline/5 Build macOS")]
+        public static void BuildMac()
+        {
+            var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
+            if (scenes.Length == 0) { Debug.LogError("[SanTi] no scenes in build settings; run BuildScenes first"); return; }
+            string outDir = Environment.GetEnvironmentVariable("SANTI_MAC_DIR");
+            if (string.IsNullOrEmpty(outDir)) outDir = Path.GetFullPath(Path.Combine(Application.dataPath, "../Builds/macOS"));
+            Directory.CreateDirectory(outDir);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);   // 免 IL2CPP 工具链，构建快
+            PlayerSettings.SetArchitecture(NamedBuildTarget.Standalone, 2);                                   // 0=Intel 1=Apple Silicon 2=通用
+            PlayerSettings.fullScreenMode = FullScreenMode.Windowed; PlayerSettings.resizableWindow = true;
+            var opts = new BuildPlayerOptions { scenes = scenes, locationPathName = Path.Combine(outDir, "三体：三体游戏.app"), target = BuildTarget.StandaloneOSX, options = BuildOptions.None };
+            var report = BuildPipeline.BuildPlayer(opts);
+            Debug.Log($"[SanTi] macOS build {report.summary.result}: {report.summary.totalSize / 1024 / 1024} MB, {report.summary.totalErrors} errors, {report.summary.totalTime.TotalMinutes:F1} min → {outDir}");
+            if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) EditorApplication.Exit(1);
+        }
     }
 }
