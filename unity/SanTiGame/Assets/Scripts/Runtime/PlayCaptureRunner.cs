@@ -15,17 +15,18 @@ namespace SanTi
 
         public string outDir;
         public string[] scenePaths;
-        public int[] frames = { 30, 150, 360 };
-        public bool autoWalk = true;            // 第 150 帧后让玩家向前走，检查 walk 动画与碰撞
+        public float[] times = { 1.0f, 4.0f, 9.0f };   // 场景内秒数；4 s 起自动前行，检查 walk 动画与碰撞
+        public float walkFrom = 4.0f;
+        public bool autoWalk = true;
 
-        int _sceneIdx = -1, _frame;
+        int _sceneIdx = -1, _shotIdx; float _t;
 
-        void Awake() { DontDestroyOnLoad(gameObject); }
+        void Awake() { DontDestroyOnLoad(gameObject); Application.targetFrameRate = 30; }
         void Start() { Next(); }
 
         void Next()
         {
-            _sceneIdx++; _frame = 0;
+            _sceneIdx++; _shotIdx = 0; _t = 0f;
             if (scenePaths == null || _sceneIdx >= scenePaths.Length) { Debug.Log("[SanTi] PlayCapture finished"); OnFinished?.Invoke(); enabled = false; return; }
             Debug.Log("[SanTi] PlayCapture loading " + scenePaths[_sceneIdx]);
             SceneManager.LoadScene(scenePaths[_sceneIdx]);
@@ -34,20 +35,20 @@ namespace SanTi
         void LateUpdate()
         {
             if (_sceneIdx < 0 || _sceneIdx >= scenePaths.Length) return;
-            _frame++;
-            if (autoWalk && _frame > 150) GameState.AutoMove = new Vector2(0, 1);
-            else GameState.AutoMove = Vector2.zero;
+            _t += Time.deltaTime;
+            GameState.AutoMove = (autoWalk && _t > walkFrom) ? new Vector2(0, 1) : Vector2.zero;
 
-            if (frames.Contains(_frame))
+            if (_shotIdx < times.Length && _t >= times[_shotIdx])
             {
                 var cam = Camera.main;
                 if (cam != null)
                 {
                     string id = Path.GetFileNameWithoutExtension(scenePaths[_sceneIdx]);
-                    Shot(cam, Path.Combine(outDir, $"{id}_play_f{_frame:D3}.png"), 1600, 900);
+                    Shot(cam, Path.Combine(outDir, $"{id}_play_t{times[_shotIdx]:00.0}s.png"), 1600, 900);
                 }
+                _shotIdx++;
             }
-            if (_frame > frames.Max()) { GameState.AutoMove = Vector2.zero; Next(); }
+            if (_shotIdx >= times.Length) { GameState.AutoMove = Vector2.zero; Next(); }
         }
 
         public static void Shot(Camera cam, string file, int w, int h)

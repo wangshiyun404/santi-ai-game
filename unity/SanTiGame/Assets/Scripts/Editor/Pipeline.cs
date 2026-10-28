@@ -80,6 +80,20 @@ namespace SanTi.Editor
 
             AssetDatabase.SaveAssets();
 
+            // 角色动画 GLB 必须以 Legacy 方式导入（CharacterAnimator 用 Animation.CrossFade）；glTFast 默认 Mecanim(2) → 改 meta 为 Legacy(1)
+            bool animFixed = false;
+            foreach (var glb in Directory.GetFiles("Assets/Models/Anim", "*.glb"))
+            {
+                string meta = glb + ".meta";
+                if (!File.Exists(meta)) continue;
+                string txt = File.ReadAllText(meta);
+                if (txt.Contains("animationMethod: 1")) continue;
+                txt = System.Text.RegularExpressions.Regex.Replace(txt, @"animationMethod: \d", "animationMethod: 1");
+                File.WriteAllText(meta, txt); animFixed = true;
+                Debug.Log("[SanTi] set Legacy animation import: " + glb);
+            }
+            if (animFixed) AssetDatabase.ImportAsset("Assets/Models/Anim", ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
+
             // glTFast 在导入时按当前管线挑着色器：首次导入发生在 URP 指定之前 → 必须重导一次
             if (!wasUrp)
             {
