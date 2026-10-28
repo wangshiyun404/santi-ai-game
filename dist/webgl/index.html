@@ -59,8 +59,10 @@
         frameworkUrl: buildUrl + "/WebGL.framework.js.unityweb",
         codeUrl: buildUrl + "/WebGL.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
-        companyName: "SanTi AI Lab (非官方同人改编，原著 © 刘慈欣)",
-        productName: "三体：三体游戏",
+        // companyName/productName 置空 → 加载器不启用 UnityCache（IndexedDB）。
+        // 在禁止 IndexedDB 的上下文（部分内嵌 iframe / 隐私模式）里 UnityCache 会让加载卡在 0%。
+        companyName: "",
+        productName: "",
         productVersion: "1.0",
         showBanner: unityShowBanner,
         // errorHandler: function(err, url, line) {
