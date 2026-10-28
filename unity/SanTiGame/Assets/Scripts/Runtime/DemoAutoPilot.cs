@@ -43,8 +43,9 @@ namespace SanTi
                 new Step { pos = new Vector3(143, 0, -57), clue = "clue_bus", wait = 5f },          // 石碑 2
                 new Step { pos = new Vector3(129, 0, -57) },
                 new Step { pos = new Vector3(129, 0, -8) },
-                new Step { pos = new Vector3(147, 0, 4) },                                          // 坡道脚
-                new Step { pos = new Vector3(147, 10, -10) },                                       // 坡道顶
+                new Step { pos = new Vector3(138, 0, 13) },
+                new Step { pos = new Vector3(147, 0, 10) },                                         // 坡道脚（正对坡道）
+                new Step { pos = new Vector3(147, 10, -9), arrive = 1.5f },                         // 坡道顶
                 new Step { pos = new Vector3(146, 10, -18), clue = "clue_sword", wait = 8f },       // 青铜剑 → 三日凌空
             },
         };
