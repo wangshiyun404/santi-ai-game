@@ -28,7 +28,7 @@ santi/
     └── Assets/StreamingAssets/layouts/*.json
 ```
 
-## 当前进度（第 3 天）
+## 当前进度（第 4 天）
 
 | 环节 | 状态 |
 |---|---|
@@ -41,17 +41,34 @@ santi/
 | A 类资产（Tripo）：16 项清单 docs/tripo_manifest.json + 批量脚本 scripts/tripo_batch.py | ✅ 17 件（含补做的牛顿）全部通过盲审，已按真实尺寸归一化导入 Unity（review/round03_tripo.md） |
 | 绑骨与动作（改用 Tripo v3 自动绑骨 + 预设动画，scripts/tripo_rig.py） | ✅ 玩家 idle/walk/run，5 名 NPC + 黑旗士兵 idle；Assets/Models/Anim/*.glb，CharacterAnimator 驱动 |
 | 旁白音频（9 条，TTS，原著原句） | ✅ Assets/Resources/VO/*.wav |
-| WebGL / macOS 打包 | ⏳ |
+| Unity 真机：URP 配置、Legacy 动画、材质转换、曝光/环境光、第 5–6 轮盲审（review/round05_06_unity_real.md、round06_unity_board.jpg） | ✅ Mac 上 batchmode 一键流水线，三场景可玩 |
+| WebGL 打包 | ✅ dist/webgl/ 20 MB（贴图外置后从 145 MB 降下来），Gzip + 解压回退，任何静态托管可用 |
+| macOS 打包 | ✅ Pipeline.BuildMac → Builds/macOS/三体：三体游戏.app（通用二进制，135 MB；课堂离线兜底） |
+| 托管（国内可访问） | ⏳ 待定：Perplexity 预览链接已可玩（国内可达性待实测）；候选腾讯云 COS / 阿里云 OSS 静态站点（需账号）或 Cloudflare Pages |
 
-## 在 Mac 上跑起来（一次性准备）
+## 在 Mac 上跑（已跑通，batchmode 一键）
 
-1. **清磁盘**：当前剩余约 5.9 GB。Unity Hub + 编辑器 + WebGL 模块 + 工程 Library 约需 20 GB。
-2. **装 Unity Hub**（unity.com/download），登录后安装 **Unity 6.3 LTS（6000.3.x）**，勾选模块：WebGL Build Support、Mac Build Support (IL2CPP)。
-3. Hub → Add → 选择 `santi/unity/SanTiGame` 文件夹 → 打开。首次打开会自动拉取 URP 与 glTFast 包（需联网，国内可能较慢；若 glTFast 拉取失败，改用 Package Manager → Add from git URL：`https://github.com/atteneder/glTFast.git`）。
-4. 若控制台报 `InvalidOperationException ... UnityEngine.Input`：Edit → Project Settings → Player → Other Settings → Active Input Handling 改为 **Both**。
-5. URP：Edit → Project Settings → Graphics 若 Default Render Pipeline 为空，在 Assets 里右键 Create → Rendering → URP Asset (with Universal Renderer) 并拖入。
-6. 菜单 **SanTi → Build All Scenes**。会生成 `Assets/Scenes/scene_00_red_coast.unity` 等三个场景并加入 Build Settings。
-7. 打开 `scene_00_red_coast` 按 Play：WASD 走动、鼠标环顾、靠近发光物件按 E。
+环境：Unity 6000.3.27f1 位于 `/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app`（含 WebGL 模块），仓库克隆在 `~/santi-ai-game`。
+
+```bash
+U=/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/MacOS/Unity
+P=~/santi-ai-game/unity/SanTiGame
+cd ~/santi-ai-game && git pull
+$U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.BuildScenes   -logFile ~/santi_build.log   # 配 URP、转材质、搭三场景（~40 s）
+$U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.CaptureReview -logFile ~/santi_cap.log     # 编辑态 5 机位截图 → review/unity/
+$U -batchmode       -projectPath $P -executeMethod SanTi.Editor.Pipeline.PlayCapture   -logFile ~/santi_play.log    # 运行态截图（自己退出）
+$U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.BuildWebGL    -logFile ~/santi_webgl.log   # → Builds/WebGL（首次 ~13 min，增量 ~1 min）
+$U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.BuildMac      -logFile ~/santi_mac.log     # → Builds/macOS/三体：三体游戏.app
+```
+
+GUI 方式：Unity Hub → Add 选择 `unity/SanTiGame` → 菜单 **SanTi → Pipeline → 1…5**。
+
+### WebGL 发布注意
+1. 构建后把 `Builds/WebGL` 拷到 `dist/webgl/`，**保留 dist 里已打补丁的 `index.html` 和 `Build/WebGL.loader.js`**（或重新打补丁）：
+   - loader.js：`void 0===window.caches` → `void 0===function(){try{return window.caches}catch(e){return void 0}}()`。否则在沙箱 iframe（无 allow-same-origin）里会卡在 0%。
+   - index.html：`companyName: ""`、`productName: ""`（关闭 UnityCache/IndexedDB），标题与同人声明。
+2. 任何静态托管即可（已开解压回退，不依赖 Content-Encoding 头）；本地预览：`cd dist/webgl && python3 -m http.server 8080`。
+3. 新增 Tripo 资产后先跑 `python3 scripts/strip_glb_textures.py`（抽贴图 + 去内嵌），否则构建体积会回到 100 MB+。
 
 ## Tripo 批量生成（API Key 已配置）
 
