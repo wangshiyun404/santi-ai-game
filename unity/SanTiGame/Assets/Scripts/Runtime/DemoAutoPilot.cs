@@ -12,6 +12,7 @@ namespace SanTi
     public class DemoAutoPilot : MonoBehaviour
     {
         class Step { public Vector3 pos; public string clue; public float wait; public float? yaw; public float arrive = 1.2f; }
+        float _lastProgressT; float _lastDist = float.MaxValue;
 
         static readonly Dictionary<string, Step[]> Routes = new()
         {
@@ -21,7 +22,7 @@ namespace SanTi
                 new Step { pos = new Vector3(-9.5f, 0, 35.5f), clue = "clue_reply", wait = 5f },    // 吉普车
                 new Step { pos = new Vector3(0, 0, -8), clue = "clue_antenna", wait = 5f },         // 天线塔下
                 new Step { pos = new Vector3(14, 0, 12) },
-                new Step { pos = new Vector3(27.5f, 0, 10.5f), clue = "clue_control_room", wait = 4f }, // 控制台 → 白屏
+                new Step { pos = new Vector3(26.5f, 0, 13f), clue = "clue_control_room", wait = 4f, arrive = 2.5f }, // 控制台 → 白屏
             },
             ["scene_01_chaotic"] = new[]
             {
@@ -120,9 +121,15 @@ namespace SanTi
                 GameState.AutoMove = Vector2.zero;
                 GameState.AutoYawEnabled = true; GameState.AutoYaw = step.yaw.Value; GameState.AutoYawSpeed = 0.6f;
                 if (!_triggered) { _triggered = true; _waitUntil = Time.time + step.wait; Log("look\t" + step.yaw.Value); return; }
-                _triggered = false; _i++; return;
+                _triggered = false; _i++; _lastDist = float.MaxValue; _lastProgressT = Time.time; return;
             }
 
+            if (d.magnitude > step.arrive)
+            {
+                // 卡住看门狗：3 秒内没有靠近目标 0.3 m，就视为到达（线索会直接触发）
+                if (d.magnitude < _lastDist - 0.3f) { _lastDist = d.magnitude; _lastProgressT = Time.time; }
+                else if (Time.time - _lastProgressT > 3f) { Log("stuck\t" + _i); _lastDist = float.MaxValue; _lastProgressT = Time.time; d = Vector3.zero; }
+            }
             if (d.magnitude > step.arrive)
             {
                 float worldAngle = Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg;
@@ -142,7 +149,7 @@ namespace SanTi
                 return;
             }
             Log("reach\t" + _i);
-            _triggered = false; _i++;
+            _triggered = false; _i++; _lastDist = float.MaxValue; _lastProgressT = Time.time;
         }
     }
 }
