@@ -72,6 +72,7 @@ namespace SanTi
         public string id;
         public string subtitle;
         public string narration;
+        public float[] at;        // 可选：未绑定物件的"地点线索"放置位置（Unity 坐标）
     }
 
     [Serializable]

@@ -115,12 +115,39 @@ namespace SanTi.Editor
                 }
             }
 
-            // 未绑定到物件的线索：放在出生点附近作为"地点线索"
+            // 未绑定到物件的线索：立一块可见的"石碑"标记（layout clues[].at 指定位置；否则放在出生点前方）
+            int unboundIdx = 0;
             foreach (var cd in data.clues.Where(c => !data.objects.Any(o => o.clue == c.id)))
             {
+                Vector3 pos = cd.at != null && cd.at.Length == 3 ? new Vector3(cd.at[0], cd.at[1], cd.at[2])
+                    : (playerSpawn ? playerSpawn.position + playerSpawn.forward * (12f + 8f * unboundIdx) + playerSpawn.right * (unboundIdx % 2 == 0 ? -4f : 4f) : Vector3.zero);
+                unboundIdx++;
                 var go = new GameObject("Clue_" + cd.id); go.transform.SetParent(root);
-                go.transform.position = (playerSpawn ? playerSpawn.position : Vector3.zero) + new Vector3(Random.Range(-15f, 15f), 0, Random.Range(10f, 30f));
+                go.transform.position = pos;
+                var stele = GameObject.CreatePrimitive(PrimitiveType.Cube); stele.name = "Stele";
+                stele.transform.SetParent(go.transform); stele.transform.localPosition = new Vector3(0, 0.9f, 0); stele.transform.localScale = new Vector3(0.9f, 1.8f, 0.3f);
+                stele.GetComponent<Renderer>().sharedMaterial = FlatMaterial("clue_stele", new Color(0.95f, 0.72f, 0.40f));
+                var cap = GameObject.CreatePrimitive(PrimitiveType.Cube); cap.name = "Cap";
+                cap.transform.SetParent(go.transform); cap.transform.localPosition = new Vector3(0, 1.95f, 0); cap.transform.localScale = new Vector3(1.1f, 0.3f, 0.5f);
+                cap.GetComponent<Renderer>().sharedMaterial = FlatMaterial("clue_stele_dark", new Color(0.25f, 0.22f, 0.20f));
                 var clue = go.AddComponent<Clue>(); clue.clueId = cd.id; clue.subtitle = cd.subtitle; clue.narrationClip = cd.narration; clue.triggerRadius = 5f;
+            }
+
+            // 高台坡道：让玩家能走上 platform（原模型台阶 5 m 高，角色上不去）
+            var platformT = root.Find("Platform");
+            var platRends = platformT ? platformT.GetComponentsInChildren<Renderer>() : new Renderer[0];
+            if (platRends.Length > 0)
+            {
+                var b = platRends[0].bounds; foreach (var r in platRends) b.Encapsulate(r.bounds);
+                float top = b.max.y; float angle = 30f;
+                float len = top / Mathf.Sin(angle * Mathf.Deg2Rad);
+                var ramp = GameObject.CreatePrimitive(PrimitiveType.Cube); ramp.name = "Platform_Ramp";
+                ramp.transform.SetParent(root);
+                ramp.transform.localScale = new Vector3(8f, 0.5f, len);
+                ramp.transform.rotation = Quaternion.Euler(angle, 0, 0);           // 高端贴高台 +Z 侧边缘，沿 +Z 方向下坡到地面
+                ramp.transform.position = new Vector3(b.center.x, top / 2f - 0.2f, b.max.z + len * Mathf.Cos(angle * Mathf.Deg2Rad) / 2f);
+                ramp.GetComponent<Renderer>().sharedMaterial = platRends[0].sharedMaterial;
+                GameObjectUtility.SetStaticEditorFlags(ramp, StaticEditorFlags.BatchingStatic);
             }
 
             // ---- 玩家 + 相机 ----

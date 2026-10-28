@@ -1277,12 +1277,22 @@
     {
       "id": "clue_gate_soldier",
       "subtitle": "你是一个门电路。",
-      "narration": "vo_02_gate.wav"
+      "narration": "vo_02_gate.wav",
+      "at": [
+        146,
+        0,
+        -36
+      ]
     },
     {
       "id": "clue_bus",
       "subtitle": "这是系统总线。",
-      "narration": "vo_02_bus.wav"
+      "narration": "vo_02_bus.wav",
+      "at": [
+        146,
+        0,
+        -60.2
+      ]
     },
     {
       "id": "clue_von_neumann",
