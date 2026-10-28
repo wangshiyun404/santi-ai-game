@@ -1,1 +1,13 @@
-{ "name": "SanTi.Editor", "rootNamespace": "SanTi.Editor", "references": ["SanTi.Runtime"], "includePlatforms": ["Editor"], "autoReferenced": true }
+{
+ "name": "SanTi.Editor",
+ "rootNamespace": "SanTi.Editor",
+ "references": [
+  "SanTi.Runtime",
+  "Unity.RenderPipelines.Universal.Runtime",
+  "Unity.RenderPipelines.Core.Runtime"
+ ],
+ "includePlatforms": [
+  "Editor"
+ ],
+ "autoReferenced": true
+}

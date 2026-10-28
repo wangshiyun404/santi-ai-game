@@ -30,7 +30,7 @@ namespace SanTi.Editor
         [MenuItem("SanTi/Build Scene From Layout/scene_01_chaotic")] static void B1() => Build("scene_01_chaotic");
         [MenuItem("SanTi/Build Scene From Layout/scene_02_computer")] static void B2() => Build("scene_02_computer");
         [MenuItem("SanTi/Build All Scenes")]
-        static void BuildAll() { foreach (var f in Directory.GetFiles(LayoutDir, "scene_*.json")) Build(Path.GetFileNameWithoutExtension(f)); }
+        public static void BuildAll() { foreach (var f in Directory.GetFiles(LayoutDir, "scene_*.json")) Build(Path.GetFileNameWithoutExtension(f)); }
 
         public static void Build(string sceneId)
         {
@@ -139,7 +139,11 @@ namespace SanTi.Editor
             cam.fieldOfView = 50f; cam.farClipPlane = 2000f;
             var follow = camGo.AddComponent<FollowCamera>(); follow.target = player.transform;
             ctrl.cameraTransform = camGo.transform;
-            camGo.transform.position = spawnPos + spawnRot * new Vector3(0, 2.5f, -6f);   // 出生点朝向的身后
+            {   // 与 FollowCamera.LateUpdate 相同的初始解：俯角 15°、距 6 m、高 2.5 m，使编辑态 Game 视图即为开场镜头
+                var pivot = spawnPos + Vector3.up * (0.5f + 1.4f);
+                var camPos = pivot - Quaternion.Euler(15f, spawnRot.eulerAngles.y, 0f) * Vector3.forward * 6f + Vector3.up * (2.5f - 1.4f);
+                camGo.transform.SetPositionAndRotation(camPos, Quaternion.LookRotation(pivot - camPos));
+            }
 
             // ---- 管理器 / UI / 事件 ----
             var mgrGo = new GameObject("GameManager");
