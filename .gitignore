@@ -1,2 +1,5 @@
 *.pyc
 __pycache__/
+
+# Unity 真机截图由 Mac 侧生成/提交
+review/unity/
