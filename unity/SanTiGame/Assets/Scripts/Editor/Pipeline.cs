@@ -101,6 +101,8 @@ namespace SanTi.Editor
                 AssetDatabase.ImportAsset("Assets/Models", ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
             }
             AssetDatabase.Refresh();
+            Mats.SetupTextureImporters();                               // 外置 Tripo 贴图：压缩 + mipmap（WebGL 体积）
+            PlayerSettings.SplashScreen.show = false;                   // Personal 许可下 Unity 标志仍会显示，这里只关自定义闪屏
             Debug.Log("[SanTi] SetupProject done");
         }
 

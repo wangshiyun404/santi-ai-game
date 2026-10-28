@@ -17,6 +17,7 @@ namespace SanTi.Editor
     {
         const string MatDir = "Assets/Materials";
         const string SettingsDir = "Assets/Settings";
+        const string TexDir = "Assets/Textures/Tripo";
         static readonly Dictionary<Material, Material> Cache = new();
         /// <summary>B 类平涂材质的颜色覆盖（asset/materialName → 颜色）。第 5 轮：乱纪元地面 22% 深色面片在 Unity 里成了巨型棋盘，压低对比。</summary>
         static readonly Dictionary<string, Color> ColorOverride = new()
@@ -43,7 +44,9 @@ namespace SanTi.Editor
             if (src == null) return null;
             if (Cache.TryGetValue(src, out var cached)) return cached;
 
-            var baseTex = GetTex(src, "baseColorTexture", "_BaseMap", "_MainTex");
+            // 第 6 轮（WebGL 体积）：Tripo 贴图已由 scripts/strip_glb_textures.py 抽为外置 PNG（压缩 + mipmap），GLB 内不再含贴图
+            var external = AssetDatabase.LoadAssetAtPath<Texture2D>($"{TexDir}/{assetName}_base.png");
+            var baseTex = external != null ? external : GetTex(src, "baseColorTexture", "_BaseMap", "_MainTex");
             var mrTex = GetTex(src, "metallicRoughnessTexture", "_MetallicGlossMap");
             var normalTex = GetTex(src, "normalTexture", "_BumpMap");
             float metal = GetFloat(src, 1f, "metallicFactor", "_Metallic");
@@ -69,6 +72,25 @@ namespace SanTi.Editor
             EditorUtility.SetDirty(dst);
             Cache[src] = dst;
             return dst;
+        }
+
+        /// <summary>外置 Tripo 贴图导入设置：sRGB、mipmap、压缩（Crunch 质量 70）、最大 1024；WebGL 构建体积从 145 MB 降到约 30 MB。</summary>
+        public static void SetupTextureImporters()
+        {
+            if (!Directory.Exists(TexDir)) return;
+            int n = 0;
+            foreach (var file in Directory.GetFiles(TexDir, "*.png"))
+            {
+                var path = file.Replace('\\', '/');
+                var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (ti == null) continue;
+                bool dirty = ti.maxTextureSize != 1024 || !ti.crunchedCompression || ti.textureCompression != TextureImporterCompression.Compressed;
+                ti.textureType = TextureImporterType.Default; ti.sRGBTexture = true; ti.mipmapEnabled = true;
+                ti.maxTextureSize = 1024; ti.textureCompression = TextureImporterCompression.Compressed;
+                ti.crunchedCompression = true; ti.compressionQuality = 70; ti.alphaIsTransparency = false;
+                if (dirty) { ti.SaveAndReimport(); n++; }
+            }
+            Debug.Log($"[SanTi] Texture importers: {n} updated in {TexDir}");
         }
 
         /// <summary>全局后期：ACES 色调映射（压过曝）+ 轻 Bloom（发光面片/三日）+ 轻暗角。</summary>
