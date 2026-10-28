@@ -46,6 +46,8 @@ santi/
 | macOS 打包 | ✅ Pipeline.BuildMac → Builds/macOS/三体：三体游戏.app（通用二进制，135 MB；课堂离线兜底） |
 | 托管 | ✅ GitHub Pages：https://wangshiyun404.github.io/santi-ai-game/ （gh-pages 分支，`scripts/publish_pages.sh` 一键发布，源码仍私有）；Perplexity 预览链接并行。国内可达性待课堂实测；若慢则上腾讯云 COS |
 
+玩法说明见 [docs/用户指南.md](docs/用户指南.md)（三幕流程、按键、课堂用法、常见问题）。
+
 ## 在 Mac 上跑（已跑通，batchmode 一键）
 
 环境：Unity 6000.3.27f1 位于 `/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app`（含 WebGL 模块），仓库克隆在 `~/santi-ai-game`。
