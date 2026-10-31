@@ -7,3 +7,5 @@
 3. 合成：`python3 assemble.py santi_demo_1080.m4v timeline.txt <offset>`，offset = 时间线 t=0 对应的视频秒数
    （用白屏切场时刻对齐：clue_control_room 触发 + 3 s = 第二幕出现的那一帧）。
    脚本负责：裁掉菜单栏/通知区、长路程 2.5×/4× 快进、幕标题与操作提示字幕、旁白与游戏原声线索自动排期、片头片尾卡片。
+
+4. 核验：每条旁白生成后先过 `python3 scripts/tts_tone_check.py <mp3> --expect <文本> [--word 字 --tone 3]`（faster-whisper 转写 + Praat F0），转写不含原文即重做；成片后抽帧检查步态/字幕（REA 台账 E24）。
