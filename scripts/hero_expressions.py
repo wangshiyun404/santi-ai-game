@@ -111,6 +111,28 @@ if dbg:
     scene.collection.objects.unlink(cam)
     for a in bpy.data.objects:
         if a.type == 'ARMATURE': a.data.pose_position = 'POSE'
+# ---- 顺手修 Tripo 重定向的已知毛病：run 剪辑的髋骨在水平方向整体偏移约 0.53 m（旧主角也一样，E26c 抽帧时人物出画）。
+# 把每个剪辑髋骨 location 的水平分量（骨骼局部 X/Z = 世界 X/Y）均值对齐到 idle，原地动画不再"跑到控制器前面半米"。
+arm = next(o for o in bpy.data.objects if o.type == 'ARMATURE')
+def hips_loc_fcurves(act):
+    out = {}
+    for layer in act.layers:
+        for strip in layer.strips:
+            for slot in act.slots:
+                cb = strip.channelbag(slot)
+                if cb is None: continue
+                for fc in cb.fcurves:
+                    if fc.data_path.endswith('Hips"].location'): out[fc.array_index] = fc
+    return out
+ref = {i: float(np.mean([k.co[1] for k in fc.keyframe_points])) for i, fc in hips_loc_fcurves(bpy.data.actions['idle']).items()} if 'idle' in bpy.data.actions else {0: 0.0, 2: 0.0}
+for act in bpy.data.actions:
+    if act.name == 'idle': continue
+    for i, fc in hips_loc_fcurves(act).items():
+        if i not in (0, 2): continue                   # 1 = 竖直（上下起伏要保留）
+        m = float(np.mean([k.co[1] for k in fc.keyframe_points])); d = m - ref.get(i, 0.0)
+        if abs(d) > 0.02:
+            for k in fc.keyframe_points: k.co[1] -= d; k.handle_left[1] -= d; k.handle_right[1] -= d
+            print(f"recenter {act.name} hips loc[{i}] by {-d:+.3f}")
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=dst, export_format='GLB', export_yup=True, export_apply=False, export_image_format='AUTO',
                           export_normals=True, export_texcoords=True, export_morph=True, export_morph_normal=False, export_animations=True)
