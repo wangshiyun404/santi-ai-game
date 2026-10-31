@@ -45,10 +45,24 @@ namespace SanTi
                 {
                     string id = Path.GetFileNameWithoutExtension(scenePaths[_sceneIdx]);
                     Shot(cam, Path.Combine(outDir, $"{id}_play_t{times[_shotIdx]:00.0}s.png"), 1600, 900);
+                    FaceShot(cam, Path.Combine(outDir, $"{id}_face_t{times[_shotIdx]:00.0}s.png"));
                 }
                 _shotIdx++;
             }
             if (_shotIdx >= times.Length) { GameState.AutoMove = Vector2.zero; Next(); }
+        }
+
+        /// <summary>REA Q1/Q2 核验：从玩家正前方 1.3 m 拍脸（朝向 + 五官 + 表情）。</summary>
+        static void FaceShot(Camera main, string file)
+        {
+            var p = GameObject.FindGameObjectWithTag("Player"); if (p == null) return;
+            var go = new GameObject("FaceCam"); var c = go.AddComponent<Camera>();
+            c.CopyFrom(main); c.fieldOfView = 30f; c.nearClipPlane = 0.05f;
+            Vector3 head = p.transform.position + Vector3.up * 1.5f;
+            go.transform.position = head + p.transform.forward * 1.3f + Vector3.up * 0.1f;
+            go.transform.LookAt(head);
+            Shot(c, file, 900, 900);
+            Destroy(go);
         }
 
         public static void Shot(Camera cam, string file, int w, int h)

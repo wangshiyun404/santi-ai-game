@@ -28,7 +28,7 @@ namespace SanTi
                 go.transform.position = new Vector3(-200f + i * 250f, -60f, -900f);   // 山脉在 Unity -Z 侧（Blender +Y）
                 suns[i] = go.transform;
             }
-            SubtitleUI.Instance?.ShowSubtitle("三日凌空。", 6f);
+            SubtitleUI.Instance?.ShowSubtitle("三日凌空。", 6f); FaceExpression.PlayerSurprise(3f);
             Color a0 = RenderSettings.ambientLight, f0 = RenderSettings.fogColor;
             float t = 0;
             while (t < duration)

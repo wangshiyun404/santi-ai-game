@@ -6,7 +6,9 @@ namespace SanTi
     [RequireComponent(typeof(CharacterController))]
     public class ThirdPersonController : MonoBehaviour
     {
-        public float walkSpeed = 2.6f;
+        // REA 台账 Q3：步行 2.0 m/s（walk 剪辑自然速度约 1.25 m/s，放 1.6×），按住 Shift 冲刺 4.5 m/s（run 剪辑约 2.8 m/s，放 1.6×）
+        public float walkSpeed = 2.0f;
+        public float sprintSpeed = 4.5f;
         public float turnSmooth = 0.12f;
         public float gravity = -20f;
         public Transform cameraTransform;
@@ -37,7 +39,8 @@ namespace SanTi
                 float targetAngle = Mathf.Atan2(input.x, input.z) * Mathf.Rad2Deg + camYaw;
                 float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _turnVel, turnSmooth);
                 transform.rotation = Quaternion.Euler(0, angle, 0);
-                move = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward * walkSpeed;
+                bool sprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || GameState.AutoSprint;
+                move = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward * (sprint ? Mathf.Max(walkSpeed, sprintSpeed) : walkSpeed);
             }
 
             if (_cc.isGrounded && _vy < 0) _vy = -2f;

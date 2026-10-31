@@ -18,7 +18,8 @@ namespace SanTi.Editor
     {
         const string LayoutDir = "Assets/StreamingAssets/layouts";
         const string ModelDir = "Assets/Models";
-        const string AnimDir = "Assets/Models/Anim";   // Tripo 绑骨+动画 GLB（原始 1 m 归一化、朝向 -X），由 InstantiateCharacter 统一缩放/转向
+        const string FaceDir = "Assets/Models/Face";   // scripts/face_patches.py 生成的五官薄片
+        const string AnimDir = "Assets/Models/Anim";   // Tripo 绑骨+动画 GLB（原始 1 m 归一化、朝向 +X），由 InstantiateCharacter 统一缩放/转向
         static readonly System.Collections.Generic.Dictionary<string, float> CharHeight = new()
         { { "char_player", 1.72f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_newton", 1.70f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
         const string SceneDir = "Assets/Scenes";
@@ -26,6 +27,8 @@ namespace SanTi.Editor
         // 碰撞规则：大而不规则的用 MeshCollider；远景/装饰/发光面片不加碰撞（围栏若用 BoxCollider 会把整个高地封死）
         static readonly System.Collections.Generic.HashSet<string> MeshColliderAssets = new() { "platform", "cliff", "pyramid", "fence_ring", "dry_lakebed", "dish_tower" };
         static readonly System.Collections.Generic.HashSet<string> NoCollider = new() { "cloud_sea", "window_lights", "sun_sphere", "mountains" };
+        // 需要贴地的小物件（REA Q4）
+        static readonly System.Collections.Generic.HashSet<string> SnapAssets = new() { "rock_small", "dehydrated_roll", "jeep", "bamboo_slips", "control_console", "sand_table", "bronze_sword", "flagpole" };
 
         [MenuItem("SanTi/Build Scene From Layout/scene_00_red_coast")] static void B0() => Build("scene_00_red_coast");
         [MenuItem("SanTi/Build Scene From Layout/scene_01_chaotic")] static void B1() => Build("scene_01_chaotic");
@@ -71,8 +74,28 @@ namespace SanTi.Editor
                 }
             }
 
+            // REA 台账 Q5：程序化天空（替代纯色背景），日色/地平线随场景光照
+            {
+                var skyShader = Shader.Find("Skybox/Procedural");
+                if (skyShader != null)
+                {
+                    string skyPath = $"{MatDir}/sky_{sceneId}.mat";
+                    var sky = AssetDatabase.LoadAssetAtPath<Material>(skyPath);
+                    if (sky == null) { sky = new Material(skyShader); AssetDatabase.CreateAsset(sky, skyPath); }
+                    var fogC = data.lighting?.fog != null ? ColorUtil.Hex(data.lighting.fog.color, Color.gray) : Color.gray;
+                    sky.SetFloat("_SunSize", sceneId.Contains("scene_01") ? 0.02f : 0.04f);
+                    sky.SetFloat("_AtmosphereThickness", sceneId.Contains("scene_00") ? 1.35f : sceneId.Contains("scene_01") ? 0.55f : 1.0f);
+                    sky.SetColor("_SkyTint", Color.Lerp(new Color(0.5f, 0.5f, 0.5f), fogC, 0.5f));
+                    sky.SetColor("_GroundColor", fogC);
+                    sky.SetFloat("_Exposure", sceneId.Contains("scene_01") ? 1.1f : 1.0f);
+                    EditorUtility.SetDirty(sky);
+                    RenderSettings.skybox = sky; RenderSettings.sun = sun;
+                }
+            }
+
             // ---- 物件 ----
             GameObject player = null; Transform playerSpawn = null; Renderer groundRenderer = null; Transform sunSphere = null;
+            var snapList = new System.Collections.Generic.List<GameObject>();
             foreach (var o in data.objects)
             {
                 if (o.role == "player_spawn") { playerSpawn = new GameObject("PlayerSpawn").transform; playerSpawn.SetParent(root); playerSpawn.SetPositionAndRotation(o.Position, o.Rotation); continue; }
@@ -103,7 +126,8 @@ namespace SanTi.Editor
                     else if (o.@static && mf.GetComponent<Collider>() == null) mf.gameObject.AddComponent<BoxCollider>();
                 }
                 if (o.asset.StartsWith("ground")) groundRenderer = go.GetComponentInChildren<Renderer>();
-                if (o.role == "npc") { var cap = go.AddComponent<CapsuleCollider>(); cap.height = 1.7f; cap.center = new Vector3(0, 0.85f, 0); cap.radius = 0.35f; }
+                if (o.role == "npc") { var cap = go.AddComponent<CapsuleCollider>(); cap.height = 1.7f; cap.center = new Vector3(0, 0.85f, 0); cap.radius = 0.35f; go.AddComponent<NpcLookAt>(); }
+                if (o.role == "npc" || SnapAssets.Contains(o.asset)) snapList.Add(go);
                 if (o.role == "sun") { sunSphere = go.transform; foreach (var c in go.GetComponentsInChildren<Collider>()) Object.DestroyImmediate(c); }
 
                 if (!string.IsNullOrEmpty(o.clue))
@@ -131,7 +155,28 @@ namespace SanTi.Editor
                 cap.transform.SetParent(go.transform); cap.transform.localPosition = new Vector3(0, 1.95f, 0); cap.transform.localScale = new Vector3(1.1f, 0.3f, 0.5f);
                 cap.GetComponent<Renderer>().sharedMaterial = FlatMaterial("clue_stele_dark", new Color(0.25f, 0.22f, 0.20f));
                 var clue = go.AddComponent<Clue>(); clue.clueId = cd.id; clue.subtitle = cd.subtitle; clue.narrationClip = cd.narration; clue.triggerRadius = 5f;
+                snapList.Add(go);
             }
+
+            // REA 台账 Q4：小道具 / NPC / 石碑按布局 y=0 放置，而地面有起伏 → 向下射线贴地（包围盒底边贴到命中点）
+            Physics.SyncTransforms();
+            int snapped = 0;
+            foreach (var go in snapList)
+            {
+                var own = go.GetComponentsInChildren<Collider>().ToList();
+                own.ForEach(c => c.enabled = false);
+                var from = go.transform.position + Vector3.up * 60f;
+                if (Physics.Raycast(from, Vector3.down, out var hit, 200f))
+                {
+                    var rends = go.GetComponentsInChildren<Renderer>();
+                    float bottom = go.transform.position.y;
+                    if (rends.Length > 0) { var b = rends[0].bounds; foreach (var r in rends) b.Encapsulate(r.bounds); bottom = b.min.y; }
+                    float dy = hit.point.y - bottom;
+                    if (Mathf.Abs(dy) < 8f) { go.transform.position += Vector3.up * (dy - 0.02f); snapped++; }
+                }
+                own.ForEach(c => c.enabled = true);
+            }
+            Debug.Log($"[SanTi] ground-snapped {snapped}/{snapList.Count} objects");
 
             // 高台坡道：让玩家能走上 platform（原模型台阶 5 m 高，角色上不去）
             var platformT = root.Find("Platform");
@@ -179,9 +224,9 @@ namespace SanTi.Editor
             var volGo = new GameObject("PostFX"); var vol = volGo.AddComponent<Volume>(); vol.isGlobal = true; vol.sharedProfile = Mats.PostFxProfile();
             var follow = camGo.AddComponent<FollowCamera>(); follow.target = player.transform;
             ctrl.cameraTransform = camGo.transform;
-            {   // 与 FollowCamera.LateUpdate 相同的初始解：俯角 15°、距 6 m、高 2.5 m，使编辑态 Game 视图即为开场镜头
+            {   // 与 FollowCamera.LateUpdate 相同的初始解（REA Q2：拉近到 4.2 m / 俯角 10° / 高 1.9 m，让脸可辨认）
                 var pivot = spawnPos + Vector3.up * (0.5f + 1.4f);
-                var camPos = pivot - Quaternion.Euler(15f, spawnRot.eulerAngles.y, 0f) * Vector3.forward * 6f + Vector3.up * (2.5f - 1.4f);
+                var camPos = pivot - Quaternion.Euler(10f, spawnRot.eulerAngles.y, 0f) * Vector3.forward * 4.2f + Vector3.up * (1.9f - 1.4f);
                 camGo.transform.SetPositionAndRotation(camPos, Quaternion.LookRotation(pivot - camPos));
             }
 
@@ -236,15 +281,19 @@ namespace SanTi.Editor
                 // Tripo 重定向输出会带一个 Icosphere 辅助网格，去掉
                 foreach (var t in inst.GetComponentsInChildren<Transform>(true))
                     if (t != null && t.name.StartsWith("Icosphere")) { Object.DestroyImmediate(t.gameObject); break; }
-                // 1 m 归一化 → 目标身高；原始朝向 -X（glTFast 翻转 X 轴后）→ 绕 Y +90° 面向 +Z
+                // 1 m 归一化 → 目标身高。REA 台账 Q1：绑骨模型原始朝向 +X（E06），glTFast 转手性翻 Z 不翻 X，
+                // 原先的 +90° 让角色背对前进方向（E02）；改为 -90° 使脸朝 +Z（= 控制器 forward）
                 float h = 1f; var rends = inst.GetComponentsInChildren<Renderer>();
                 if (rends.Length > 0) { var b = rends[0].bounds; foreach (var r in rends) b.Encapsulate(r.bounds); h = Mathf.Max(0.1f, b.size.y); }
                 float target = CharHeight.TryGetValue(name, out var th) ? th : 1.7f;
                 inst.transform.localScale = Vector3.one * (target / h);
-                inst.transform.localRotation = Quaternion.Euler(0, 90f, 0);
+                inst.transform.localRotation = Quaternion.Euler(0, -90f, 0);
                 inst.transform.localPosition = Vector3.zero;
                 var ca = root.AddComponent<CharacterAnimator>();
                 ca.anim = inst.GetComponentInChildren<Animation>(); ca.controller = controller;
+                // REA Q2：几何五官 + 表情（有 _face.glb 的角色）
+                var face = AssetDatabase.LoadAssetAtPath<GameObject>($"{FaceDir}/{name}_face.glb");
+                if (face != null) { var fe = root.AddComponent<FaceExpression>(); fe.facePrefab = face; }
             }
             else
             {

@@ -34,7 +34,7 @@ namespace SanTi
                 if (sunSphere) sunSphere.position = Vector3.Lerp(s0, new Vector3(s0.x, -80f, s0.z), k);
                 yield return null;
             }
-            SubtitleUI.Instance?.ShowSubtitle("乱纪元开始了。", 5f);
+            SubtitleUI.Instance?.ShowSubtitle("乱纪元开始了。", 5f); FaceExpression.PlayerSurprise(2.5f);
         }
     }
 }

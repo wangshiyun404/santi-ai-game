@@ -107,7 +107,7 @@ namespace SanTi
                 var p = GameObject.FindGameObjectWithTag("Player");
                 if (p == null) return;
                 _player = p.transform; _ctrl = p.GetComponent<ThirdPersonController>();
-                if (_ctrl != null) _ctrl.walkSpeed = 4.5f;
+                if (_ctrl != null) _ctrl.walkSpeed = 4.5f;   // 演示用跑步速度（≥ runThreshold → run 剪辑）
                 _cam = FindFirstObjectByType<FollowCamera>();
                 Log("player_ready");
             }

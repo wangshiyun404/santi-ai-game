@@ -49,6 +49,12 @@ namespace SanTi
         {
             Done = true;
             SubtitleUI.Instance?.ShowSubtitle(subtitle, 4f);
+            // 线索挂在 NPC 身上时切对话近景 + 表情（REA Q2）
+            if (GetComponent<NpcLookAt>() != null)
+            {
+                GameState.FocusTarget = transform; GameState.FocusUntil = Time.time + 4.5f;
+                GetComponentInChildren<FaceExpression>()?.Say(4f);
+            }
             if (!string.IsNullOrEmpty(narrationClip))
             {
                 var clip = Resources.Load<AudioClip>("VO/" + System.IO.Path.GetFileNameWithoutExtension(narrationClip));
