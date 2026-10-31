@@ -39,6 +39,7 @@
 | E15 | `docs/rea_evidence/E15_yewenjie_fixed.jpg` | Blender 渲染（Unity 实际贴图） | 叶文洁脸部贴图修复后 |
 | E17 | `docs/rea_evidence/E17_facecam_minus90_backhead.jpg`、`E17b_chasecam_minus90_eyes_to_camera.jpg` | Unity 真机 PlayCapture（−90° 版本） | 脸部特写拍到后脑；追尾镜头看到正脸 → −90° 错 |
 | E18 | `docs/rea_evidence/E18_facecam_plus90_faces.jpg`、`E18b_play_plus90_back.jpg` | Unity 真机 PlayCapture（+90° 版本） | 正脸五官清晰、追尾看到后背 → Q1 通过；几何五官挂接位置正确（Q2 判据 2 通过） |
+| E19 | `docs/rea_evidence/E19_soldier_axes.jpg` | Blender 四向渲染 | 人列计算机士兵（静态网格）原始朝向 glTF +Z，与绑骨角色（+X）不同；`SoldierFormation` yaw≈0 正确，阵列面向高台 |
 | E16 | Blender 射线实验（`/tmp/dbg*.py`，见 §2 Q2 O7） | 实验 | 绑骨 GLB 导入后停在 idle 第 1 帧，头部已偏离绑定位 → 必须用 REST 姿态取脸面 |
 
 ## 2. 问题清单与结论
@@ -109,6 +110,9 @@
 - 音频：脚步声、环境声缺失（U3）。
 - 交互反馈：进入线索半径无提示音/高亮（U4）。
 - UI：字幕无说话人名字（U5）。
+- **取证（E20，代码审读）**：`Clue.Trigger` 只放旁白音频（Resources/VO 已有 9 条）与 4 s 固定字幕；靠近时已有自发光脉冲与"按 E 查看"提示，但无声音；`SubtitleUI` 不区分说话人。
+- **修复（第一批）**：`Clue.speaker` 由 `SceneBuilder` 按 NPC 显示名注入（叶文洁 / 跟随者 / 冯·诺依曼 / 牛顿 / 秦始皇），字幕显示为"说话人：台词"；字幕时长 = 1.5 s + 0.28 s/字（4–9 s），对话近景与说话口型同步该时长；`Sfx` 运行时合成两段短音（确认音 660→990 Hz，靠近提示 880 Hz），不增加 WebGL 体积。
+- 未结：脚步声、环境声（风 / 阵列翻旗声）—— 需音频资源或程序化合成，列入 v0.3。
 
 ## 3. 重建蓝图（观察到的行为 vs 设计选择）
 
@@ -136,8 +140,8 @@
 | Q2 | 已答；Blender 与真机（E18）核验通过，表情触发待录像复核 | `face_patches.py`、`face_skin_fix.py`、`FaceExpression.cs`、`FollowCamera` 近景、`Clue` 触发 |
 | Q3 | 已答，待真机核验 | `ThirdPersonController` 2.0/4.5 m/s + Shift；`CharacterAnimator` 阈值 3.3、速率缩放 |
 | Q4 | 已答，待真机核验 | `SceneBuilder` 射线贴地 |
-| Q5 | 部分（第一批：程序化天空） | `SceneBuilder` `Skybox/Procedural` 按场景 |
+| Q5 | 第一批（程序化天空）已真机核验；第二批（地面贴图）待核验 | `Skybox/Procedural`；`scripts/ground_textures.py` + `SceneBuilder.ApplyGroundTexture`（cliff 用世界 XZ 平面 UV） |
 | Q6 | 已答，待真机核验 | `NpcLookAt.cs` |
-| Q7 | 未解（未取证） | — |
+| Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
 核验入口：Mac 上 `bash scripts/mac_verify.sh` → `~/santi_review.zip`（每场景 3 个时刻的全景 + 正面脸部特写）。
