@@ -311,7 +311,7 @@ namespace SanTi.Editor
         static readonly System.Collections.Generic.Dictionary<string, (string tex, float tile, bool planar)> GroundTex = new()
         {
             { "cliff", ("ground_red_coast", 10f, true) },
-            { "ground_chaotic", ("ground_chaotic", 12f, false) },
+            { "ground_chaotic", ("ground_chaotic", 7f, false) },
             { "ground_plain", ("ground_plain", 8f, false) },
         };
 
@@ -353,7 +353,7 @@ namespace SanTi.Editor
                     var m = AssetDatabase.LoadAssetAtPath<Material>(path);
                     if (m == null) { m = new Material(lit); AssetDatabase.CreateAsset(m, path); } else m.shader = lit;
                     m.SetTexture("_BaseMap", tex); m.SetTextureScale("_BaseMap", tiling);
-                    m.SetColor("_BaseColor", i == 0 ? Color.white : new Color(0.7f, 0.7f, 0.7f));   // 子材质（如乱纪元 crack）更暗
+                    m.SetColor("_BaseColor", i == 0 ? Color.white : new Color(0.94f, 0.94f, 0.94f));   // 子材质（乱纪元 crack 面片呈棋盘分布）只做极轻微明暗差，避免棋盘格
                     m.SetFloat("_Metallic", 0f); m.SetFloat("_Smoothness", 0.08f);
                     EditorUtility.SetDirty(m); mats[i] = m;
                 }

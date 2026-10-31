@@ -34,7 +34,7 @@ def mix(a, b, t):
 os.makedirs(OUT, exist_ok=True)
 # 1) 红岸基地：红褐土 + 稀疏草斑（东北山地、秋）
 n = tile_noise(6); n2 = tile_noise(24, 3)
-soil_a = np.array([0.56, 0.36, 0.30]); soil_b = np.array([0.47, 0.29, 0.25]); grass = np.array([0.42, 0.40, 0.26])
+soil_a = np.array([0.50, 0.36, 0.31]); soil_b = np.array([0.43, 0.30, 0.27]); grass = np.array([0.42, 0.40, 0.26])
 img = mix(soil_a, soil_b, n)
 img = img * (0.93 + 0.14 * n2[..., None])                       # 细颗粒
 gmask = np.clip((tile_noise(10, 2) - 0.58) * 6, 0, 1) * 0.7       # 草斑（弱化，保持低对比）
@@ -45,9 +45,22 @@ save('ground_red_coast', img)
 n = tile_noise(8); n2 = tile_noise(32, 2)
 sand_a = np.array([0.80, 0.76, 0.69]); sand_b = np.array([0.70, 0.66, 0.59])
 img = mix(sand_a, sand_b, n) * (0.95 + 0.10 * n2[..., None])
-# 龟裂：用两层噪声差的等值线近似
-d = np.abs(tile_noise(5, 1) - tile_noise(5, 1))
-crack = np.clip(1 - d * 60, 0, 1) * 0.28
+# 龟裂：周期 Voronoi 的 F2−F1 边界（多边形裂块网络）
+pts = []
+while len(pts) < 28:   # 最小间距采样：两粒种子过近会让 F2−F1 处处很小，出现大片污渍
+    q = rng.random(2)
+    if all(min(np.hypot(*(np.abs(q - p) - np.round(np.abs(q - p)))) for _ in [0]) > 0.11 for p in pts): pts.append(q)
+pts = np.array(pts)
+yy, xx = np.mgrid[0:N, 0:N] / N
+d1 = np.full((N, N), 9.0); d2 = np.full((N, N), 9.0)
+for oy in (-1, 0, 1):
+    for ox in (-1, 0, 1):
+        for p in pts:
+            d = np.hypot(xx - (p[0] + ox), yy - (p[1] + oy))
+            m = d < d1
+            d2 = np.where(m, d1, np.minimum(d2, d)); d1 = np.where(m, d, d1)
+edge = np.clip(1 - (d2 - d1) / 0.012, 0, 1)
+crack = edge * 0.30 * (0.6 + 0.4 * tile_noise(16, 2))   # 裂缝深浅不均
 img = img * (1 - crack[..., None])
 save('ground_chaotic', img)
 
