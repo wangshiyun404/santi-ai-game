@@ -281,13 +281,13 @@ namespace SanTi.Editor
                 // Tripo 重定向输出会带一个 Icosphere 辅助网格，去掉
                 foreach (var t in inst.GetComponentsInChildren<Transform>(true))
                     if (t != null && t.name.StartsWith("Icosphere")) { Object.DestroyImmediate(t.gameObject); break; }
-                // 1 m 归一化 → 目标身高。REA 台账 Q1：绑骨模型原始朝向 +X（E06），glTFast 转手性翻 Z 不翻 X，
-                // 原先的 +90° 让角色背对前进方向（E02）；改为 -90° 使脸朝 +Z（= 控制器 forward）
+                // 1 m 归一化 → 目标身高。REA 台账 Q1（E17 真机脸部特写定论）：绑骨模型 glTF 原始朝向 +X（E11），
+                // glTFast 翻 X 轴后为 -X，绕 Y +90° → 脸朝 +Z（= 控制器 forward）。曾按低清抽帧 E02 误判为 -90°，被 E17 推翻。
                 float h = 1f; var rends = inst.GetComponentsInChildren<Renderer>();
                 if (rends.Length > 0) { var b = rends[0].bounds; foreach (var r in rends) b.Encapsulate(r.bounds); h = Mathf.Max(0.1f, b.size.y); }
                 float target = CharHeight.TryGetValue(name, out var th) ? th : 1.7f;
                 inst.transform.localScale = Vector3.one * (target / h);
-                inst.transform.localRotation = Quaternion.Euler(0, -90f, 0);
+                inst.transform.localRotation = Quaternion.Euler(0, 90f, 0);
                 inst.transform.localPosition = Vector3.zero;
                 var ca = root.AddComponent<CharacterAnimator>();
                 ca.anim = inst.GetComponentInChildren<Animation>(); ca.controller = controller;

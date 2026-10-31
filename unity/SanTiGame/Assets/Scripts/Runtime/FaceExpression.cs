@@ -41,13 +41,19 @@ namespace SanTi
             {
                 var node = mf.transform;
                 Matrix4x4 nodeM = rootW2L * node.localToWorldMatrix;   // 节点在预制体根空间的矩阵（通常为单位阵）
-                Matrix4x4 local = bind * nodeM;
+                // 薄片顶点在模型空间（原点在脚下）。把网格重心移到节点原点，表情缩放才会绕薄片自身中心进行，而不是绕脚下原点。
+                var mesh = Instantiate(mf.sharedMesh);
+                Vector3 c = mesh.bounds.center;
+                var vs = mesh.vertices;
+                for (int i = 0; i < vs.Length; i++) vs[i] -= c;
+                mesh.vertices = vs; mesh.RecalculateBounds();
+                Matrix4x4 local = bind * nodeM * Matrix4x4.Translate(c);
                 var go = new GameObject(node.name);
                 go.transform.SetParent(head, false);
                 go.transform.localPosition = local.GetPosition();
                 go.transform.localRotation = local.rotation;
                 go.transform.localScale = local.lossyScale;
-                go.AddComponent<MeshFilter>().sharedMesh = mf.sharedMesh;
+                go.AddComponent<MeshFilter>().sharedMesh = mesh;
                 var mr = go.AddComponent<MeshRenderer>();
                 var srcR = node.GetComponent<MeshRenderer>();
                 mr.sharedMaterials = srcR != null ? srcR.sharedMaterials : new Material[0];
