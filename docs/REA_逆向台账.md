@@ -48,6 +48,7 @@
 | E23c | `docs/rea_evidence/E23_skeleton_mirror_attempt_failed.jpg` | Blender 渲染（`scripts/experiments/mirror_front_anim.py`） | 只镜像"骨架+动画、不镜像网格"的数学方案：姿态矩阵完全吻合（误差 0），但脚部蒙皮被拉成鸭蹼——因为 Tripo 重定向本身把脚骨相对绑定姿态翻了 125°，镜像后杠杆更大。方案否决 |
 | E23d | `docs/rea_evidence/E23_bodyfix_mesh.jpg`、`E23_v3_walk_forward_pass.jpg`、`E23_face_patches_v3.jpg` | Blender 渲染 `assets/tripo/fix/char_player_bodyfix.glb` 与 `assets/tripo/anim/char_player_anim.glb`（v3） | 脖子以下整体前后镜像后：脸/扣/靴尖同朝 +X；重新绑骨+重定向，`scripts/gait_check.py` 三剪辑 PASS（脚尖 +0.064、着地脚滑移 −0.0146、跑步前倾 +0.14）；几何五官按新绑定重建 |
 | E24 | `scripts/tts_tone_check.py` 输出（faster-whisper small/medium + Praat F0） | 语音核验 | 原 `vo_02_bus` 被转写为"戏土宗献"（总读成一声）、`vo_01_dehydration` 被转写为 "That's it!"（完全走样）、宣传片 n5 "四条线索"被听成"四桥线路"；替换稿分别转写为"这里是系统总线。""快，脱水！""集齐四条线索…"，「总」「水」F0 轮廓为低-降（三声） |
+| E25 | `docs/rea_evidence/E25_mac_gait_face_round9.jpg`、`E25_take9_run_from_behind.jpg` | Unity 真机第 9 轮（`PlayCapture` 新增 `GaitShot` 侧视 + take9 录像抽帧） | 三个场景行走侧视：靴尖与迈步均朝前进方向，披风向后飘；脸部薄片五官正常；录像背视奔跑时摆动腿脚跟向后上方抬起（正向跑的特征）。成片 ASR 复核："快，脱水。""这里是系统总线。""集齐四条线索，三日凌空…" |
 
 ## 2. 问题清单与结论
 
@@ -68,7 +69,7 @@
 - **I6（纠正 I5 的过度结论）**：E18 证明的是"+90° 让脸朝前"，并不能证明步态正确；"朝向"与"步态"是两个独立判据。低清录像不能定论是对的，但高清脸部特写同样不能替代步态核验。
 - **修复过程（E23b–d）**：① 只镜像脚 → Tripo 仍判前向 −X（它还参考膝盖/手等整体线索）；② 只镜像骨架+动画 → 数学上成立但蒙皮被破坏，否决；③ **脖子以下网格整体前后镜像**（`scripts/mirror_body_glb.py`，接缝藏在围巾里）→ 重新绑骨（骨骼静止系与其余 6 个角色的差异从 170° 降到 11°）→ 重定向 → `scripts/gait_check.py` PASS。共耗 Tripo 110 积分（两次绑骨+重定向），余额约 465。
 - **固化的核验手段**：`scripts/gait_check.py <anim.glb>`：逐剪辑输出脚尖方向、着地脚滑移、前倾，三项与脸向一致才算过；以后任何角色绑骨/重定向后必跑。
-- **待真机复核**：Mac `mac_verify.sh` 的侧视行走截图 + 新录像。
+- **真机复核（E25）**：第 9 轮侧视截图与 take9 录像均正向；Q1 关闭。
 - **用户所说"跑步方向错"的其余可能**（未结）：U1' 过场/自动演示中转向时镜头偏航滞后（1.5 s 时间常数）使角色短暂侧身奔跑；U1'' 人列计算机阵列与 NPC 的朝向（Q6）。待新录像复核。
 
 ### Q2 为什么"没有五官、没有表情"？
@@ -155,13 +156,13 @@
 
 | 问题 | 状态 | 已落地的改动 |
 |---|---|---|
-| Q1 | **第 8 轮重开并修复**：脸向（E18）正确，但步态倒退（E23a/b）；网格脖子以下前后镜像 + 重新绑骨/重定向，`gait_check.py` PASS（E23d）；待真机复核 | `scripts/mirror_body_glb.py`、`scripts/tripo_refix_player.py`、`scripts/gait_check.py`、`PlayCaptureRunner.FaceShot` |
+| Q1 | **第 8 轮重开并修复**：脸向（E18）正确，但步态倒退（E23a/b）；网格脖子以下前后镜像 + 重新绑骨/重定向，`gait_check.py` PASS（E23d），真机侧视与录像复核通过（E25） | `scripts/mirror_body_glb.py`、`scripts/tripo_refix_player.py`、`scripts/gait_check.py`、`PlayCaptureRunner.FaceShot` |
 | Q2 | 已答；Blender 与真机（E18）核验通过，表情触发待录像复核 | `face_patches.py`、`face_skin_fix.py`、`FaceExpression.cs`、`FollowCamera` 近景、`Clue` 触发 |
 | Q3 | 已答，待真机核验 | `ThirdPersonController` 2.0/4.5 m/s + Shift；`CharacterAnimator` 阈值 3.3、速率缩放 |
 | Q4 | 已真机核验（E22）：悬空脱水卷落地 y=0.08 | `SceneBuilder` 只对地面类资产射线贴地 |
 | Q5 | 第一、二批已真机核验（E21）；第三批（方块建筑替换、远景）未开始 | `Skybox/Procedural`；`scripts/ground_textures.py` + `SceneBuilder.ApplyGroundTexture`（cliff 用世界 XZ 平面 UV） |
 | Q6 | 已答，待真机核验 | `NpcLookAt.cs` |
-| Q8 | 已修（E24），待录像复核 | `scripts/tts_tone_check.py`；3 条配音/旁白改稿重生成 |
+| Q8 | 已修（E24），成片 ASR 复核通过（E25） | `scripts/tts_tone_check.py`；3 条配音/旁白改稿重生成 |
 | Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
 核验入口：Mac 上 `bash scripts/mac_verify.sh` → `~/santi_review.zip`（每场景 3 个时刻的全景 + 正面脸部特写）。
