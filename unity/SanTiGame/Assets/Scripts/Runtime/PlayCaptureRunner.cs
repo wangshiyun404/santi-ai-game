@@ -59,7 +59,10 @@ namespace SanTi
             var p = GameObject.FindGameObjectWithTag("Player"); if (p == null) return;
             var go = new GameObject("FaceCam"); var c = go.AddComponent<Camera>();
             c.CopyFrom(main); c.fieldOfView = 30f; c.nearClipPlane = 0.05f;
-            Vector3 head = p.transform.position + Vector3.up * 1.5f;
+            // 用蒙皮包围盒顶部定位头部（E27：固定 1.5 m 时真机脸被裁到画面底部）
+            float top = p.transform.position.y + 1.62f;
+            var smr = p.GetComponentInChildren<SkinnedMeshRenderer>(); if (smr != null) top = smr.bounds.max.y;
+            Vector3 head = new Vector3(p.transform.position.x, top - 0.14f, p.transform.position.z);
             go.transform.position = head + p.transform.forward * 1.3f + Vector3.up * 0.1f;
             go.transform.LookAt(head);
             Shot(c, file, 900, 900);
