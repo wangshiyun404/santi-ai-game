@@ -40,6 +40,7 @@
 | E17 | `docs/rea_evidence/E17_facecam_minus90_backhead.jpg`、`E17b_chasecam_minus90_eyes_to_camera.jpg` | Unity 真机 PlayCapture（−90° 版本） | 脸部特写拍到后脑；追尾镜头看到正脸 → −90° 错 |
 | E18 | `docs/rea_evidence/E18_facecam_plus90_faces.jpg`、`E18b_play_plus90_back.jpg` | Unity 真机 PlayCapture（+90° 版本） | 正脸五官清晰、追尾看到后背 → Q1 通过；几何五官挂接位置正确（Q2 判据 2 通过） |
 | E19 | `docs/rea_evidence/E19_soldier_axes.jpg` | Blender 四向渲染 | 人列计算机士兵（静态网格）原始朝向 glTF +Z，与绑骨角色（+X）不同；`SoldierFormation` yaw≈0 正确，阵列面向高台 |
+| E21 | `docs/rea_evidence/E21_ground_textures_play.jpg` | Unity 真机 PlayCapture | 三场景地面贴图生效（Q5 第二批通过）；`REA_round7_board.jpg` 为本轮前后对照看板 |
 | E16 | Blender 射线实验（`/tmp/dbg*.py`，见 §2 Q2 O7） | 实验 | 绑骨 GLB 导入后停在 idle 第 1 帧，头部已偏离绑定位 → 必须用 REST 姿态取脸面 |
 
 ## 2. 问题清单与结论
@@ -140,7 +141,7 @@
 | Q2 | 已答；Blender 与真机（E18）核验通过，表情触发待录像复核 | `face_patches.py`、`face_skin_fix.py`、`FaceExpression.cs`、`FollowCamera` 近景、`Clue` 触发 |
 | Q3 | 已答，待真机核验 | `ThirdPersonController` 2.0/4.5 m/s + Shift；`CharacterAnimator` 阈值 3.3、速率缩放 |
 | Q4 | 已答，待真机核验 | `SceneBuilder` 射线贴地 |
-| Q5 | 第一批（程序化天空）已真机核验；第二批（地面贴图）待核验 | `Skybox/Procedural`；`scripts/ground_textures.py` + `SceneBuilder.ApplyGroundTexture`（cliff 用世界 XZ 平面 UV） |
+| Q5 | 第一、二批已真机核验（E21）；第三批（方块建筑替换、远景）未开始 | `Skybox/Procedural`；`scripts/ground_textures.py` + `SceneBuilder.ApplyGroundTexture`（cliff 用世界 XZ 平面 UV） |
 | Q6 | 已答，待真机核验 | `NpcLookAt.cs` |
 | Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
