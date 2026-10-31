@@ -112,6 +112,8 @@ namespace SanTi
                 Log("player_ready");
             }
             if (GameState.InputLocked || Time.time < _waitUntil) { GameState.AutoMove = Vector2.zero; return; }
+            // 对话近景期间停步（E22：边走边切越肩镜头会让玩家迎面走向镜头）
+            if (GameState.FocusTarget != null && Time.time < GameState.FocusUntil) { GameState.AutoMove = Vector2.zero; return; }
 
             var step = _steps[_i];
             Vector3 d = step.pos - _player.position; d.y = 0;
