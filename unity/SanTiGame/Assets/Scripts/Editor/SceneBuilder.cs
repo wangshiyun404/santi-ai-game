@@ -22,6 +22,8 @@ namespace SanTi.Editor
         const string AnimDir = "Assets/Models/Anim";   // Tripo 绑骨+动画 GLB（原始 1 m 归一化、朝向 +X），由 InstantiateCharacter 统一缩放/转向
         static readonly System.Collections.Generic.Dictionary<string, float> CharHeight = new()
         { { "char_player", 1.72f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_newton", 1.70f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
+        static readonly System.Collections.Generic.Dictionary<string, string> CharDisplayName = new()
+        { { "char_ye_wenjie", "叶文洁" }, { "char_follower", "跟随者" }, { "char_von_neumann", "冯·诺依曼" }, { "char_newton", "牛顿" }, { "char_qin", "秦始皇" } };
         const string SceneDir = "Assets/Scenes";
         const string MatDir = "Assets/Materials";
         // 碰撞规则：大而不规则的用 MeshCollider；远景/装饰/发光面片不加碰撞（围栏若用 BoxCollider 会把整个高地封死）
@@ -115,6 +117,7 @@ namespace SanTi.Editor
                 Mats.ConvertRenderers(go, o.asset);
                 go.transform.SetPositionAndRotation(o.Position, o.Rotation);
                 go.transform.localScale = o.Scale;
+                ApplyGroundTexture(go, o.asset);   // REA Q5 第二批：地面可平铺贴图
                 if (o.@static) { GameObjectUtility.SetStaticEditorFlags(go, StaticEditorFlags.BatchingStatic | StaticEditorFlags.OccludeeStatic); }
 
                 // 碰撞：地面/平台/悬崖用 MeshCollider，其余用包围盒
@@ -135,6 +138,7 @@ namespace SanTi.Editor
                     var cd = data.clues.FirstOrDefault(c => c.id == o.clue);
                     var clue = go.AddComponent<Clue>();
                     clue.clueId = o.clue; clue.subtitle = cd?.subtitle ?? o.clue; clue.narrationClip = cd?.narration;
+                    clue.speaker = CharDisplayName.TryGetValue(o.asset, out var dn) ? dn : "";   // REA Q7：字幕前加说话人
                     clue.triggerRadius = o.asset == "pyramid" || o.asset == "dish_tower" || o.asset == "platform" ? 18f : 3.5f;
                 }
             }
@@ -301,6 +305,60 @@ namespace SanTi.Editor
                 inst.transform.SetParent(root.transform); inst.transform.localPosition = Vector3.zero; inst.transform.localRotation = Quaternion.identity;
             }
             return root;
+        }
+
+        // REA 台账 Q5 第二批：scripts/ground_textures.py 生成的可平铺地面贴图。tile = 一张贴图覆盖的米数；planar = 用世界 XZ 重算 UV（圆柱 UV 的 cliff 顶面不可用）
+        static readonly System.Collections.Generic.Dictionary<string, (string tex, float tile, bool planar)> GroundTex = new()
+        {
+            { "cliff", ("ground_red_coast", 10f, true) },
+            { "ground_chaotic", ("ground_chaotic", 12f, false) },
+            { "ground_plain", ("ground_plain", 8f, false) },
+        };
+
+        static void ApplyGroundTexture(GameObject go, string asset)
+        {
+            if (!GroundTex.TryGetValue(asset, out var g)) return;
+            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Textures/Ground/{g.tex}.png");
+            if (tex == null) { Debug.LogWarning($"[SanTi] ground texture missing: {g.tex}"); return; }
+            var lit = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+            Directory.CreateDirectory($"{MatDir}/Ground"); Directory.CreateDirectory("Assets/Generated");
+            int k = 0;
+            foreach (var mf in go.GetComponentsInChildren<MeshFilter>())
+            {
+                var r = mf.GetComponent<Renderer>(); var mesh = mf.sharedMesh;
+                if (r == null || mesh == null) continue;
+                Vector2 tiling;
+                if (g.planar)
+                {
+                    string mp = $"Assets/Generated/{asset}_{k}_planar.asset";
+                    var copy = AssetDatabase.LoadAssetAtPath<Mesh>(mp);
+                    if (copy == null)
+                    {
+                        copy = Object.Instantiate(mesh); copy.name = $"{asset}_{k}_planar";
+                        var v = copy.vertices; var uv = new Vector2[v.Length]; var l2w = mf.transform.localToWorldMatrix;
+                        for (int i = 0; i < v.Length; i++) { var w = l2w.MultiplyPoint3x4(v[i]); uv[i] = new Vector2(w.x, w.z) / g.tile; }
+                        copy.uv = uv; AssetDatabase.CreateAsset(copy, mp);
+                    }
+                    mf.sharedMesh = copy; tiling = Vector2.one;
+                }
+                else
+                {
+                    var b = mesh.bounds.size;
+                    tiling = new Vector2(Mathf.Max(1f, Mathf.Round(b.x / g.tile)), Mathf.Max(1f, Mathf.Round(b.z / g.tile)));
+                }
+                var mats = r.sharedMaterials;
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    string path = $"{MatDir}/Ground/{asset}_{k}_{i}.mat";
+                    var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+                    if (m == null) { m = new Material(lit); AssetDatabase.CreateAsset(m, path); } else m.shader = lit;
+                    m.SetTexture("_BaseMap", tex); m.SetTextureScale("_BaseMap", tiling);
+                    m.SetColor("_BaseColor", i == 0 ? Color.white : new Color(0.7f, 0.7f, 0.7f));   // 子材质（如乱纪元 crack）更暗
+                    m.SetFloat("_Metallic", 0f); m.SetFloat("_Smoothness", 0.08f);
+                    EditorUtility.SetDirty(m); mats[i] = m;
+                }
+                r.sharedMaterials = mats; k++;
+            }
         }
 
         static Material FlatMaterial(string name, Color c, bool emissive = false)

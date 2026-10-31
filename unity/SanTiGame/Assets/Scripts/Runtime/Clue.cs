@@ -8,11 +8,12 @@ namespace SanTi
         public string clueId;
         [TextArea] public string subtitle;
         public string narrationClip;      // Resources/VO/<name>（不含扩展名）
+        public string speaker;            // REA Q7：说话人（NPC 显示名；空=旁白）
         public float triggerRadius = 3.5f;
         public bool oneShot = true;
 
         public bool Done { get; private set; }
-        Transform _player;
+        Transform _player; bool _wasNear;
         Renderer[] _renderers;
         MaterialPropertyBlock _mpb;
         static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
@@ -42,18 +43,23 @@ namespace SanTi
             }
 
             if (near) SubtitleUI.Instance?.ShowHint("按 E 查看");
+            if (near && !_wasNear) Sfx.Tick();   // REA Q7：进入交互范围时轻提示一次
+            _wasNear = near;
             if (near && Input.GetKeyDown(KeyCode.E) && !GameState.InputLocked) Trigger();
         }
 
         public void Trigger()
         {
             Done = true;
-            SubtitleUI.Instance?.ShowSubtitle(subtitle, 4f);
+            // REA Q7：字幕带说话人、时长随字数；触发时给一声确认音（无需音频资源，运行时合成）
+            float secs = Mathf.Clamp(1.5f + 0.28f * (subtitle?.Length ?? 0), 4f, 9f);
+            SubtitleUI.Instance?.ShowSubtitle(string.IsNullOrEmpty(speaker) ? subtitle : $"{speaker}：{subtitle}", secs);
+            Sfx.Confirm();
             // 线索挂在 NPC 身上时切对话近景 + 表情（REA Q2）
             if (GetComponent<NpcLookAt>() != null)
             {
-                GameState.FocusTarget = transform; GameState.FocusUntil = Time.time + 4.5f;
-                GetComponentInChildren<FaceExpression>()?.Say(4f);
+                GameState.FocusTarget = transform; GameState.FocusUntil = Time.time + secs + 0.5f;
+                GetComponentInChildren<FaceExpression>()?.Say(secs);
             }
             if (!string.IsNullOrEmpty(narrationClip))
             {
