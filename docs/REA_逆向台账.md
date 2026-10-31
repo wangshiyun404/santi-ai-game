@@ -37,6 +37,8 @@
 | E13 | `docs/rea_evidence/E13_yewenjie_full.jpg` | Blender 渲染 | 叶文洁全身：脸与手为紫色（贴图错） |
 | E14' | `docs/rea_evidence/E14_face_patches_v3a.jpg`、`E14_face_patches_v3b.jpg` | Blender 渲染 | 几何五官薄片贴合效果（玩家 / 牛顿 / 秦始皇 / 叶文洁） |
 | E15 | `docs/rea_evidence/E15_yewenjie_fixed.jpg` | Blender 渲染（Unity 实际贴图） | 叶文洁脸部贴图修复后 |
+| E17 | `docs/rea_evidence/E17_facecam_minus90_backhead.jpg`、`E17b_chasecam_minus90_eyes_to_camera.jpg` | Unity 真机 PlayCapture（−90° 版本） | 脸部特写拍到后脑；追尾镜头看到正脸 → −90° 错 |
+| E18 | `docs/rea_evidence/E18_facecam_plus90_faces.jpg`、`E18b_play_plus90_back.jpg` | Unity 真机 PlayCapture（+90° 版本） | 正脸五官清晰、追尾看到后背 → Q1 通过；几何五官挂接位置正确（Q2 判据 2 通过） |
 | E16 | Blender 射线实验（`/tmp/dbg*.py`，见 §2 Q2 O7） | 实验 | 绑骨 GLB 导入后停在 idle 第 1 帧，头部已偏离绑定位 → 必须用 REST 姿态取脸面 |
 
 ## 2. 问题清单与结论
@@ -49,7 +51,12 @@
 - **I1**：glTFast 转手性是翻 Z 不翻 X；+X 朝向经 +90° 偏航后指向 −Z，正好与控制器 `forward` 反向 → 180° 背着跑。两个独立证据（录像 E02、模型 E06）指向同一结论。
 - **I2**：NPC 走同一函数，所以 NPC 的面向也整体错 180°（E07 第 6 帧三位 NPC 看似各朝一方，与 E14 的统一 yaw 矛盾，可由此解释）。
 - **U1**：glTFast 版本差异是否影响翻转轴 —— 不猜，用新录像验证（判据 1）。
-- **修复假设**：`Euler(0, −90, 0)`；同步修正注释。验证：重录后抽帧对照 E02。
+- **修复假设（已被推翻）**：`Euler(0, −90, 0)`。
+- **O10（E17，真机脸部特写，决定性）**：按 −90° 重建后，从玩家根节点 `forward` 正前方 1.3 m 拍脸，拍到的是**后脑**；追尾镜头（根节点正后方）反而看到带眼睛的正脸 → −90° 让角色背对前进方向。
+- **I5（修正）**：O1 是误读——E02 是 480p 录像再裁切放大，"胸口与脸"实际是披风兜帽的**背面**；低清证据不能作朝向定论。I1 对 glTFast 转手性的推断也错了：glTFast 翻的是 X 轴（+X 朝向 → −X），+90° 偏航把 −X 转到 +Z，**原代码本来是对的**。
+- **O11（E18）**：恢复 +90° 后，脸部特写拍到正脸（眼、眉、嘴清晰，一帧捕捉到眨眼），追尾镜头看到后背 → Q1 判据 1 通过。
+- **教训（写入方法）**：朝向这类二值问题，必须用"已知相机位 + 可辨识特征（五官）"的专用证据回答，不能靠全景抽帧目测；本轮为此新增 `PlayCaptureRunner.FaceShot` 作为固定核验手段。
+- **用户所说"跑步方向错"的其余可能**（未结）：U1' 过场/自动演示中转向时镜头偏航滞后（1.5 s 时间常数）使角色短暂侧身奔跑；U1'' 人列计算机阵列与 NPC 的朝向（Q6）。待新录像复核。
 
 ### Q2 为什么"没有五官、没有表情"？
 
@@ -107,7 +114,7 @@
 
 | 模块 | 观察到的现状 | 设计选择（v0.2） | 依据 |
 |---|---|---|---|
-| 角色朝向 | 背着跑 | yaw −90° | Q1 |
+| 角色朝向 | 原判"背着跑"系误读，+90° 正确 | 保留 +90°；新增脸部特写核验 | Q1 |
 | 脸 | 4/6 角色无五官，叶文洁紫脸 | 几何五官薄片 + 可见性切换表情；UV 掩膜修肤色 | Q2 |
 | 镜头 | 6 m / 15° | 4.2 m / 10°，对话近景 | Q2 |
 | 移动 | 2.6 m/s 单速 | 3.0 走 / 5.5 冲刺，动画速率匹配 | Q3 |
@@ -125,8 +132,8 @@
 
 | 问题 | 状态 | 已落地的改动 |
 |---|---|---|
-| Q1 | 已答，待真机核验 | `SceneBuilder.InstantiateCharacter` yaw −90° |
-| Q2 | 已答，Blender 核验通过，待真机核验 | `face_patches.py`、`face_skin_fix.py`、`FaceExpression.cs`、`FollowCamera` 近景、`Clue` 触发 |
+| Q1 | 已核验（E17/E18）：原 +90° 正确，−90° 误改已回退 | `PlayCaptureRunner.FaceShot` 脸部特写核验 |
+| Q2 | 已答；Blender 与真机（E18）核验通过，表情触发待录像复核 | `face_patches.py`、`face_skin_fix.py`、`FaceExpression.cs`、`FollowCamera` 近景、`Clue` 触发 |
 | Q3 | 已答，待真机核验 | `ThirdPersonController` 2.0/4.5 m/s + Shift；`CharacterAnimator` 阈值 3.3、速率缩放 |
 | Q4 | 已答，待真机核验 | `SceneBuilder` 射线贴地 |
 | Q5 | 部分（第一批：程序化天空） | `SceneBuilder` `Skybox/Procedural` 按场景 |
