@@ -135,5 +135,5 @@ for act in bpy.data.actions:
             print(f"recenter {act.name} hips loc[{i}] by {-d:+.3f}")
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=dst, export_format='GLB', export_yup=True, export_apply=False, export_image_format='AUTO',
-                          export_normals=True, export_texcoords=True, export_morph=True, export_morph_normal=False, export_animations=True)
+                          export_normals=True, export_texcoords=True, export_morph=True, export_morph_normal=False, export_try_sparse_sk=False, export_animations=True)   # 不用稀疏 accessor：glTFast 读稀疏形变键会出乱几何（真机 E27 楔形面罩）
 print('exported', dst)
