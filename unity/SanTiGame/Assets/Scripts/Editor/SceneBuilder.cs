@@ -186,6 +186,7 @@ namespace SanTi.Editor
                     if (rends.Length > 0) { var b = rends[0].bounds; foreach (var r in rends) b.Encapsulate(r.bounds); bottom = b.min.y; }
                     float dy = hit.point.y - bottom;
                     if (Mathf.Abs(dy) < 8f) { go.transform.position += Vector3.up * (dy - 0.02f); snapped++; }
+                    if (Mathf.Abs(dy) > 0.5f) Debug.Log($"[SanTi] snap-dbg {go.name} pos={go.transform.position} hit={hit.collider.name}@{hit.point.y:F2} bottom={bottom:F2} dy={dy:F2}");
                 }
                 own.ForEach(c => c.enabled = true);
             }
