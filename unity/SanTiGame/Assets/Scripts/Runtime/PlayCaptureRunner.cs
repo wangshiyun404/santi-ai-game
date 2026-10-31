@@ -46,6 +46,7 @@ namespace SanTi
                     string id = Path.GetFileNameWithoutExtension(scenePaths[_sceneIdx]);
                     Shot(cam, Path.Combine(outDir, $"{id}_play_t{times[_shotIdx]:00.0}s.png"), 1600, 900);
                     FaceShot(cam, Path.Combine(outDir, $"{id}_face_t{times[_shotIdx]:00.0}s.png"));
+                    if (_t > walkFrom) GaitShot(cam, Path.Combine(outDir, $"{id}_gait_t{times[_shotIdx]:00.0}s.png"));
                 }
                 _shotIdx++;
             }
@@ -61,6 +62,19 @@ namespace SanTi
             Vector3 head = p.transform.position + Vector3.up * 1.5f;
             go.transform.position = head + p.transform.forward * 1.3f + Vector3.up * 0.1f;
             go.transform.LookAt(head);
+            Shot(c, file, 900, 900);
+            Destroy(go);
+        }
+
+        /// <summary>REA Q1 步态核验：行走中从玩家右侧 2.2 m 拍全身侧视（前进方向 = 画面左）。脚尖与迈步应朝画面左。</summary>
+        static void GaitShot(Camera main, string file)
+        {
+            var p = GameObject.FindGameObjectWithTag("Player"); if (p == null) return;
+            var go = new GameObject("GaitCam"); var c = go.AddComponent<Camera>();
+            c.CopyFrom(main); c.fieldOfView = 35f; c.nearClipPlane = 0.05f;
+            Vector3 mid = p.transform.position + Vector3.up * 0.9f;
+            go.transform.position = mid + p.transform.right * 2.2f;
+            go.transform.LookAt(mid);
             Shot(c, file, 900, 900);
             Destroy(go);
         }
