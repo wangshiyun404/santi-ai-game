@@ -2265,7 +2265,7 @@
   "clues": [
     {
       "id": "clue_dehydration",
-      "subtitle": "脱水——",
+      "subtitle": "快，脱水！",
       "narration": "vo_01_dehydration.wav"
     },
     {

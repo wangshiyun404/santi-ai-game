@@ -409,7 +409,7 @@ def build_scene_chaotic():
         "palette": P,
         "lighting": {"sunAngle": [35, 0, 160], "intensity": 6, "ambient": "#D9D6CF", "fog": {"color": "#D9D6CF", "start": 120, "end": 520}},
         "clues": [
-            {"id": "clue_dehydration", "subtitle": "脱水——", "narration": "vo_01_dehydration.wav"},
+            {"id": "clue_dehydration", "subtitle": "快，脱水！", "narration": "vo_01_dehydration.wav"},
             {"id": "clue_pyramid_follower", "subtitle": "跟我来，大王在金字塔里等你。", "narration": "vo_01_follower.wav"},
             {"id": "clue_lakebed", "subtitle": "乱纪元开始了。", "narration": "vo_01_chaotic_begins.wav"},
         ],
@@ -475,7 +475,7 @@ def build_scene_computer():
                       "blocks": [{**b, "origin": [round(-b["origin"][0] - (b["cols"] - 1) * b["spacing"], 3), round(-b["origin"][1] - (b["rows"] - 1) * b["spacing"], 3)]} for b in blocks]},
         "clues": [
             {"id": "clue_gate_soldier", "subtitle": "你是一个门电路。", "narration": "vo_02_gate.wav"},
-            {"id": "clue_bus", "subtitle": "这是系统总线。", "narration": "vo_02_bus.wav"},
+            {"id": "clue_bus", "subtitle": "这里是系统总线。", "narration": "vo_02_bus.wav"},
             {"id": "clue_von_neumann", "subtitle": "这是一台计算机！", "narration": "vo_02_computer.wav"},
         ],
         "events": [{"id": "three_suns", "trigger": "all_clues_done", "duration": 60}],

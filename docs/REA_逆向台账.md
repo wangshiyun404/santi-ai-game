@@ -42,6 +42,12 @@
 | E19 | `docs/rea_evidence/E19_soldier_axes.jpg` | Blender 四向渲染 | 人列计算机士兵（静态网格）原始朝向 glTF +Z，与绑骨角色（+X）不同；`SoldierFormation` yaw≈0 正确，阵列面向高台 |
 | E21 | `docs/rea_evidence/E21_ground_textures_play.jpg` | Unity 真机 PlayCapture | 三场景地面贴图生效（Q5 第二批通过）；`REA_round7_board.jpg` 为本轮前后对照看板 |
 | E16 | Blender 射线实验（`/tmp/dbg*.py`，见 §2 Q2 O7） | 实验 | 绑骨 GLB 导入后停在 idle 第 1 帧，头部已偏离绑定位 → 必须用 REST 姿态取脸面 |
+| E22 | `scripts/mac_verify.sh` 第 8 轮输出（`~/santi_review.zip`）+ `SceneBuilder` snap-dbg 日志 | Unity 真机 | 乱纪元 `DehydratedRoll_00` 贴地后 y=0.08（此前悬空），根因是贴地射线命中了脱水卷自己/别的道具；改为只对"地面类资产"射线 |
+| E23a | `docs/rea_evidence/E23_raw_mesh_front_back_side.jpg`、`E23_raw_feet_toes_negX.jpg`、`E23_tripo_front_render.jpg` | Blender/Cycles 渲染 `assets/tripo/char_player.glb`；Tripo 任务自带正面渲染图 | 原始网格：脸、围巾扣、开襟在 +X，**靴尖却在 −X**（脚尖离踝 11 cm 朝 −X，脚跟 4 cm 朝 +X）；Tripo 正面渲染里也能看出脚是反的 |
+| E23b | `docs/rea_evidence/E23_v1_v2_walk_still_backward.jpg` | Blender 逐帧侧视（走路 f2–f17，+X 在右） | v1（原绑骨）与 v2（只镜像了脚再绑骨）步态都朝 −X：着地脚向 +X 滑、跑步前倾朝 −X |
+| E23c | `docs/rea_evidence/E23_skeleton_mirror_attempt_failed.jpg` | Blender 渲染（`scripts/experiments/mirror_front_anim.py`） | 只镜像"骨架+动画、不镜像网格"的数学方案：姿态矩阵完全吻合（误差 0），但脚部蒙皮被拉成鸭蹼——因为 Tripo 重定向本身把脚骨相对绑定姿态翻了 125°，镜像后杠杆更大。方案否决 |
+| E23d | `docs/rea_evidence/E23_bodyfix_mesh.jpg`、`E23_v3_walk_forward_pass.jpg`、`E23_face_patches_v3.jpg` | Blender 渲染 `assets/tripo/fix/char_player_bodyfix.glb` 与 `assets/tripo/anim/char_player_anim.glb`（v3） | 脖子以下整体前后镜像后：脸/扣/靴尖同朝 +X；重新绑骨+重定向，`scripts/gait_check.py` 三剪辑 PASS（脚尖 +0.064、着地脚滑移 −0.0146、跑步前倾 +0.14）；几何五官按新绑定重建 |
+| E24 | `scripts/tts_tone_check.py` 输出（faster-whisper small/medium + Praat F0） | 语音核验 | 原 `vo_02_bus` 被转写为"戏土宗献"（总读成一声）、`vo_01_dehydration` 被转写为 "That's it!"（完全走样）、宣传片 n5 "四条线索"被听成"四桥线路"；替换稿分别转写为"这里是系统总线。""快，脱水！""集齐四条线索…"，「总」「水」F0 轮廓为低-降（三声） |
 
 ## 2. 问题清单与结论
 
@@ -58,6 +64,11 @@
 - **I5（修正）**：O1 是误读——E02 是 480p 录像再裁切放大，"胸口与脸"实际是披风兜帽的**背面**；低清证据不能作朝向定论。I1 对 glTFast 转手性的推断也错了：glTFast 翻的是 X 轴（+X 朝向 → −X），+90° 偏航把 −X 转到 +Z，**原代码本来是对的**。
 - **O11（E18）**：恢复 +90° 后，脸部特写拍到正脸（眼、眉、嘴清晰，一帧捕捉到眨眼），追尾镜头看到后背 → Q1 判据 1 通过。
 - **教训（写入方法）**：朝向这类二值问题，必须用"已知相机位 + 可辨识特征（五官）"的专用证据回答，不能靠全景抽帧目测；本轮为此新增 `PlayCaptureRunner.FaceShot` 作为固定核验手段。
+- **O12（E23a，第 8 轮，用户再次指出"他总是倒着跑"）**：此前 E18 只回答了"脸朝哪"，没有回答"腿往哪迈"。Blender 量化：原始网格的靴尖朝 −X 而脸朝 +X——**模型本身脚是反装的**（多视图生成时四张概念图不一致所致）。Tripo 自动绑骨以脚/腿判定前向（−X），重定向出的 walk/run 因而相对脸部倒着走：着地脚向 +X 滑 0.014 m/帧、跑步头部落后髋部 0.167 m。脸朝前进方向，腿却在倒退——这正是用户看到的"倒着跑"。
+- **I6（纠正 I5 的过度结论）**：E18 证明的是"+90° 让脸朝前"，并不能证明步态正确；"朝向"与"步态"是两个独立判据。低清录像不能定论是对的，但高清脸部特写同样不能替代步态核验。
+- **修复过程（E23b–d）**：① 只镜像脚 → Tripo 仍判前向 −X（它还参考膝盖/手等整体线索）；② 只镜像骨架+动画 → 数学上成立但蒙皮被破坏，否决；③ **脖子以下网格整体前后镜像**（`scripts/mirror_body_glb.py`，接缝藏在围巾里）→ 重新绑骨（骨骼静止系与其余 6 个角色的差异从 170° 降到 11°）→ 重定向 → `scripts/gait_check.py` PASS。共耗 Tripo 110 积分（两次绑骨+重定向），余额约 465。
+- **固化的核验手段**：`scripts/gait_check.py <anim.glb>`：逐剪辑输出脚尖方向、着地脚滑移、前倾，三项与脸向一致才算过；以后任何角色绑骨/重定向后必跑。
+- **待真机复核**：Mac `mac_verify.sh` 的侧视行走截图 + 新录像。
 - **用户所说"跑步方向错"的其余可能**（未结）：U1' 过场/自动演示中转向时镜头偏航滞后（1.5 s 时间常数）使角色短暂侧身奔跑；U1'' 人列计算机阵列与 NPC 的朝向（Q6）。待新录像复核。
 
 ### Q2 为什么"没有五官、没有表情"？
@@ -115,6 +126,13 @@
 - **修复（第一批）**：`Clue.speaker` 由 `SceneBuilder` 按 NPC 显示名注入（叶文洁 / 跟随者 / 冯·诺依曼 / 牛顿 / 秦始皇），字幕显示为"说话人：台词"；字幕时长 = 1.5 s + 0.28 s/字（4–9 s），对话近景与说话口型同步该时长；`Sfx` 运行时合成两段短音（确认音 660→990 Hz，靠近提示 880 Hz），不增加 WebGL 体积。
 - 未结：脚步声、环境声（风 / 阵列翻旗声）—— 需音频资源或程序化合成，列入 v0.3。
 
+### Q8 语音为什么"读错字"？（第 8 轮新增）
+
+- **O13**（E24）：用户指出"系统总线"的"总"读成了一声、"脱水"像方言。用 faster-whisper 把全部 9 条游戏内配音和 7 条宣传片旁白转写：`vo_02_bus` → "戏土宗献"，`vo_01_dehydration` → "That's it!"，宣传片 n5 "四条线索看齐" → "四桥线路看齐"；其余条目转写正确（同音字差异除外）。
+- **I7**：TTS 对**超短句 / 破折号拖音 / 生僻搭配**最不稳：两字句"脱水——"被模型当成英语感叹；"总线"孤立出现时多音字"总"倾向读轻/一声；"四条线索看齐"是不自然的搭配。
+- **修复（设计选择）**：改写成 TTS 更稳的自然句，并保持剧情语义："这里是系统总线。""快，脱水！""集齐四条线索，三日凌空。"字幕同步改（`layouts/*.json`、`StreamingAssets`、`blender/build_assets.py`）。每条替换稿都经 `scripts/tts_tone_check.py`：转写含目标文本 + 关键字 F0 轮廓符合声调（三声低-降）。
+- **固化的核验手段**：任何新配音先过 `tts_tone_check.py`，转写不含原文即判不合格；不靠"听起来差不多"。
+
 ## 3. 重建蓝图（观察到的行为 vs 设计选择）
 
 | 模块 | 观察到的现状 | 设计选择（v0.2） | 依据 |
@@ -137,12 +155,13 @@
 
 | 问题 | 状态 | 已落地的改动 |
 |---|---|---|
-| Q1 | 已核验（E17/E18）：原 +90° 正确，−90° 误改已回退 | `PlayCaptureRunner.FaceShot` 脸部特写核验 |
+| Q1 | **第 8 轮重开并修复**：脸向（E18）正确，但步态倒退（E23a/b）；网格脖子以下前后镜像 + 重新绑骨/重定向，`gait_check.py` PASS（E23d）；待真机复核 | `scripts/mirror_body_glb.py`、`scripts/tripo_refix_player.py`、`scripts/gait_check.py`、`PlayCaptureRunner.FaceShot` |
 | Q2 | 已答；Blender 与真机（E18）核验通过，表情触发待录像复核 | `face_patches.py`、`face_skin_fix.py`、`FaceExpression.cs`、`FollowCamera` 近景、`Clue` 触发 |
 | Q3 | 已答，待真机核验 | `ThirdPersonController` 2.0/4.5 m/s + Shift；`CharacterAnimator` 阈值 3.3、速率缩放 |
-| Q4 | 已答，待真机核验 | `SceneBuilder` 射线贴地 |
+| Q4 | 已真机核验（E22）：悬空脱水卷落地 y=0.08 | `SceneBuilder` 只对地面类资产射线贴地 |
 | Q5 | 第一、二批已真机核验（E21）；第三批（方块建筑替换、远景）未开始 | `Skybox/Procedural`；`scripts/ground_textures.py` + `SceneBuilder.ApplyGroundTexture`（cliff 用世界 XZ 平面 UV） |
 | Q6 | 已答，待真机核验 | `NpcLookAt.cs` |
+| Q8 | 已修（E24），待录像复核 | `scripts/tts_tone_check.py`；3 条配音/旁白改稿重生成 |
 | Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
 核验入口：Mac 上 `bash scripts/mac_verify.sh` → `~/santi_review.zip`（每场景 3 个时刻的全景 + 正面脸部特写）。

@@ -1286,7 +1286,7 @@
     },
     {
       "id": "clue_bus",
-      "subtitle": "这是系统总线。",
+      "subtitle": "这里是系统总线。",
       "narration": "vo_02_bus.wav",
       "at": [
         146,
