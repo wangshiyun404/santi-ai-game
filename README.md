@@ -8,6 +8,8 @@
 ```
 santi/
 ├── docs/PRD.md                 产品需求与关卡设计（第 1 天产出）
+├── docs/REA_逆向台账.md         逐轮问题、证据、根因、失败实验（REA 纪律）
+├── docs/REA_3A设计研究.md       3A 镜头/动画/光色/叙事/交互对照与 v0.3 行动表
 ├── docs/tripo_prompts.md       A 类资产的 Tripo 提示词与参数
 ├── docs/tripo_manifest.json    Tripo 批量生成清单（16 项）
 ├── scripts/tripo_batch.py      Tripo 批量生成脚本（上传→建任务→轮询→下载 GLB）
