@@ -2,6 +2,10 @@
 # 在 Mac 上一键：重建三场景 → WebGL 构建 → 同步到 dist/webgl（保留 index.html，重新给 loader.js 打补丁）→ 提交推送。
 # 用法：cd ~/santi-ai-game && git pull && bash scripts/mac_rebuild_webgl.sh
 set -u
+# 互斥锁：避免同一命令被重复执行（Unity 批处理同时只能开一个实例）
+LOCK="$HOME/.santi_build.lock"
+if ! mkdir "$LOCK" 2>/dev/null; then echo "another build instance is running, exit"; exit 1; fi
+trap 'rmdir "$LOCK" 2>/dev/null' EXIT
 ROOT="$HOME/santi-ai-game"
 U=/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/MacOS/Unity
 P="$ROOT/unity/SanTiGame"

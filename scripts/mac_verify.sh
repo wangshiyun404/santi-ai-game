@@ -2,6 +2,10 @@
 # Mac 上：拉代码 → 重建三场景 → Play 模式盲审截图（含正面脸部特写）→ 打包到 ~/santi_review.zip
 # 状态写到 ~/santi_verify_status.txt（只含计数与摘要，不含日志全文）
 set -u
+# 互斥锁：避免同一命令被重复执行（Unity 批处理同时只能开一个实例）
+LOCK="$HOME/.santi_build.lock"
+if ! mkdir "$LOCK" 2>/dev/null; then echo "another build instance is running, exit"; exit 1; fi
+trap 'rmdir "$LOCK" 2>/dev/null' EXIT
 ROOT="$HOME/santi-ai-game"; U=/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/MacOS/Unity
 P="$ROOT/unity/SanTiGame"; S="$HOME/santi_verify_status.txt"; R="$HOME/santi_review"
 cd "$ROOT" || exit 1
