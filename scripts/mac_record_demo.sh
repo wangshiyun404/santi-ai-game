@@ -2,6 +2,11 @@
 # 在 Mac 上录制自动演示：mac_record_demo.sh [秒数，默认 240] [--build]
 # 产物：~/santi_demo.mov（原始录屏）、~/santi_demo_1080.m4v（压缩版）、~/santi_demo_timeline.txt（事件时间线）
 SECS=${1:-240}
+# 互斥锁：同一时刻只允许一个录制实例（E22：Terminal 曾把同一条命令执行两次，两个游戏实例互相遮挡）
+LOCK="$HOME/.santi_record.lock"
+if ! mkdir "$LOCK" 2>/dev/null; then echo "another record instance is running, exit"; exit 1; fi
+trap 'rmdir "$LOCK" 2>/dev/null' EXIT
+pgrep -f "三体：三体游戏" >/dev/null && pkill -f "三体：三体游戏"; sleep 1
 MON=${SANTI_MONITOR:-1}   # 1=主显示器；2=第二块屏（录第二块屏时主屏可继续干活）
 S="$HOME/santi_rec_status.txt"
 ROOT="$HOME/santi-ai-game"

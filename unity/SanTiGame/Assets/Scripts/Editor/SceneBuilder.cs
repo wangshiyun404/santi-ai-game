@@ -28,6 +28,7 @@ namespace SanTi.Editor
         const string MatDir = "Assets/Materials";
         // 碰撞规则：大而不规则的用 MeshCollider；远景/装饰/发光面片不加碰撞（围栏若用 BoxCollider 会把整个高地封死）
         static readonly System.Collections.Generic.HashSet<string> MeshColliderAssets = new() { "platform", "cliff", "pyramid", "fence_ring", "dry_lakebed", "dish_tower" };
+        static readonly System.Collections.Generic.HashSet<string> GroundLikeAssets = new() { "cliff", "platform", "dry_lakebed" };
         static readonly System.Collections.Generic.HashSet<string> NoCollider = new() { "cloud_sea", "window_lights", "sun_sphere", "mountains" };
         // 需要贴地的小物件（REA Q4）
         static readonly System.Collections.Generic.HashSet<string> SnapAssets = new() { "rock_small", "dehydrated_roll", "jeep", "bamboo_slips", "control_console", "sand_table", "bronze_sword", "flagpole" };
@@ -97,6 +98,7 @@ namespace SanTi.Editor
 
             // ---- 物件 ----
             GameObject player = null; Transform playerSpawn = null; Renderer groundRenderer = null; Transform sunSphere = null;
+            var groundCols = new System.Collections.Generic.HashSet<Collider>();   // 贴地射线只认这些面（E22：曾贴到石碑顶上）
             var snapList = new System.Collections.Generic.List<GameObject>();
             foreach (var o in data.objects)
             {
@@ -125,7 +127,10 @@ namespace SanTi.Editor
                 {
                     if (NoCollider.Contains(o.asset)) continue;
                     if (o.asset.StartsWith("ground") || MeshColliderAssets.Contains(o.asset))
-                        mf.gameObject.AddComponent<MeshCollider>();
+                    {
+                        var mc = mf.gameObject.AddComponent<MeshCollider>();
+                        if (o.asset.StartsWith("ground") || GroundLikeAssets.Contains(o.asset)) groundCols.Add(mc);
+                    }
                     else if (o.@static && mf.GetComponent<Collider>() == null) mf.gameObject.AddComponent<BoxCollider>();
                 }
                 if (o.asset.StartsWith("ground")) groundRenderer = go.GetComponentInChildren<Renderer>();
@@ -170,7 +175,11 @@ namespace SanTi.Editor
                 var own = go.GetComponentsInChildren<Collider>().ToList();
                 own.ForEach(c => c.enabled = false);
                 var from = go.transform.position + Vector3.up * 60f;
-                if (Physics.Raycast(from, Vector3.down, out var hit, 200f))
+                // 只认地面类碰撞体（E22：此前射线先打到同位置的线索石碑顶部，脱水人卷悬在 2 m 高）
+                RaycastHit hit = default; bool got = false;
+                foreach (var h in Physics.RaycastAll(from, Vector3.down, 200f))
+                    if (groundCols.Contains(h.collider) && (!got || h.point.y > hit.point.y)) { hit = h; got = true; }
+                if (got)
                 {
                     var rends = go.GetComponentsInChildren<Renderer>();
                     float bottom = go.transform.position.y;
