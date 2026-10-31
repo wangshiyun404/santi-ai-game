@@ -49,6 +49,8 @@
 | E23d | `docs/rea_evidence/E23_bodyfix_mesh.jpg`、`E23_v3_walk_forward_pass.jpg`、`E23_face_patches_v3.jpg` | Blender 渲染 `assets/tripo/fix/char_player_bodyfix.glb` 与 `assets/tripo/anim/char_player_anim.glb`（v3） | 脖子以下整体前后镜像后：脸/扣/靴尖同朝 +X；重新绑骨+重定向，`scripts/gait_check.py` 三剪辑 PASS（脚尖 +0.064、着地脚滑移 −0.0146、跑步前倾 +0.14）；几何五官按新绑定重建 |
 | E24 | `scripts/tts_tone_check.py` 输出（faster-whisper small/medium + Praat F0） | 语音核验 | 原 `vo_02_bus` 被转写为"戏土宗献"（总读成一声）、`vo_01_dehydration` 被转写为 "That's it!"（完全走样）、宣传片 n5 "四条线索"被听成"四桥线路"；替换稿分别转写为"这里是系统总线。""快，脱水！""集齐四条线索…"，「总」「水」F0 轮廓为低-降（三声） |
 | E25 | `docs/rea_evidence/E25_mac_gait_face_round9.jpg`、`E25_take9_run_from_behind.jpg` | Unity 真机第 9 轮（`PlayCapture` 新增 `GaitShot` 侧视 + take9 录像抽帧） | 三个场景行走侧视：靴尖与迈步均朝前进方向，披风向后飘；脸部薄片五官正常；录像背视奔跑时摆动腿脚跟向后上方抬起（正向跑的特征）。成片 ASR 复核："快，脱水。""这里是系统总线。""集齐四条线索，三日凌空…" |
+| E26 | `docs/rea_evidence/E26a_hero_v1_janus_head.jpg`、`E26b_hero_refs_v1_leftright_swapped.jpg` | Blender/Cycles 渲染第 10 轮写实主角第 1 次 Tripo 生成（4 视图 → 3.1 多视图） | 后脑长出第二张脸（"雅努斯头"）；根因：参考图 `left`/`right` 文件名装反（Tripo 约定 left = 相机在人物左侧、人物面朝画面左），多视图互相矛盾 |
+| E26' | `docs/rea_evidence/E26_hero_v2_views_heads_expressions.jpg`、`E26_char_ye_hero_tripo_render.png`、`E26c_hero_gait_strips.jpg` | 第 2 次生成（左右换回）：`mesh_check.py` 体检 + 四视图/头部三视图/四表情渲染 + walk/run 侧视抽帧 | 单一正脸、后脑干净、脚尖与脸同向 +X；臂长/身高 0.30、裆高/身高 0.405；`gait_check.py` PASS；4 个形变键（blink/jaw_open/smile/brows_up）有效；run 剪辑髋骨原有 0.53 m 水平偏移已归零 |
 
 ## 2. 问题清单与结论
 
@@ -134,6 +136,21 @@
 - **修复（设计选择）**：改写成 TTS 更稳的自然句，并保持剧情语义："这里是系统总线。""快，脱水！""集齐四条线索，三日凌空。"字幕同步改（`layouts/*.json`、`StreamingAssets`、`blender/build_assets.py`）。每条替换稿都经 `scripts/tts_tone_check.py`：转写含目标文本 + 关键字 F0 轮廓符合声调（三声低-降）。
 - **固化的核验手段**：任何新配音先过 `tts_tone_check.py`，转写不含原文即判不合格；不靠"听起来差不多"。
 
+### Q9 主角为什么"手臂短、没表情、像机器人"？（第 10 轮新增）
+
+- **O14（用户反馈）**："叶文洁……手和胳膊很短，而且没有任何表情。她是个女科学家，需要塑造得真实、逼真一些，就像 Steam 游戏里的女性角色那样。"
+- **I8（根因）**：旧主角 `char_player` 是低模斗篷人——① 原始 T-pose 参考图本身就是卡通比例，Tripo 据此生成的臂长/身高约 0.25；② 贴图无五官，Q2 的"几何薄片五官"只能开关可见性，做不出真实表情；③ 全程只有 idle/walk/run，没有头部微动。三者叠加就是"机械"。
+- **设计选择**：用户要的是 Steam 写实女性角色，这是风格决定，不再"低模统一"：
+  1. 参考图改为写实多视图（1971 年前后、二十多岁中国女天体物理学者，双辫、军绿棉袄、灰毛衣、白衬衫领、藏青裤、黑布鞋，A 姿态，4 视图同光照同背景）；
+  2. Tripo v3 `multiview-to-model`（3.1，PBR，detailed 贴图，30k 面）→ 自动绑骨（biped/mixamo）→ idle/walk/run 原地重定向；
+  3. Tripo 没有表情，在 Blender 里按"贴图取色 + 几何位置"自动定位瞳孔（最暗簇）与唇（最红簇），生成 4 个形变键导出为 glTF morph targets（`scripts/hero_expressions.py`）；
+  4. Unity `FaceExpression` 新增 BlendShape 模式：眨眼 100、说话 35–55 抖动、惊讶张嘴 70 + 抬眉、平时微笑 18；`LateUpdate` 叠加 Perlin 头部微动 ±2.5°（说话时 ±4.5°）；有形变键就不再挂卡通薄片；
+  5. 身高表 1.72 → 1.62 m；主角基础色外置 2048（其它角色 1024）；场景 0 删去同名 NPC（玩家本人就是叶文洁）。
+- **第 1 次生成失败（E26a/b）**：后脑长出第二张脸。查到参考图左右视图装反——这是多视图生成最常见的翻车点，已把约定写进 `mesh_check.py` 注释与本条。**教训**：多视图喂模型之前，先把 4 张图拼成一排人眼复核"侧视图里人物面朝哪边"。
+- **第 2 次生成（E26'）**：体检 PASS；步态 PASS；表情渲染可辨。已知限制：脸部网格稀疏，blink=100 时眉毛会被一起拉低（真机眨眼 130 ms、镜头 4 m 外不可见），后续可用 Tripo `detailed` 几何或手工加密脸部网格。
+- **顺手修的旧毛病**：Tripo 重定向的 run 剪辑髋骨整体偏前 0.53 m（旧主角同样如此，一直没人发现——因为相机跟的是控制器），`hero_expressions.py` 把 walk/run 髋骨水平均值对齐到 idle。
+- **待真机复核**：Mac `mac_verify.sh` 的 FaceShot/GaitShot + 重录宣传片；移动端/WebGL 体积（主角 GLB 1.5 MB + 2048 贴图 Crunch）。
+
 ## 3. 重建蓝图（观察到的行为 vs 设计选择）
 
 | 模块 | 观察到的现状 | 设计选择（v0.2） | 依据 |
@@ -145,6 +162,7 @@
 | 道具落地 | y=0 | 射线贴地 | Q4 |
 | 天空/地面 | 纯色 | 程序化天空 + 噪声贴图 | Q5 |
 | NPC | 固定朝向 | 注视玩家 | Q6 |
+| 主角形象 | 低模斗篷人，臂短、无五官 | 写实叶文洁（多视图→Tripo 3.1 PBR）+ 形变键表情 + 头部微动 | Q9 |
 
 ## 4. 路线图
 
@@ -163,6 +181,7 @@
 | Q5 | 第一、二批已真机核验（E21）；第三批（方块建筑替换、远景）未开始 | `Skybox/Procedural`；`scripts/ground_textures.py` + `SceneBuilder.ApplyGroundTexture`（cliff 用世界 XZ 平面 UV） |
 | Q6 | 已答，待真机核验 | `NpcLookAt.cs` |
 | Q8 | 已修（E24），成片 ASR 复核通过（E25） | `scripts/tts_tone_check.py`；3 条配音/旁白改稿重生成 |
+| Q9 | 模型/动画/表情已做并在 Blender 核验（E26'），待真机与录像复核 | `scripts/tripo_hero.py`、`scripts/mesh_check.py`、`scripts/hero_expressions.py`、`FaceExpression` BlendShape 模式、`SceneBuilder` 身高表/表情分流 |
 | Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
 核验入口：Mac 上 `bash scripts/mac_verify.sh` → `~/santi_review.zip`（每场景 3 个时刻的全景 + 正面脸部特写）。

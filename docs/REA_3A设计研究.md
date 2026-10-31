@@ -58,6 +58,8 @@ Journey 的镜头设计师 John Nesky 在 GDC 的《50 Game Camera Mistakes》�
 - `CharacterAnimator` 是 idle/walk/run 三态直切（有 crossfade），无 Blend Tree、无脚 IK、无转身、无起步/停步。
 - 移动速度（walk 2.2 / run 4.5 m/s）是拍脑袋值，没有按动画实测步幅标定。
 - 所有角色共用 Tripo 的通用 walk/run，没有个性（叶文洁和士兵走路一样）。
+- 第 10 轮发现：Tripo 重定向的 run 剪辑髋骨整体偏前 0.53 m，"原地"动画其实跑在控制器前面半米——相机跟的是控制器，所以一直没人看出来；已在 `hero_expressions.py` 里把 walk/run 髋骨水平均值对齐 idle（台账 Q9）。
+- **角色形象**（第 10 轮，用户反馈"胳膊短、没表情、机械"）：3A 女性主角的写实感来自三层——比例正确的人体与服装（Aloy、Ellie 都严格按真人扫描/参考比例）、面部 BlendShape 驱动的微表情与眨眼、以及待机时持续的头/视线/呼吸微动（"活着的静止"）。我们的旧主角三层全缺。现已改为写实叶文洁（多视图 → Tripo 3.1 PBR）+ 4 个形变键 + Perlin 头部微动；量化体检 `mesh_check.py`：臂长/身高 0.30（真人 0.30–0.36），裆高/身高 0.405。
 
 ### v0.3 行动（可核验）
 
@@ -68,6 +70,8 @@ Journey 的镜头设计师 John Nesky 在 GDC 的《50 Game Camera Mistakes》�
 | A3 | 简易脚 IK：Animator `OnAnimatorIK` 每脚向下射线，着地相位（由 A1 导出的相位曲线）权重 1，摆动相位 0 | 斜坡上截图脚底与地面间隙 <2 cm |
 | A4 | 转身：偏航差 >60° 且无前进输入时播 Tripo 预设里的 turn 剪辑（若无则用 walk 前 6 帧 + 根旋转） | 原地按 A/D 时截图序列有踏步 |
 | A5 | 起步/停步各 0.15 s 的身体前倾/后仰（程序化：根据加速度给脊柱 ±6°） | 录像里起跑第一步不是瞬间全速 |
+| A6 | **面部与待机生命感**（已做第一版）：BlendShape 眨眼/说话/惊讶/微笑 + 头部 Perlin 微动；下一步：视线 IK 看向最近线索或 NPC、呼吸（胸骨缩放 ±1%） | FaceShot 连续 3 秒抽帧至少出现 1 次眨眼；待机 5 秒头部朝向标准差 >1° |
+| A7 | **脸部网格密度**：当前 Tripo standard 几何的脸区顶点稀疏，blink=100 会把眉毛拉低；下一版改 `geometry_quality: detailed` 或在 Blender 对脸区细分一次再做形变键 | 眨眼帧眉毛位移 <2 mm |
 
 ---
 
