@@ -21,7 +21,7 @@ namespace SanTi.Editor
         const string FaceDir = "Assets/Models/Face";   // scripts/face_patches.py 生成的五官薄片
         const string AnimDir = "Assets/Models/Anim";   // Tripo 绑骨+动画 GLB（原始 1 m 归一化、朝向 +X），由 InstantiateCharacter 统一缩放/转向
         static readonly System.Collections.Generic.Dictionary<string, float> CharHeight = new()
-        { { "char_player", 1.72f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_newton", 1.70f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
+        { { "char_player", 1.62f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_newton", 1.70f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
         static readonly System.Collections.Generic.Dictionary<string, string> CharDisplayName = new()
         { { "char_ye_wenjie", "叶文洁" }, { "char_follower", "跟随者" }, { "char_von_neumann", "冯·诺依曼" }, { "char_newton", "牛顿" }, { "char_qin", "秦始皇" } };
         const string SceneDir = "Assets/Scenes";
@@ -306,8 +306,12 @@ namespace SanTi.Editor
                 var ca = root.AddComponent<CharacterAnimator>();
                 ca.anim = inst.GetComponentInChildren<Animation>(); ca.controller = controller;
                 // REA Q2：几何五官 + 表情（有 _face.glb 的角色）
-                var face = AssetDatabase.LoadAssetAtPath<GameObject>($"{FaceDir}/{name}_face.glb");
-                if (face != null) { var fe = root.AddComponent<FaceExpression>(); fe.facePrefab = face; }
+                // 第 10 轮（REA Q9）：写实主角自带形变键（blink/jaw_open/smile/brows_up，scripts/hero_expressions.py），
+                // 走 BlendShape 模式；几何薄片只给没有形变键的低模 NPC（写实脸 + 卡通薄片会很怪）。
+                var smr = inst.GetComponentInChildren<SkinnedMeshRenderer>();
+                bool hasBlend = smr != null && smr.sharedMesh != null && smr.sharedMesh.blendShapeCount > 0;
+                var face = hasBlend ? null : AssetDatabase.LoadAssetAtPath<GameObject>($"{FaceDir}/{name}_face.glb");
+                if (hasBlend || face != null) { var fe = root.AddComponent<FaceExpression>(); fe.facePrefab = face; }
             }
             else
             {

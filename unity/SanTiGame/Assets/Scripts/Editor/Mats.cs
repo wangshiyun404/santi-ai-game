@@ -74,7 +74,7 @@ namespace SanTi.Editor
             return dst;
         }
 
-        /// <summary>外置 Tripo 贴图导入设置：sRGB、mipmap、压缩（Crunch 质量 70）、最大 1024；WebGL 构建体积从 145 MB 降到约 30 MB。</summary>
+        /// <summary>外置 Tripo 贴图导入设置：sRGB、mipmap、压缩（Crunch 质量 70）、最大 1024（主角 2048）；WebGL 构建体积从 145 MB 降到约 30 MB。</summary>
         public static void SetupTextureImporters()
         {
             if (!Directory.Exists(TexDir)) return;
@@ -84,9 +84,10 @@ namespace SanTi.Editor
                 var path = file.Replace('\\', '/');
                 var ti = AssetImporter.GetAtPath(path) as TextureImporter;
                 if (ti == null) continue;
-                bool dirty = ti.maxTextureSize != 1024 || !ti.crunchedCompression || ti.textureCompression != TextureImporterCompression.Compressed;
+                int maxSize = Path.GetFileName(path).StartsWith("char_player") ? 2048 : 1024;   // 第 10 轮：写实主角脸部需要 2048
+                bool dirty = ti.maxTextureSize != maxSize || !ti.crunchedCompression || ti.textureCompression != TextureImporterCompression.Compressed;
                 ti.textureType = TextureImporterType.Default; ti.sRGBTexture = true; ti.mipmapEnabled = true;
-                ti.maxTextureSize = 1024; ti.textureCompression = TextureImporterCompression.Compressed;
+                ti.maxTextureSize = maxSize; ti.textureCompression = TextureImporterCompression.Compressed;
                 ti.crunchedCompression = true; ti.compressionQuality = 70; ti.alphaIsTransparency = false;
                 if (dirty) { ti.SaveAndReimport(); n++; }
             }

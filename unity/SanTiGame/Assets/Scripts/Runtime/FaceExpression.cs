@@ -8,6 +8,9 @@ namespace SanTi
     /// 导出 Assets/Models/Face/&lt;name&gt;_face.glb；本组件在运行时把这些薄片挂到 Head 骨骼上
     /// （薄片与蒙皮网格同处绑定空间：child.local = bindposes[head]），再按状态切换可见性做表情：
     /// 随机眨眼、说话（张嘴/闭嘴交替）、惊讶（睁大眼 + 张嘴）。
+    /// 第 10 轮（REA Q9）：写实主角改用 BlendShape 模式——网格自带形变键 blink / jaw_open / smile / brows_up
+    /// （scripts/hero_expressions.py 生成，glTFast 导入为 SkinnedMeshRenderer 的 BlendShape），按同样的状态机平滑驱动权重；
+    /// 另加轻微的呼吸/视线微动（头骨随机小角度偏转），避免"站着像木偶"。
     /// </summary>
     public class FaceExpression : MonoBehaviour
     {
@@ -18,11 +21,31 @@ namespace SanTi
         float _nextBlink, _blinkUntil, _talkUntil, _surpriseUntil, _mouthFlip;
         bool _ready;
 
+        // ---- BlendShape 模式 ----
+        SkinnedMeshRenderer _smr; int _bBlink = -1, _bJaw = -1, _bSmile = -1, _bBrows = -1; bool _blend;
+        float _wBlink, _wJaw, _wSmile, _wBrows;
+        Transform _head; Quaternion _headBase; Vector3 _lookSeed;
+
         void Start()
         {
-            if (facePrefab == null) { enabled = false; return; }
             var smr = GetComponentInChildren<SkinnedMeshRenderer>();
             if (smr == null || smr.bones == null || smr.sharedMesh == null) { enabled = false; return; }
+            if (smr.sharedMesh.blendShapeCount > 0)
+            {
+                _smr = smr; var mesh = smr.sharedMesh;
+                for (int i = 0; i < mesh.blendShapeCount; i++)
+                {
+                    string n = mesh.GetBlendShapeName(i).ToLowerInvariant();
+                    if (n.EndsWith("blink")) _bBlink = i; else if (n.EndsWith("jaw_open")) _bJaw = i; else if (n.EndsWith("smile")) _bSmile = i; else if (n.EndsWith("brows_up")) _bBrows = i;
+                }
+                _blend = _bBlink >= 0 || _bJaw >= 0;
+                foreach (var b in smr.bones) { if (b != null && b.name.ToLowerInvariant().EndsWith("head")) { _head = b; break; } }
+                _lookSeed = new Vector3(Random.value * 100f, Random.value * 100f, 0);
+                _ready = _blend; _nextBlink = Time.time + Random.Range(blinkMin, blinkMax);
+                if (!_ready) enabled = false;
+                return;
+            }
+            if (facePrefab == null) { enabled = false; return; }
             int h = -1;
             for (int i = 0; i < smr.bones.Length; i++)
             {
@@ -72,7 +95,37 @@ namespace SanTi
             float t = Time.time;
             if (t > _nextBlink) { _blinkUntil = t + blinkDur; _nextBlink = t + Random.Range(blinkMin, blinkMax); }
             if (t < _talkUntil && t > _mouthFlip) _mouthFlip = t + Random.Range(0.08f, 0.16f);
-            Apply();
+            if (_blend) ApplyBlend(); else Apply();
+        }
+
+        void ApplyBlend()
+        {
+            float t = Time.time, dt = Time.deltaTime;
+            bool closed = t < _blinkUntil, surprised = t < _surpriseUntil, talking = t < _talkUntil;
+            bool mouthOpen = surprised || (talking && Mathf.FloorToInt((_mouthFlip - t) * 12f) % 2 == 0);
+            // 目标权重（0–100）：眨眼快、嘴/眉慢；惊讶张嘴 70、说话 35–55 抖动
+            float tBlink = closed ? 100f : 0f;
+            float tJaw = surprised ? 70f : mouthOpen ? Random.Range(35f, 55f) : 0f;
+            float tBrows = surprised ? 100f : 0f;
+            float tSmile = (!surprised && !talking) ? 18f : 0f;   // 平时带一点点柔和的微笑，避免面无表情
+            _wBlink = Mathf.MoveTowards(_wBlink, tBlink, dt * 1400f);
+            _wJaw = Mathf.Lerp(_wJaw, tJaw, 1f - Mathf.Exp(-dt * 18f));
+            _wBrows = Mathf.Lerp(_wBrows, tBrows, 1f - Mathf.Exp(-dt * 10f));
+            _wSmile = Mathf.Lerp(_wSmile, tSmile, 1f - Mathf.Exp(-dt * 3f));
+            if (_bBlink >= 0) _smr.SetBlendShapeWeight(_bBlink, _wBlink);
+            if (_bJaw >= 0) _smr.SetBlendShapeWeight(_bJaw, _wJaw);
+            if (_bBrows >= 0) _smr.SetBlendShapeWeight(_bBrows, _wBrows);
+            if (_bSmile >= 0) _smr.SetBlendShapeWeight(_bSmile, _wSmile);
+        }
+
+        void LateUpdate()
+        {
+            // 头部微动（在动画求值之后叠加）：慢速 Perlin 噪声 ±3°，说话/惊讶时幅度略大
+            if (!_blend || _head == null) return;
+            float t = Time.time; float amp = (t < _talkUntil || t < _surpriseUntil) ? 4.5f : 2.5f;
+            float yaw = (Mathf.PerlinNoise(_lookSeed.x, t * 0.18f) - 0.5f) * 2f * amp;
+            float pitch = (Mathf.PerlinNoise(_lookSeed.y, t * 0.23f) - 0.5f) * 2f * amp * 0.6f;
+            _head.localRotation = _head.localRotation * Quaternion.Euler(pitch, yaw, 0);
         }
 
         void Apply()

@@ -16,8 +16,9 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 U = os.path.join(ROOT, "unity", "SanTiGame", "Assets")
 TEX_DIR = os.path.join(U, "Textures", "Tripo")
-HI = {"char_player", "char_ye_wenjie", "char_newton", "char_von_neumann", "char_qin", "char_follower",
+HI = {"char_ye_wenjie", "char_newton", "char_von_neumann", "char_qin", "char_follower",
       "dish_tower", "jeep", "control_console", "sand_table", "pyramid"}   # 1024；其余 512
+XHI = {"char_player"}   # 第 10 轮：写实主角（Tripo 4096² 基础色，脸只占图集一小块）→ 2048，Unity 侧 Crunch 压缩
 
 
 def read_glb(path):
@@ -67,7 +68,7 @@ def process(path):
     if base_img is not None and not os.path.exists(out_png):
         data = view_bytes(j, bin_, base_img["bufferView"])
         im = Image.open(io.BytesIO(data)).convert("RGBA")
-        size = 1024 if name in HI else 512
+        size = 2048 if name in XHI else 1024 if name in HI else 512
         if max(im.size) > size:
             im = im.resize((size, size), Image.LANCZOS)
         if im.getextrema()[3] == (255, 255):

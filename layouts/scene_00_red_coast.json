@@ -629,28 +629,6 @@
       "static": true,
       "added_by": "apply_tripo_layout",
       "clue": "clue_reply"
-    },
-    {
-      "asset": "char_ye_wenjie",
-      "name": "YeWenjie",
-      "position": [
-        28.5,
-        0,
-        13.5
-      ],
-      "rotation": [
-        0.0,
-        -180.0,
-        0.0
-      ],
-      "scale": [
-        1.0,
-        1.0,
-        1.0
-      ],
-      "static": false,
-      "added_by": "apply_tripo_layout",
-      "role": "npc"
     }
   ],
   "palette": {

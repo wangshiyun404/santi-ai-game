@@ -60,8 +60,8 @@
 
 | 角色 | 出现场景 | 是否绑骨 | 动作 |
 |---|---|---|---|
-| 玩家角色（无名"V装具"玩家 / 斗篷人） | 全部 | 是 | idle、walk、look、interact（伸手触碰） |
-| 叶文洁 | 场景 0 | 是 | idle、walk、press_button（IK 微调手接触按键） |
+| 玩家角色 = 叶文洁（第 10 轮改为写实风格：多视图 → Tripo 3.1 PBR，自带 blink/jaw_open/smile/brows_up 形变键） | 全部 | 是 | idle、walk、run + BlendShape 表情 |
+| ~~叶文洁 NPC（场景 0）~~ 第 10 轮并入玩家角色，场景 0 不再放同名 NPC | — | — | — |
 | 追随者 / 周文王 | 场景 1 | 是 | idle、kneel |
 | 士兵（基准） | 场景 2 | 否（两个静态 Pose：黑旗/白旗） | 几何节点/实例化切换 |
 | 冯·诺依曼、牛顿、秦始皇 | 场景 2 高台 | 是 | idle、point |

@@ -84,6 +84,15 @@ cap(V(t_lake + 6), V(t_slips - 1.5), "2.5× 快进", "speed")
 cap(V(t_bus + 6), V(t_sword - 6), "2.5× 快进", "speed")
 cap(V(t_sword + 15), V(t_sword + 52), "4× 快进", "speed")
 
+# 同一位置的字幕不得在时间上重叠（第 9 版曾出现两条 tip 叠在一起）：后一条开始前 0.3 s 结束前一条
+for style in ("tip", "title", "speed"):
+    idx = [i for i, c in enumerate(caps) if c[3] == style]
+    idx.sort(key=lambda i: caps[i][0])
+    for a, b in zip(idx, idx[1:]):
+        v0, v1, text, st = caps[a]
+        if v1 > caps[b][0] - 0.3: caps[a] = (v0, max(v0 + 1.5, caps[b][0] - 0.3), text, st)
+        if caps[a][1] <= caps[a][0]: print("WARN caption dropped", text)
+caps = [c for c in caps if c[1] > c[0]]
 draw = "[cat]"
 chain = []
 for i, (v0, v1, text, style) in enumerate(caps):
