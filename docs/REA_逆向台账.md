@@ -54,7 +54,7 @@
 | E27 | `docs/rea_evidence/E27_mac_hero_round12.jpg`（失败对照：`E27_mac_sparse_morph_wedge.jpg`、`E27a_mac_round11_wedge_persists_nonsparse.jpg`） | Mac 真机第 10–12 轮 FaceShot/GaitShot/第三人称 | 第 10/11 轮楔形面罩（glTFast 形变帧权重=1 导致 100 倍过冲）；第 12 轮通过 |
 | E28 | `docs/rea_evidence/E28_promo10_contact_sheet_{a,b}.jpg`、`E28_promo10_caption_layout.jpg` | 宣传片第 10 版（写实主角）每 4 s 抽帧 + 字幕区放大 | 无字幕重叠；旁白 ASR 复核"系统总线/脱水"读音正确；主角正脸、步态方向正确 |
 | E29 | `docs/rea_evidence/E29_posture_fix_gait.jpg` | Blender/Cycles 侧视逐帧（走 6 帧 + 跑 6 帧，修正前后） | 修正前：走路脊柱 C 形（Spine −11°、Neck +8°、Head +18°，颈→头俯仰 17.5°），跑步躯干前扑 32°、头 54°；修正后：走路躯干 0°、头 7°，跑步躯干 13°、头 12° |
-| E30 | `docs/rea_evidence/E30_mac_story_layer.jpg` | Mac 真机第 13 轮（`PlayCapture` 新增 `UiShot` 含 HUD） | 章节卡 / 目标行 / 路标 / 关键线索门控 / 尾声结束卡在真机上的样子（见 Q10） |
+| E30 | `docs/rea_evidence/E30a_mac_round13_card_overlap.jpg`（失败对照）、`E30_mac_story_layer.jpg`（第 14 轮） | Mac 真机第 13/14 轮（`PlayCapture` 新增 `UiShot` 含 HUD） | 第 13 轮：章节卡标题压在正文第二行上、左上 HUD 贴亮天空发虚 → 标题上移/正文下移 + 半透明底板；第 14 轮：章节卡、目标行（0/3）、路标「» 吉普车旁的电台 · 20 m >」均正确，步态侧视抬头直立 |
 
 ## 2. 问题清单与结论
 
@@ -170,7 +170,7 @@
   5. **解说行**：每条线索字幕第二行灰色小字（`story`）解释这句台词在《三体》里的意义；字幕时长改按字数 4–13 s。
   6. **故事闭环**：第一幕=做选择（发射），第二、三幕=看后果（乱纪元 / 人列计算机 → 三日凌空），`GameState.Ending` 后回到红岸只剩"回主控室"一件事，台词换成"我点燃了火，却控制不了它。"，9 s 后出结束卡，R 重新开始。
 - **驼背（同一反馈）**：量化后不是贴图错觉——Tripo 重定向的 walk 剪辑脊柱呈 C 形，颈→头俯仰 17.5°（与 idle 同），run 躯干前扑 32°、头 54°。修法在 `hero_expressions.py`：Spine/Spine1/Spine2/Neck 先向绑定姿态 slerp 收敛 30–40%，再逐帧按世界俯仰角校正 Spine（髋→颈）与 Neck（颈→头）到目标值（走 0°/8.5°，跑 10°/13.5°），重新插关键帧（E29）。
-- **真机核验**：见 E30。
+- **真机核验**：第 13 轮发现章节卡标题与正文重叠、HUD 文字贴天空发虚（E30a），修正后第 14 轮通过（E30）。
 
 ## 3. 重建蓝图（观察到的行为 vs 设计选择）
 
