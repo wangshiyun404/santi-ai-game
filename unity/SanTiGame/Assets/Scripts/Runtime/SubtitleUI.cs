@@ -144,12 +144,25 @@ namespace SanTi
             _endText.text = text; _end.gameObject.SetActive(true);
         }
 
+        // WebGL 没有系统字体回退：内置 LegacyRuntime(Arial) 不含汉字，网页版所有中文都是空白（E31，部署校验发现）。
+        // 随包带一份 Noto Sans CJK SC 子集（GB2312 一级字 + 全部文案，约 0.8 MB），Mac/Windows 同样用它，三端一致。
+        static Font _uiFont;
+        static Font UiFont
+        {
+            get
+            {
+                if (_uiFont == null) _uiFont = Resources.Load<Font>("Fonts/NotoSansCJKsc_subset");
+                if (_uiFont == null) { Debug.LogWarning("[SanTi] CJK font missing, falling back to LegacyRuntime"); _uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); }
+                return _uiFont;
+            }
+        }
+
         static Text MakeText(Transform parent, string name, int size, TextAnchor anchor, Vector2 anchorPt, Vector2 pos, Vector2 sizeDelta)
         {
             var go = new GameObject(name, typeof(Text), typeof(Outline));
             go.transform.SetParent(parent, false);
             var t = go.GetComponent<Text>();
-            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            t.font = UiFont;
             t.fontSize = size; t.alignment = anchor; t.color = Color.white;
             t.horizontalOverflow = HorizontalWrapMode.Wrap;
             t.raycastTarget = false;
