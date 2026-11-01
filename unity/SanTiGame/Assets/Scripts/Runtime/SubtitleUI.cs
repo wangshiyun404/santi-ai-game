@@ -20,7 +20,7 @@ namespace SanTi
 
         RectTransform _canvasRt;
         Text _title, _objective, _controls, _subtitle, _hint, _marker, _cardTitle, _cardLines, _cardSkip, _endText;
-        Image _whiteout, _card, _end;
+        Image _whiteout, _card, _end, _controlsBg;
         float _subtitleUntil, _hintUntil, _controlsUntil;
         bool _endShown;
 
@@ -46,7 +46,9 @@ namespace SanTi
             _title.text = eraTitle;
             _objective = MakeText(canvasGo.transform, "Objective", 24, TextAnchor.UpperLeft, new Vector2(0, 1), new Vector2(40, -82), new Vector2(1100, 70));
             _objective.color = new Color(1f, 0.92f, 0.7f, 0.95f);
-            _controls = MakeText(canvasGo.transform, "Controls", 22, TextAnchor.UpperRight, new Vector2(1, 1), new Vector2(-40, -40), new Vector2(900, 80));
+            _controlsBg = MakeImage(canvasGo.transform, "ControlsBg"); _controlsBg.color = new Color(0, 0, 0, 0.42f); _controlsBg.raycastTarget = false;
+            var cb = _controlsBg.rectTransform; cb.anchorMin = cb.anchorMax = cb.pivot = new Vector2(1, 1); cb.anchoredPosition = new Vector2(-24, -24); cb.sizeDelta = new Vector2(800, 56);
+            _controls = MakeText(canvasGo.transform, "Controls", 22, TextAnchor.UpperRight, new Vector2(1, 1), new Vector2(-34, -32), new Vector2(780, 40));
             _controls.color = new Color(1, 1, 1, 0.75f);
             _controls.text = "WASD 移动 · 鼠标转视角 · Shift 跑 · 靠近发光物按 E · Esc 放出鼠标";
             _controlsUntil = Time.time + 14f;
@@ -85,7 +87,7 @@ namespace SanTi
             _title.text = eraTitle;
             var cm = ClueManager.Instance;
             _objective.text = string.IsNullOrEmpty(objective) ? "" : $"目标：{objective}{(cm != null && cm.Total > 0 ? $"（{cm.DoneCount}/{cm.Total}）" : "")}";
-            float cl = Mathf.Clamp01((_controlsUntil - Time.time) / 2f); var cc = _controls.color; cc.a = 0.75f * cl; _controls.color = cc;
+            float cl = Mathf.Clamp01((_controlsUntil - Time.time) / 2f); var cc = _controls.color; cc.a = 0.75f * cl; _controls.color = cc; var cbc = _controlsBg.color; cbc.a = 0.42f * cl; _controlsBg.color = cbc;
             UpdateMarker(cm);
             if (_endShown && Input.GetKeyDown(KeyCode.R)) { GameState.Ending = false; GameState.InputLocked = false; SceneManager.LoadScene("scene_00_red_coast"); }
         }
