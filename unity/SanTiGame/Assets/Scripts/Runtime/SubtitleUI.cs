@@ -40,13 +40,13 @@ namespace SanTi
             _marker.color = new Color(1f, 0.85f, 0.45f, 0.95f);
 
             // 左上信息底板：半透明深色，保证纪元名/目标行在亮天空前可读（E30：第 13 轮真机 HUD 字贴天空发虚）
-            var hudBg = MakeImage(canvasGo.transform, "HudBg"); hudBg.color = new Color(0, 0, 0, 0.42f); hudBg.raycastTarget = false;
+            var hudBg = MakeImage(canvasGo.transform, "HudBg"); hudBg.color = new Color(0, 0, 0, 0.6f); hudBg.raycastTarget = false;
             var hb = hudBg.rectTransform; hb.anchorMin = hb.anchorMax = hb.pivot = new Vector2(0, 1); hb.anchoredPosition = new Vector2(24, -24); hb.sizeDelta = new Vector2(1140, 124);
             _title = MakeText(canvasGo.transform, "Title", 30, TextAnchor.UpperLeft, new Vector2(0, 1), new Vector2(40, -40), new Vector2(900, 60));
             _title.text = eraTitle;
             _objective = MakeText(canvasGo.transform, "Objective", 24, TextAnchor.UpperLeft, new Vector2(0, 1), new Vector2(40, -82), new Vector2(1100, 70));
             _objective.color = new Color(1f, 0.92f, 0.7f, 0.95f);
-            _controlsBg = MakeImage(canvasGo.transform, "ControlsBg"); _controlsBg.color = new Color(0, 0, 0, 0.42f); _controlsBg.raycastTarget = false;
+            _controlsBg = MakeImage(canvasGo.transform, "ControlsBg"); _controlsBg.color = new Color(0, 0, 0, 0.6f); _controlsBg.raycastTarget = false;
             var cb = _controlsBg.rectTransform; cb.anchorMin = cb.anchorMax = cb.pivot = new Vector2(1, 1); cb.anchoredPosition = new Vector2(-24, -24); cb.sizeDelta = new Vector2(800, 56);
             _controls = MakeText(canvasGo.transform, "Controls", 22, TextAnchor.UpperRight, new Vector2(1, 1), new Vector2(-34, -32), new Vector2(780, 40));
             _controls.color = new Color(1, 1, 1, 0.75f);
@@ -74,7 +74,7 @@ namespace SanTi
             SetCardAlpha(0f); _card.gameObject.SetActive(false);
 
             // 结束卡
-            _end = MakeImage(canvasGo.transform, "End"); _end.color = new Color(0.03f, 0.04f, 0.07f, 0.92f); _end.raycastTarget = false; Stretch(_end.rectTransform);
+            _end = MakeImage(canvasGo.transform, "End"); _end.color = new Color(0.03f, 0.04f, 0.07f, 1f); _end.raycastTarget = false; Stretch(_end.rectTransform);
             _endText = MakeText(_end.transform, "EndText", 34, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1400, 500));
             _endText.lineSpacing = 1.4f;
             _end.gameObject.SetActive(false);
@@ -87,7 +87,7 @@ namespace SanTi
             _title.text = eraTitle;
             var cm = ClueManager.Instance;
             _objective.text = string.IsNullOrEmpty(objective) ? "" : $"目标：{objective}{(cm != null && cm.Total > 0 ? $"（{cm.DoneCount}/{cm.Total}）" : "")}";
-            float cl = Mathf.Clamp01((_controlsUntil - Time.time) / 2f); var cc = _controls.color; cc.a = 0.75f * cl; _controls.color = cc; var cbc = _controlsBg.color; cbc.a = 0.42f * cl; _controlsBg.color = cbc;
+            float cl = Mathf.Clamp01((_controlsUntil - Time.time) / 2f); var cc = _controls.color; cc.a = 0.75f * cl; _controls.color = cc; var cbc = _controlsBg.color; cbc.a = 0.6f * cl; _controlsBg.color = cbc;
             UpdateMarker(cm);
             if (_endShown && Input.GetKeyDown(KeyCode.R)) { GameState.Ending = false; GameState.InputLocked = false; SceneManager.LoadScene("scene_00_red_coast"); }
         }
@@ -132,7 +132,7 @@ namespace SanTi
 
         void SetCardAlpha(float a)
         {
-            var c = _card.color; c.a = 0.93f * a; _card.color = c;
+            var c = _card.color; c.a = a; _card.color = c;   // 不留透明度：URP 把 Overlay UI 合成进 HDR 缓冲再调色，0.93 的黑在亮场景里只像 50% 灰（E31 网页版截图）
             var ct = _cardTitle.color; ct.a = a; _cardTitle.color = ct;
             var cl = _cardLines.color; cl.a = 0.9f * a; _cardLines.color = cl;
             var cs = _cardSkip.color; cs.a = 0.55f * a; _cardSkip.color = cs;
