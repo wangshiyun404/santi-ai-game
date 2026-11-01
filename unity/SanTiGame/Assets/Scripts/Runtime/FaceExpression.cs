@@ -23,6 +23,7 @@ namespace SanTi
 
         // ---- BlendShape 模式 ----
         SkinnedMeshRenderer _smr; int _bBlink = -1, _bJaw = -1, _bSmile = -1, _bBrows = -1; bool _blend;
+        float _frameW = 100f;   // 形变键满幅权重：glTFast 导入的帧权重是 1 而非 Unity 惯例的 100（E27 楔形面罩根因）
         float _wBlink, _wJaw, _wSmile, _wBrows;
         Transform _head; Quaternion _headBase; Vector3 _lookSeed;
 
@@ -39,6 +40,8 @@ namespace SanTi
                     if (n.EndsWith("blink")) _bBlink = i; else if (n.EndsWith("jaw_open")) _bJaw = i; else if (n.EndsWith("smile")) _bSmile = i; else if (n.EndsWith("brows_up")) _bBrows = i;
                 }
                 _blend = _bBlink >= 0 || _bJaw >= 0;
+                int any = _bBlink >= 0 ? _bBlink : _bJaw;
+                if (any >= 0) { int fc = mesh.GetBlendShapeFrameCount(any); if (fc > 0) _frameW = mesh.GetBlendShapeFrameWeight(any, fc - 1); }
                 foreach (var b in smr.bones) { if (b != null && b.name.ToLowerInvariant().EndsWith("head")) { _head = b; break; } }
                 _lookSeed = new Vector3(Random.value * 100f, Random.value * 100f, 0);
                 _ready = _blend; _nextBlink = Time.time + Random.Range(blinkMin, blinkMax);
@@ -112,10 +115,11 @@ namespace SanTi
             _wJaw = Mathf.Lerp(_wJaw, tJaw, 1f - Mathf.Exp(-dt * 18f));
             _wBrows = Mathf.Lerp(_wBrows, tBrows, 1f - Mathf.Exp(-dt * 10f));
             _wSmile = Mathf.Lerp(_wSmile, tSmile, 1f - Mathf.Exp(-dt * 3f));
-            if (_bBlink >= 0) _smr.SetBlendShapeWeight(_bBlink, _wBlink);
-            if (_bJaw >= 0) _smr.SetBlendShapeWeight(_bJaw, _wJaw);
-            if (_bBrows >= 0) _smr.SetBlendShapeWeight(_bBrows, _wBrows);
-            if (_bSmile >= 0) _smr.SetBlendShapeWeight(_bSmile, _wSmile);
+            float k = _frameW / 100f;   // 内部权重按 0–100 计，换算到网格实际帧权重
+            if (_bBlink >= 0) _smr.SetBlendShapeWeight(_bBlink, _wBlink * k);
+            if (_bJaw >= 0) _smr.SetBlendShapeWeight(_bJaw, _wJaw * k);
+            if (_bBrows >= 0) _smr.SetBlendShapeWeight(_bBrows, _wBrows * k);
+            if (_bSmile >= 0) _smr.SetBlendShapeWeight(_bSmile, _wSmile * k);
         }
 
         void LateUpdate()
