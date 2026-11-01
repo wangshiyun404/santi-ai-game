@@ -133,6 +133,69 @@ for act in bpy.data.actions:
         if abs(d) > 0.02:
             for k in fc.keyframe_points: k.co[1] -= d; k.handle_left[1] -= d; k.handle_right[1] -= d
             print(f"recenter {act.name} hips loc[{i}] by {-d:+.3f}")
+# ---- 体态修正（用户反馈"走路总是驼背"）：Tripo 重定向的 walk 是 C 形脊柱（下背后仰 -11°、颈/头前探 +8/+18°），
+# run 是整体前扑 32°（头 52°）。先把脊柱链的姿态旋转向静止姿态收敛（slerp），再按世界坐标把躯干（髋→颈）和头
+# （颈→头）的前倾角校到目标值，保留步幅/摆臂不动。目标：walk 躯干 ≈ 静止、头 ≈ 静止；run 躯干前倾 10°、头比静止多 5°。
+from mathutils import Quaternion, Matrix, Vector
+import math
+# torso=躯干(髋→颈)世界俯仰目标°，None=取 idle；head=颈→头俯仰相对 idle 的偏移°。idle 本身头前探 17.5°，走路再压 9° 才像"抬头走"
+POSTURE = {'walk': dict(k_spine=0.3, k_neck=0.4, torso=0.0, head=-9.0),
+           'run':  dict(k_spine=0.35, k_neck=0.35, torso=10.0, head=-4.0)}
+CHAIN = ['mixamorig:Spine', 'mixamorig:Spine1', 'mixamorig:Spine2', 'mixamorig:Neck']
+def rot_fcurves(act, bone):
+    out = {}
+    for layer in act.layers:
+        for strip in layer.strips:
+            for slot in act.slots:
+                cb = strip.channelbag(slot)
+                if cb is None: continue
+                for fc in cb.fcurves:
+                    if fc.data_path == f'pose.bones["{bone}"].rotation_quaternion': out[fc.array_index] = fc
+    return out
+def seg_pitch(a, b):   # 世界坐标，前 = +X，上 = +Z
+    pa = arm.matrix_world @ arm.pose.bones[a].head; pb_ = arm.matrix_world @ arm.pose.bones[b].head
+    v = pb_ - pa; return math.degrees(math.atan2(v.x, v.z))
+def measure(act, label):
+    f0, f1 = map(int, act.frame_range); ts = []; hs = []
+    for f in range(f0, f1 + 1):
+        bpy.context.scene.frame_set(f); bpy.context.view_layer.update()
+        ts.append(seg_pitch('mixamorig:Hips', 'mixamorig:Neck')); hs.append(seg_pitch('mixamorig:Neck', 'mixamorig:Head'))
+    print(f"posture {act.name} {label}: torso {np.mean(ts):+.1f} ({min(ts):+.1f}..{max(ts):+.1f}), head {np.mean(hs):+.1f}")
+    return float(np.mean(ts)), float(np.mean(hs))
+arm.animation_data.action = bpy.data.actions['idle']
+idle_torso, idle_head = measure(bpy.data.actions['idle'], 'ref')
+for act in bpy.data.actions:
+    cfg = POSTURE.get(act.name)
+    if not cfg: continue
+    arm.animation_data.action = act
+    measure(act, 'before')
+    # 1) slerp 收敛
+    for bone in CHAIN:
+        k = cfg['k_neck'] if bone.endswith('Neck') else cfg['k_spine']
+        fcs = rot_fcurves(act, bone)
+        if len(fcs) != 4: continue
+        n = len(fcs[0].keyframe_points)
+        for i in range(n):
+            q = Quaternion([fcs[j].keyframe_points[i].co[1] for j in range(4)])
+            q2 = Quaternion((1, 0, 0, 0)).slerp(q, k)
+            for j in range(4):
+                kp = fcs[j].keyframe_points[i]; d = q2[j] - kp.co[1]
+                kp.co[1] = q2[j]; kp.handle_left[1] += d; kp.handle_right[1] += d
+    # 2) 按世界角度校正：Spine 控躯干、Neck 控头（围绕世界侧向轴 Y 旋转，作用在骨骼头部）
+    t_torso = idle_torso if cfg['torso'] is None else cfg['torso']
+    t_head = idle_head + (cfg['head'] or 0.0)
+    f0, f1 = map(int, act.frame_range)
+    for bone, a, b, target in (('mixamorig:Spine', 'mixamorig:Hips', 'mixamorig:Neck', t_torso), ('mixamorig:Neck', 'mixamorig:Neck', 'mixamorig:Head', t_head)):
+        for f in range(f0, f1 + 1):
+            bpy.context.scene.frame_set(f); bpy.context.view_layer.update()
+            err = math.radians(seg_pitch(a, b) - target)
+            if abs(err) < 1e-4: continue
+            pb = arm.pose.bones[bone]
+            head_w = arm.matrix_world @ pb.head
+            R = Matrix.Translation(head_w) @ Matrix.Rotation(-err, 4, 'Y') @ Matrix.Translation(-head_w)   # 绕 +Y 负转使 +X 分量减小（前倾减小）
+            pb.matrix = arm.matrix_world.inverted() @ R @ arm.matrix_world @ pb.matrix
+            pb.keyframe_insert('rotation_quaternion', frame=f)
+    measure(act, 'after')
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=dst, export_format='GLB', export_yup=True, export_apply=False, export_image_format='AUTO',
                           export_normals=True, export_texcoords=True, export_morph=True, export_morph_normal=False, export_try_sparse_sk=False, export_animations=True)   # 不用稀疏 accessor：glTFast 读稀疏形变键会出乱几何（真机 E27 楔形面罩）

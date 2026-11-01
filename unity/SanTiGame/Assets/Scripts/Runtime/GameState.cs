@@ -6,6 +6,8 @@ namespace SanTi
     {
         /// <summary>事件播放（白屏、三日凌空）期间锁定输入。</summary>
         public static bool InputLocked;
+        /// <summary>三日凌空之后回到红岸 = 尾声（REA Q10：故事闭环）。</summary>
+        public static bool Ending;
         /// <summary>自动移动输入（运行态截图 / 演示用），非零时覆盖键盘。</summary>
         public static Vector2 AutoMove;
         public static bool AutoSprint;          // 演示/自动驾驶时冲刺

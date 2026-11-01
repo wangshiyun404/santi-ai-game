@@ -9,6 +9,11 @@ namespace SanTi
         [TextArea] public string subtitle;
         public string narrationClip;      // Resources/VO/<name>（不含扩展名）
         public string speaker;            // REA Q7：说话人（NPC 显示名；空=旁白）
+        [TextArea] public string story;   // REA Q10：解说行（这句话在故事里意味着什么）
+        public string displayName;        // 路标上显示的名字
+        public bool final;                // 关键线索：其他线索看完才能触发
+        public int order;                 // 布局中的顺序（路标按此顺序指引）
+        [TextArea] public string endingSubtitle, endingStory;   // 尾声替换文案（scene_00 主控台）
         public float triggerRadius = 3.5f;
         public bool oneShot = true;
 
@@ -42,18 +47,23 @@ namespace SanTi
                 r.SetPropertyBlock(_mpb);
             }
 
-            if (near) SubtitleUI.Instance?.ShowHint("按 E 查看");
+            bool gated = final && ClueManager.Instance != null && !ClueManager.Instance.OthersDone(this);
+            if (near) SubtitleUI.Instance?.ShowHint(gated ? $"这是本幕的关键线索——先看完其他 {ClueManager.Instance.Total - 1} 处（{ClueManager.Instance.DoneCount}/{ClueManager.Instance.Total - 1}）" : "按 E 查看");
             if (near && !_wasNear) Sfx.Tick();   // REA Q7：进入交互范围时轻提示一次
             _wasNear = near;
-            if (near && Input.GetKeyDown(KeyCode.E) && !GameState.InputLocked) Trigger();
+            if (near && Input.GetKeyDown(KeyCode.E) && !GameState.InputLocked && !gated) Trigger();
         }
 
         public void Trigger()
         {
             Done = true;
-            // REA Q7：字幕带说话人、时长随字数；触发时给一声确认音（无需音频资源，运行时合成）
-            float secs = Mathf.Clamp(1.5f + 0.28f * (subtitle?.Length ?? 0), 4f, 9f);
-            SubtitleUI.Instance?.ShowSubtitle(string.IsNullOrEmpty(speaker) ? subtitle : $"{speaker}：{subtitle}", secs);
+            bool ending = GameState.Ending && !string.IsNullOrEmpty(endingSubtitle);
+            string line = ending ? endingSubtitle : subtitle, expl = ending ? endingStory : story;
+            // REA Q7/Q10：字幕 = 台词（带说话人）+ 灰色解说行；时长按总字数（中文约 4.5 字/秒），4–13 s
+            float secs = Mathf.Clamp(1.5f + 0.22f * ((line?.Length ?? 0) + (expl?.Length ?? 0)), 4f, 13f);
+            string text = string.IsNullOrEmpty(speaker) ? line : $"{speaker}：{line}";
+            if (!string.IsNullOrEmpty(expl)) text += $"\n<size=28><color=#D8D8D8>{expl}</color></size>";
+            SubtitleUI.Instance?.ShowSubtitle(text, secs);
             Sfx.Confirm();
             // 线索挂在 NPC 身上时切对话近景 + 表情（REA Q2）
             if (GetComponent<NpcLookAt>() != null)
@@ -61,7 +71,7 @@ namespace SanTi
                 GameState.FocusTarget = transform; GameState.FocusUntil = Time.time + secs + 0.5f;
                 GetComponentInChildren<FaceExpression>()?.Say(secs);
             }
-            if (!string.IsNullOrEmpty(narrationClip))
+            if (!string.IsNullOrEmpty(narrationClip) && !ending)
             {
                 var clip = Resources.Load<AudioClip>("VO/" + System.IO.Path.GetFileNameWithoutExtension(narrationClip));
                 if (clip != null) AudioSource.PlayClipAtPoint(clip, Camera.main != null ? Camera.main.transform.position : transform.position);

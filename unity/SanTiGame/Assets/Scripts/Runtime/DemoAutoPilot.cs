@@ -92,6 +92,9 @@ namespace SanTi
         void OnSceneLoaded(Scene s, LoadSceneMode m)
         {
             Routes.TryGetValue(s.name, out _steps);
+            if (GameState.Ending && s.name == "scene_00_red_coast")   // 尾声：环视一下，直接回主控室
+                _steps = new[] { new Step { pos = new Vector3(8, 0, 40), yaw = 200, wait = 3f }, new Step { pos = new Vector3(14, 0, 12) },
+                                 new Step { pos = new Vector3(26.5f, 0, 13f), clue = "clue_control_room", wait = 12f, arrive = 2.5f } };
             _i = 0; _sceneT = Time.time; _triggered = false; _waitUntil = Time.time + 2f;
             _player = null; _ctrl = null; _cam = null;
             GameState.AutoMove = Vector2.zero;

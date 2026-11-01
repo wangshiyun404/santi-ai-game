@@ -28,7 +28,7 @@ namespace SanTi
                 go.transform.position = new Vector3(-200f + i * 250f, -60f, -900f);   // 山脉在 Unity -Z 侧（Blender +Y）
                 suns[i] = go.transform;
             }
-            SubtitleUI.Instance?.ShowSubtitle("三日凌空。", 6f); FaceExpression.PlayerSurprise(3f);
+            SubtitleUI.Instance?.ShowSubtitle("三日凌空。\n<size=28><color=#D8D8D8>——三颗太阳同时升起，计算还没有结果，这个文明第 192 次毁灭。幸存的只有脱水收藏的人。</color></size>", 12f); FaceExpression.PlayerSurprise(3f);
             Color a0 = RenderSettings.ambientLight, f0 = RenderSettings.fogColor;
             float t = 0;
             while (t < duration)
@@ -46,6 +46,7 @@ namespace SanTi
                 if (k > 0.75f) SubtitleUI.Instance?.SetWhiteout((k - 0.75f) / 0.25f);
                 yield return null;
             }
+            GameState.Ending = true;   // 回到红岸 = 尾声（REA Q10 故事闭环）
             yield return SceneTransition.WhiteoutAndLoad(nextScene, 1.5f);
         }
     }

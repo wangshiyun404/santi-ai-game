@@ -15,6 +15,17 @@ namespace SanTi
         public FormationData formation;
         public List<ClueData> clues = new List<ClueData>();
         public List<EventData> events = new List<EventData>();
+        public IntroData intro;        // 章节卡：进场时讲清"你是谁、在哪、要做什么"（REA Q10）
+        public IntroData ending;       // 仅 scene_00：三日凌空后回到红岸时用的尾声卡
+    }
+
+    [Serializable]
+    public class IntroData
+    {
+        public string title;           // 如 "第一幕 · 红岸基地 1971"
+        public string lines;           // 两三句前情（\n 换行）
+        public string objective;
+        public string endText;    // 仅尾声：结束卡文字（按 R 重新开始）
     }
 
     [Serializable]
@@ -73,6 +84,10 @@ namespace SanTi
         public string subtitle;
         public string narration;
         public float[] at;        // 可选：未绑定物件的"地点线索"放置位置（Unity 坐标）
+        public string story;      // 解说行：这句台词在《三体》里意味着什么（字幕第二行，灰色小字）
+        public bool final;        // 本幕的"关键线索"：其他线索看完才能触发（触发后切幕）
+        public string endingSubtitle;  // 尾声时替换台词（仅 scene_00 主控台）
+        public string endingStory;
     }
 
     [Serializable]

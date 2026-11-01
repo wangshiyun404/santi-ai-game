@@ -21,7 +21,7 @@ namespace SanTi
 
         int _sceneIdx = -1, _shotIdx; float _t;
 
-        void Awake() { DontDestroyOnLoad(gameObject); Application.targetFrameRate = 30; }
+        void Awake() { DontDestroyOnLoad(gameObject); Application.targetFrameRate = 30; StoryDirector.holdOverride = 2.0f; }
         void Start() { Next(); }
 
         void Next()
@@ -45,12 +45,25 @@ namespace SanTi
                 {
                     string id = Path.GetFileNameWithoutExtension(scenePaths[_sceneIdx]);
                     Shot(cam, Path.Combine(outDir, $"{id}_play_t{times[_shotIdx]:00.0}s.png"), 1600, 900);
+                    UiShot(cam, Path.Combine(outDir, $"{id}_ui_t{times[_shotIdx]:00.0}s.png"));   // REA Q10：含 HUD/章节卡/路标
                     FaceShot(cam, Path.Combine(outDir, $"{id}_face_t{times[_shotIdx]:00.0}s.png"));
                     if (_t > walkFrom) GaitShot(cam, Path.Combine(outDir, $"{id}_gait_t{times[_shotIdx]:00.0}s.png"));
                 }
                 _shotIdx++;
             }
             if (_shotIdx >= times.Length) { GameState.AutoMove = Vector2.zero; Next(); }
+        }
+
+        /// <summary>带 UI 的截图：把 Overlay 画布临时切到 ScreenSpaceCamera 跟主相机一起渲染到 RT（batchmode 下 ScreenCapture 不可用）。</summary>
+        static void UiShot(Camera cam, string file)
+        {
+            var canvas = SubtitleUI.Instance != null ? SubtitleUI.Instance.GetComponentInChildren<Canvas>() : null;
+            if (canvas == null) { Shot(cam, file, 1600, 900); return; }
+            var mode = canvas.renderMode; var wc = canvas.worldCamera;
+            canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = cam; canvas.planeDistance = 1f;
+            Canvas.ForceUpdateCanvases();
+            Shot(cam, file, 1600, 900);
+            canvas.renderMode = mode; canvas.worldCamera = wc;
         }
 
         /// <summary>REA Q1/Q2 核验：从玩家正前方 1.3 m 拍脸（朝向 + 五官 + 表情）。</summary>

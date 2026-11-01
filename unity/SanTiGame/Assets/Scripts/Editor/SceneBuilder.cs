@@ -22,6 +22,20 @@ namespace SanTi.Editor
         const string AnimDir = "Assets/Models/Anim";   // Tripo 绑骨+动画 GLB（原始 1 m 归一化、朝向 +X），由 InstantiateCharacter 统一缩放/转向
         static readonly System.Collections.Generic.Dictionary<string, float> CharHeight = new()
         { { "char_player", 1.62f }, { "char_ye_wenjie", 1.62f }, { "char_follower", 1.65f }, { "char_von_neumann", 1.75f }, { "char_newton", 1.70f }, { "char_qin", 1.78f }, { "soldier_black", 1.75f }, { "soldier_white", 1.75f } };
+        /// <summary>REA Q10：把布局里的解说/关键线索/尾声文案与顺序灌给 Clue。</summary>
+        static void FillStory(Clue clue, ClueData cd, LayoutData data)
+        {
+            if (cd == null) return;
+            clue.story = cd.story; clue.final = cd.final; clue.order = data.clues.IndexOf(cd);
+            clue.endingSubtitle = cd.endingSubtitle; clue.endingStory = cd.endingStory;
+            clue.displayName = ClueDisplayName.TryGetValue(cd.id, out var n) ? n : "线索";
+        }
+        static readonly System.Collections.Generic.Dictionary<string, string> ClueDisplayName = new()
+        {
+            { "clue_reply", "吉普车旁的电台" }, { "clue_antenna", "天线塔" }, { "clue_control_room", "主控室（关键）" },
+            { "clue_lakebed", "干湖床" }, { "clue_dehydration", "脱水人" }, { "clue_slips", "周文王的竹简" }, { "clue_pyramid_follower", "金字塔下的追随者（关键）" },
+            { "clue_von_neumann", "高台下的冯·诺依曼" }, { "clue_gate_soldier", "石碑：门电路" }, { "clue_bus", "石碑：系统总线" }, { "clue_sword", "高台上的青铜剑（关键）" },
+        };
         static readonly System.Collections.Generic.Dictionary<string, string> CharDisplayName = new()
         { { "char_ye_wenjie", "叶文洁" }, { "char_follower", "跟随者" }, { "char_von_neumann", "冯·诺依曼" }, { "char_newton", "牛顿" }, { "char_qin", "秦始皇" } };
         const string SceneDir = "Assets/Scenes";
@@ -143,6 +157,7 @@ namespace SanTi.Editor
                     var cd = data.clues.FirstOrDefault(c => c.id == o.clue);
                     var clue = go.AddComponent<Clue>();
                     clue.clueId = o.clue; clue.subtitle = cd?.subtitle ?? o.clue; clue.narrationClip = cd?.narration;
+                    FillStory(clue, cd, data);
                     clue.speaker = CharDisplayName.TryGetValue(o.asset, out var dn) ? dn : "";   // REA Q7：字幕前加说话人
                     clue.triggerRadius = o.asset == "pyramid" || o.asset == "dish_tower" || o.asset == "platform" ? 18f : 3.5f;
                 }
@@ -164,6 +179,7 @@ namespace SanTi.Editor
                 cap.transform.SetParent(go.transform); cap.transform.localPosition = new Vector3(0, 1.95f, 0); cap.transform.localScale = new Vector3(1.1f, 0.3f, 0.5f);
                 cap.GetComponent<Renderer>().sharedMaterial = FlatMaterial("clue_stele_dark", new Color(0.25f, 0.22f, 0.20f));
                 var clue = go.AddComponent<Clue>(); clue.clueId = cd.id; clue.subtitle = cd.subtitle; clue.narrationClip = cd.narration; clue.triggerRadius = 5f;
+                FillStory(clue, cd, data);
                 snapList.Add(go);
             }
 
@@ -248,6 +264,8 @@ namespace SanTi.Editor
             var mgrGo = new GameObject("GameManager");
             var mgr = mgrGo.AddComponent<ClueManager>(); mgr.events = data.events;
             var ui = mgrGo.AddComponent<SubtitleUI>(); ui.eraTitle = data.title;
+            var story = mgrGo.AddComponent<StoryDirector>(); story.intro = data.intro; story.ending = data.ending;   // REA Q10：章节卡 + 目标行 + 尾声
+            mgr.endText = data.ending != null && !string.IsNullOrEmpty(data.ending.endText) ? data.ending.endText : "";
 
             if (sceneId == "scene_01_chaotic")
             {
