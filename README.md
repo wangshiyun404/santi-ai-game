@@ -98,6 +98,8 @@ cp assets/tripo/anim/<name>_anim.glb unity/SanTiGame/Assets/Models/Anim/<name>.g
 
 - `Assets/Models/<name>.glb`：静态资产，1 unit = 1 m，原点在底部中心，正面朝 +Z，SceneBuilder 直接按 layout 摆放。
 - `Assets/Models/Anim/<name>.glb`：带骨骼与动画的角色，保持 Tripo 原始归一化（1 m 高、朝 −X），由 `SceneBuilder.InstantiateCharacter` 统一缩放到身高表并转向，再挂 `CharacterAnimator`（玩家按速度切 idle/walk/run，NPC 循环 idle）。
+- 主角 `char_player`（玩家扮演的叶文洁）是写实角色：`concept/ye_{front,left,back,right}.png` 四视图 → `scripts/tripo_hero.py`（Tripo v3 多视图生成 + 绑骨 + idle/walk/run）→ `scripts/mesh_check.py` 体检 → `scripts/hero_expressions.py`（生成 blink/jaw_open/smile/brows_up 形变键、归零 walk/run 髋骨偏移）→ `Assets/Models/Anim/char_player.glb`（贴图外置 `Assets/Textures/Tripo/char_player_base.png` 2048）。`FaceExpression` 检测到形变键就走 BlendShape 模式（眨眼/说话/惊讶/头部微动）；注意 glTFast 导入的形变帧权重是 1，代码里按 `GetBlendShapeFrameWeight` 换算，不能直接写 0–100。
+- 多视图参考图的左右约定：`left` 是从人物左侧拍（人物面朝画面左），装反会在后脑长出第二张脸（见台账 E26a/b）。
 - 重新生成某件资产后只需同名覆盖，Unity 自动重新导入，场景引用不变。
 
 ## 迭代流程（Sac 的两个工程动作）

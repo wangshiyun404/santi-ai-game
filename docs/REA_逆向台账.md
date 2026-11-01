@@ -51,6 +51,7 @@
 | E25 | `docs/rea_evidence/E25_mac_gait_face_round9.jpg`、`E25_take9_run_from_behind.jpg` | Unity 真机第 9 轮（`PlayCapture` 新增 `GaitShot` 侧视 + take9 录像抽帧） | 三个场景行走侧视：靴尖与迈步均朝前进方向，披风向后飘；脸部薄片五官正常；录像背视奔跑时摆动腿脚跟向后上方抬起（正向跑的特征）。成片 ASR 复核："快，脱水。""这里是系统总线。""集齐四条线索，三日凌空…" |
 | E26 | `docs/rea_evidence/E26a_hero_v1_janus_head.jpg`、`E26b_hero_refs_v1_leftright_swapped.jpg` | Blender/Cycles 渲染第 10 轮写实主角第 1 次 Tripo 生成（4 视图 → 3.1 多视图） | 后脑长出第二张脸（"雅努斯头"）；根因：参考图 `left`/`right` 文件名装反（Tripo 约定 left = 相机在人物左侧、人物面朝画面左），多视图互相矛盾 |
 | E26' | `docs/rea_evidence/E26_hero_v2_views_heads_expressions.jpg`、`E26_char_ye_hero_tripo_render.png`、`E26c_hero_gait_strips.jpg` | 第 2 次生成（左右换回）：`mesh_check.py` 体检 + 四视图/头部三视图/四表情渲染 + walk/run 侧视抽帧 | 单一正脸、后脑干净、脚尖与脸同向 +X；臂长/身高 0.30、裆高/身高 0.405；`gait_check.py` PASS；4 个形变键（blink/jaw_open/smile/brows_up）有效；run 剪辑髋骨原有 0.53 m 水平偏移已归零 |
+| E27 | `docs/rea_evidence/E27_mac_hero_round12.jpg`（失败对照：`E27_mac_sparse_morph_wedge.jpg`、`E27a_mac_round11_wedge_persists_nonsparse.jpg`） | Mac 真机第 10–12 轮 FaceShot/GaitShot/第三人称 | 第 10/11 轮楔形面罩（glTFast 形变帧权重=1 导致 100 倍过冲）；第 12 轮通过 |
 
 ## 2. 问题清单与结论
 
@@ -149,7 +150,9 @@
 - **第 1 次生成失败（E26a/b）**：后脑长出第二张脸。查到参考图左右视图装反——这是多视图生成最常见的翻车点，已把约定写进 `mesh_check.py` 注释与本条。**教训**：多视图喂模型之前，先把 4 张图拼成一排人眼复核"侧视图里人物面朝哪边"。
 - **第 2 次生成（E26'）**：体检 PASS；步态 PASS；表情渲染可辨。已知限制：脸部网格稀疏，blink=100 时眉毛会被一起拉低（真机眨眼 130 ms、镜头 4 m 外不可见），后续可用 Tripo `detailed` 几何或手工加密脸部网格。
 - **顺手修的旧毛病**：Tripo 重定向的 run 剪辑髋骨整体偏前 0.53 m（旧主角同样如此，一直没人发现——因为相机跟的是控制器），`hero_expressions.py` 把 walk/run 髋骨水平均值对齐到 idle。
-- **待真机复核**：Mac `mac_verify.sh` 的 FaceShot/GaitShot + 重录宣传片；移动端/WebGL 体积（主角 GLB 1.5 MB + 2048 贴图 Crunch）。
+- **真机第 10/11 轮失败（E27、E27a）**：脸上罩着一块楔形"面罩"，随动画变形。第一次猜测是 Blender 导出的稀疏 accessor，改为非稀疏后原样复现（排除）。第二次对比形变键位移上限（≤1.4 cm）与楔形尺寸（0.3–0.8 m）得出"权重过冲约 100 倍"——glTFast 导入的形变帧权重是 1，而 Unity 惯例是 100，`FaceExpression` 按 100 写权重就等于把眨眼/张嘴放大 100 倍。修法：启动时读 `GetBlendShapeFrameWeight` 做换算，对任何导入器都正确。**教训**：盲审时先量尺寸再猜根因；"换导出选项碰运气"浪费了一轮真机。
+- **真机第 12 轮通过（E27）**：三个场景正脸、步态侧视、第三人称全部正常；眨眼帧可见；无楔形；步态前进方向正确。
+- **待复核**：重录宣传片；移动端/WebGL 体积（主角 GLB 1.5 MB + 2048 贴图 Crunch）。
 
 ## 3. 重建蓝图（观察到的行为 vs 设计选择）
 
@@ -181,7 +184,7 @@
 | Q5 | 第一、二批已真机核验（E21）；第三批（方块建筑替换、远景）未开始 | `Skybox/Procedural`；`scripts/ground_textures.py` + `SceneBuilder.ApplyGroundTexture`（cliff 用世界 XZ 平面 UV） |
 | Q6 | 已答，待真机核验 | `NpcLookAt.cs` |
 | Q8 | 已修（E24），成片 ASR 复核通过（E25） | `scripts/tts_tone_check.py`；3 条配音/旁白改稿重生成 |
-| Q9 | 模型/动画/表情已做并在 Blender 核验（E26'），待真机与录像复核 | `scripts/tripo_hero.py`、`scripts/mesh_check.py`、`scripts/hero_expressions.py`、`FaceExpression` BlendShape 模式、`SceneBuilder` 身高表/表情分流 |
+| Q9 | 真机第 12 轮核验通过（E27）；录像复核进行中 | `scripts/tripo_hero.py`、`scripts/mesh_check.py`、`scripts/hero_expressions.py`、`FaceExpression` BlendShape 模式、`SceneBuilder` 身高表/表情分流 |
 | Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
 核验入口：Mac 上 `bash scripts/mac_verify.sh` → `~/santi_review.zip`（每场景 3 个时刻的全景 + 正面脸部特写）。
