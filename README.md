@@ -50,7 +50,10 @@ santi/
 | macOS 打包 | ✅ Pipeline.BuildMac → Builds/macOS/三体：三体游戏.app（通用二进制，135 MB；课堂离线兜底） |
 | 托管 | ✅ GitHub Pages：https://wangshiyun404.github.io/santi-ai-game/ （gh-pages 分支，`scripts/publish_pages.sh` 一键发布，源码仍私有）；Perplexity 预览链接并行。国内可达性待课堂实测；若慢则上腾讯云 COS |
 
-玩法说明见 [docs/用户指南.md](docs/用户指南.md)（三幕流程、按键、课堂用法、常见问题）。
+| 剧情层（REA Q10） | ✅ 章节卡（你是谁/在哪/做什么）、目标行 + 进度、屏幕路标、关键线索门控、解说行、三日凌空后回红岸的尾声与结束卡（`StoryDirector`、`SubtitleUI`；文案在 `layouts/*.json` 的 `intro/ending/clues[].story`） |
+| 主角体态（REA E29） | ✅ 走路抬头（颈→头 17.5°→7°）、跑步前倾 32°→13°，`scripts/hero_expressions.py` POSTURE 逐帧校正 |
+
+玩法说明见 [docs/用户指南.md](docs/用户指南.md)（故事与玩法的关系、三幕 + 尾声流程、按键、课堂用法、常见问题）。
 
 ## 在 Mac 上跑（已跑通，batchmode 一键）
 

@@ -53,6 +53,8 @@
 | E26' | `docs/rea_evidence/E26_hero_v2_views_heads_expressions.jpg`、`E26_char_ye_hero_tripo_render.png`、`E26c_hero_gait_strips.jpg` | 第 2 次生成（左右换回）：`mesh_check.py` 体检 + 四视图/头部三视图/四表情渲染 + walk/run 侧视抽帧 | 单一正脸、后脑干净、脚尖与脸同向 +X；臂长/身高 0.30、裆高/身高 0.405；`gait_check.py` PASS；4 个形变键（blink/jaw_open/smile/brows_up）有效；run 剪辑髋骨原有 0.53 m 水平偏移已归零 |
 | E27 | `docs/rea_evidence/E27_mac_hero_round12.jpg`（失败对照：`E27_mac_sparse_morph_wedge.jpg`、`E27a_mac_round11_wedge_persists_nonsparse.jpg`） | Mac 真机第 10–12 轮 FaceShot/GaitShot/第三人称 | 第 10/11 轮楔形面罩（glTFast 形变帧权重=1 导致 100 倍过冲）；第 12 轮通过 |
 | E28 | `docs/rea_evidence/E28_promo10_contact_sheet_{a,b}.jpg`、`E28_promo10_caption_layout.jpg` | 宣传片第 10 版（写实主角）每 4 s 抽帧 + 字幕区放大 | 无字幕重叠；旁白 ASR 复核"系统总线/脱水"读音正确；主角正脸、步态方向正确 |
+| E29 | `docs/rea_evidence/E29_posture_fix_gait.jpg` | Blender/Cycles 侧视逐帧（走 6 帧 + 跑 6 帧，修正前后） | 修正前：走路脊柱 C 形（Spine −11°、Neck +8°、Head +18°，颈→头俯仰 17.5°），跑步躯干前扑 32°、头 54°；修正后：走路躯干 0°、头 7°，跑步躯干 13°、头 12° |
+| E30 | `docs/rea_evidence/E30_mac_story_layer.jpg` | Mac 真机第 13 轮（`PlayCapture` 新增 `UiShot` 含 HUD） | 章节卡 / 目标行 / 路标 / 关键线索门控 / 尾声结束卡在真机上的样子（见 Q10） |
 
 ## 2. 问题清单与结论
 
@@ -156,6 +158,20 @@
 - **宣传片第 10 版（E28）**：已重录并复核。
 - **待复核**：移动端/WebGL 体积（主角 GLB 1.5 MB + 2048 贴图 Crunch）。
 
+### Q10 剧情和游戏到底是什么关系？怎么玩？（第 13 轮新增）
+
+- **O15（用户反馈）**："我还是不知道这个故事情节和这个游戏到底有什么关系，然后是怎么玩的。另外就是这个女科学家在走路的时候总是驼背。"
+- **I9（根因）**：此前游戏把"叙事"全部压在线索台词上——玩家进场没有被告诉自己是谁、在哪、要做什么；三幕之间只有白屏，没有因果交代；线索可以乱序触发，关键线索随时切幕，玩家常常还没看完就被推走。这是 3A 叙事游戏的三件标配（开场卡、目标 HUD、路标）一件都没有。
+- **设计选择**（按 3A 逆向：《最后生还者》开场卡 + 目标行、《神秘海域》路标、《风之旅人》尾声回环）：
+  1. **章节卡**：每幕开场 6.5 s 深色全屏，三行字说清"你是叶文洁 / 在红岸 / 先看回复再决定要不要发射"；锁输入，1 s 后任意键跳过（`StoryDirector` + `SubtitleUI.ShowCard`，文案在布局 `intro`）。
+  2. **目标行**：左上角常驻"目标：……（已看/总数）"。
+  3. **路标**：屏幕空间金色文字"» 天线塔 · 85 m"投影到下一条线索，出屏贴边加 `< >`；4 m 内隐藏。顺序 = 布局 `clues[]` 顺序。
+  4. **关键线索门控**：每幕最后一条 `final: true`，其他未看完时靠近提示"先看完其他 N 处（x/N）"，不可触发——解决"还没看完就切幕"。
+  5. **解说行**：每条线索字幕第二行灰色小字（`story`）解释这句台词在《三体》里的意义；字幕时长改按字数 4–13 s。
+  6. **故事闭环**：第一幕=做选择（发射），第二、三幕=看后果（乱纪元 / 人列计算机 → 三日凌空），`GameState.Ending` 后回到红岸只剩"回主控室"一件事，台词换成"我点燃了火，却控制不了它。"，9 s 后出结束卡，R 重新开始。
+- **驼背（同一反馈）**：量化后不是贴图错觉——Tripo 重定向的 walk 剪辑脊柱呈 C 形，颈→头俯仰 17.5°（与 idle 同），run 躯干前扑 32°、头 54°。修法在 `hero_expressions.py`：Spine/Spine1/Spine2/Neck 先向绑定姿态 slerp 收敛 30–40%，再逐帧按世界俯仰角校正 Spine（髋→颈）与 Neck（颈→头）到目标值（走 0°/8.5°，跑 10°/13.5°），重新插关键帧（E29）。
+- **真机核验**：见 E30。
+
 ## 3. 重建蓝图（观察到的行为 vs 设计选择）
 
 | 模块 | 观察到的现状 | 设计选择（v0.2） | 依据 |
@@ -187,6 +203,7 @@
 | Q6 | 已答，待真机核验 | `NpcLookAt.cs` |
 | Q8 | 已修（E24），成片 ASR 复核通过（E25） | `scripts/tts_tone_check.py`；3 条配音/旁白改稿重生成 |
 | Q9 | 真机第 12 轮核验通过（E27）；宣传片第 10 版复核通过（E28） | `scripts/tripo_hero.py`、`scripts/mesh_check.py`、`scripts/hero_expressions.py`、`FaceExpression` BlendShape 模式、`SceneBuilder` 身高表/表情分流 |
+| Q10 | 已实现（章节卡/目标行/路标/门控/尾声）+ 体态修正（E29），真机核验见 E30 | `StoryDirector.cs`、`SubtitleUI.cs` 重写、`Clue.final/story/order`、`ClueManager.Next/Active`、布局 `intro/ending/story`、`hero_expressions.py` POSTURE |
 | Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
 核验入口：Mac 上 `bash scripts/mac_verify.sh` → `~/santi_review.zip`（每场景 3 个时刻的全景 + 正面脸部特写）。

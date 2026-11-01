@@ -19,7 +19,7 @@ namespace SanTi
         public bool cardShowing;
 
         RectTransform _canvasRt;
-        Text _title, _objective, _controls, _subtitle, _hint, _marker, _cardTitle, _cardLines, _endText;
+        Text _title, _objective, _controls, _subtitle, _hint, _marker, _cardTitle, _cardLines, _cardSkip, _endText;
         Image _whiteout, _card, _end;
         float _subtitleUntil, _hintUntil, _controlsUntil;
         bool _endShown;
@@ -39,6 +39,9 @@ namespace SanTi
             _marker = MakeText(canvasGo.transform, "Marker", 26, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(420, 40));
             _marker.color = new Color(1f, 0.85f, 0.45f, 0.95f);
 
+            // 左上信息底板：半透明深色，保证纪元名/目标行在亮天空前可读（E30：第 13 轮真机 HUD 字贴天空发虚）
+            var hudBg = MakeImage(canvasGo.transform, "HudBg"); hudBg.color = new Color(0, 0, 0, 0.42f); hudBg.raycastTarget = false;
+            var hb = hudBg.rectTransform; hb.anchorMin = hb.anchorMax = hb.pivot = new Vector2(0, 1); hb.anchoredPosition = new Vector2(24, -24); hb.sizeDelta = new Vector2(1140, 124);
             _title = MakeText(canvasGo.transform, "Title", 30, TextAnchor.UpperLeft, new Vector2(0, 1), new Vector2(40, -40), new Vector2(900, 60));
             _title.text = eraTitle;
             _objective = MakeText(canvasGo.transform, "Objective", 24, TextAnchor.UpperLeft, new Vector2(0, 1), new Vector2(40, -82), new Vector2(1100, 70));
@@ -60,9 +63,12 @@ namespace SanTi
 
             // 章节卡：深色全屏 + 标题 + 前情
             _card = MakeImage(canvasGo.transform, "Card"); _card.color = new Color(0.03f, 0.04f, 0.07f, 0f); _card.raycastTarget = false; Stretch(_card.rectTransform);
-            _cardTitle = MakeText(_card.transform, "CardTitle", 54, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0, 90), new Vector2(1600, 90));
-            _cardLines = MakeText(_card.transform, "CardLines", 32, TextAnchor.UpperCenter, new Vector2(0.5f, 0.5f), new Vector2(0, 20), new Vector2(1300, 300));
+            // 标题块 (0,+200) 高 90 → 155..245；正文块 (0,-60) 高 300，UpperCenter 从 +90 向下排 → 与标题留 65 px（E30：第 13 轮真机标题压在正文第二行上）
+            _cardTitle = MakeText(_card.transform, "CardTitle", 54, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0, 200), new Vector2(1600, 90));
+            _cardLines = MakeText(_card.transform, "CardLines", 32, TextAnchor.UpperCenter, new Vector2(0.5f, 0.5f), new Vector2(0, -60), new Vector2(1300, 300));
             _cardLines.lineSpacing = 1.35f;
+            _cardSkip = MakeText(_card.transform, "CardSkip", 22, TextAnchor.LowerCenter, new Vector2(0.5f, 0), new Vector2(0, 60), new Vector2(600, 40));
+            _cardSkip.text = "按任意键继续";
             SetCardAlpha(0f); _card.gameObject.SetActive(false);
 
             // 结束卡
@@ -127,6 +133,7 @@ namespace SanTi
             var c = _card.color; c.a = 0.93f * a; _card.color = c;
             var ct = _cardTitle.color; ct.a = a; _cardTitle.color = ct;
             var cl = _cardLines.color; cl.a = 0.9f * a; _cardLines.color = cl;
+            var cs = _cardSkip.color; cs.a = 0.55f * a; _cardSkip.color = cs;
         }
 
         public void ShowEnd(string text)
