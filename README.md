@@ -1,5 +1,8 @@
 # 《三体游戏》AI 制作工程
 
+**下载 / Release**：[v1.0 课堂可用版](https://github.com/wangshiyun404/santi-ai-game/releases/tag/v1.0)（宣传片兼使用说明 mp4、网页版静态文件 zip）
+
+
 逆向 Sac《小王子》管线（PRD → 视觉锚点 → Tripo 资产 → Blender 搭建 → Unity 打包）的《三体》低多边形 3D 剧情探索游戏。
 非官方同人改编，教学/研究用途，原著 © 刘慈欣。
 
