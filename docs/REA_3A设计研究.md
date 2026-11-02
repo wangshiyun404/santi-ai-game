@@ -1,4 +1,4 @@
-# 《三体游戏》REA × 3A 设计研究（v0.3 行动稿）
+# 《三体游戏》REA × 3A 设计研究（v0.4 行动稿）
 
 > 目的：回应"去领悟 REA 的精髓，去市面上看别人的游戏，尤其是 3A 大作：他们的审美、视图、动画、故事线设计，还有用户的交互"。
 > 方法：按 REA 的工作方式——先拆解对象（观察 → 证据 → 推断 → 未知），再重建（可核验的具体改动）。所有结论都附核验手段；"看起来差不多"不算过。
@@ -174,3 +174,73 @@ Nesky 的规则同样适用于交互：**尊重意图**、不要替玩家做他�
 6. **L5、N4、U6**——需要 Tripo 积分或新资产，最后做。
 
 每一条完成后在台账里新增 E 条目；没有证据的不算完成。
+
+---
+
+## 8. 角色写实度：差距诊断与追赶路线（v0.4 新增）
+
+> 回应："角色的人物形象……跟 Steam 平台里 3A 巨作的人物形象完全相距甚远。去钻研《赛博朋克 2077》之类的审美、设计、交互和用户体验。"
+> 本章先按 REA 的纪律把"3A 角色好在哪"拆成可核验的层，再量我们每一层差多少，最后给出**已经在沙箱里跑通、可直接看到差别**的追赶原型（证据 E33）。
+
+### 8.1 3A 角色是怎么做出来的（拆解）
+
+| 层 | 《赛博朋克 2077》等 3A 的做法 | 证据 |
+|---|---|---|
+| 人体与服装 | 真人扫描/雕刻的高模烘焙到游戏网格；玩家角色 4 万–12 万三角面，NPC 按距离分级 | [REDmodding wiki：面数与 4K 贴图](https://wiki.redmodding.org/cyberpunk-2077-modding/for-mod-creators-theory/3d-modelling/on-4k-textures-and-high-poly-meshes) |
+| 面部 | 独立眼球、牙齿、舌头；FACS 表情单元驱动的 BlendShape/骨骼面部绑定；2077 用 JALI 由语音+文本自动生成口型与表情，覆盖 10 种语言 | [多伦多大学：JALI](https://alumni.utoronto.ca/news/u-t-startup-jali-research-draws-ai-linguistics-power-facial-animation-video-games)、[gamesindustry.biz](https://www.gamesindustry.biz/articles/2020-12-10-why-cd-projekt-used-ai-to-localise-cyberpunk-2077)、[80.lv：JALI](https://80.lv/articles/cyberpunk-2077-uses-jali-to-automate-facial-animation) |
+| 身体动画 | 光学动捕 + 动画师清理；跑/走/转身/起停是独立剪辑按相位混合 | [80.lv：3A 动捕流程](https://80.lv/articles/aaa-games-animation-with-motion-capture-systems) |
+| 皮肤/毛发渲染 | 次表面散射皮肤、各向异性头发、屏幕空间环境光遮蔽、ACES 色调映射、景深 | [Face-Research：引擎侧数字人综述](https://github.com/Ludentes/Face-Research/blob/main/12-game-engine-world.md) |
+| 镜头 | 过肩第三人称/第一人称，对话时自动切近景；镜头围绕角色公转、预判遮挡 | [GameAIPro 第 47 章](http://www.gameaipro.com/GameAIPro/GameAIPro_Chapter47_Tips_and_Tricks_for_a_Robust_Third-Person_Camera_System.pdf)、[Unity：镜头视角](https://unity.com/blog/video-game-camera-perspectives) |
+| UI/UX | 尽量"世界内"（diegetic）呈现信息；2077 的 UI 被批评的恰恰是信息过载和菜单层级 | [gdad.wiki：界面类型](https://gdad.wiki/wiki/game-design/systems-design/game-interface-types)、[Falcon：游戏 UI 设计](https://falcon.so/resources/game-design/game-ui-design)、[interfaceingame：2077 UX 批评](https://interfaceingame.com/articles/cyberpunk-2077-ux-ui-critique/) |
+
+一句话：3A 角色不是"一张好看的模型"，而是**人体 → 面部系统 → 动捕 → 皮肤/毛发渲染 → 镜头**五层叠出来的。我们此前只在第一层（而且是 AI 单网格）上打转，所以无论怎么修贴图，都到不了那个观感。
+
+### 8.2 我们现状（观察 → 根因）
+
+| 观察（用户反馈 + 本轮复测） | 根因 | 量化 |
+|---|---|---|
+| "手和胳膊很短、没表情、驼背" | Tripo 文生/图生 3D 输出是**单一融合网格 + 烘焙贴图**：没有独立眼球/牙齿，脸部几何稀疏，形变键只能后补 4 个；骨架由网格自动推断，比例错了只能镜像/缩放补救（台账 E23、E29） | 臂长/身高 0.30（刚到真人下限）；脸区顶点稀疏到 blink=100 会拉动眉毛（A7） |
+| "走路总倒着跑/驼背" | 动画来自 Tripo 预设重定向，没有真人动捕；预设与网格朝向不一致 | E23 镜像修复、E29 体态修正均为补救而非根治 |
+| "和 Steam 3A 差距远" | 上表五层里，我们缺第二、三、四层，第五层只有基础跟随 | — |
+
+**结论**：继续在 Tripo 单网格上打补丁是走不到位的；必须换成"有独立面部系统、标准人形骨架、真人动捕"的角色底座。
+
+### 8.3 可选底座的取舍（REA：先看许可和可达性，再看效果）
+
+| 方案 | 效果上限 | 许可 | 在本项目的可达性 | 判断 |
+|---|---|---|---|---|
+| **MetaHuman（Epic）** | 3A 级面部/皮肤/毛发，行业事实标准 | 2025-06 起归入 UE EULA，**允许导出到 Unity/Godot 使用**，年收入 <100 万美元免费（[CG Channel](https://www.cgchannel.com/2025/06/you-can-now-sell-metahumans-or-use-them-in-unity-or-godot/)、[Epic 论坛公告](https://forums.unrealengine.com/t/metahuman-5-6-release/2539165)） | 需在 Mac 上装 Unreal 5.7（MetaHuman Creator 5.7 起支持 macOS，[UE 5.7 预览公告](https://forums.unrealengine.com/t/unreal-engine-5-7-preview/2658958)），M1 不能渲发丝（[硬件要求](https://dev.epicgames.com/documentation/metahuman/hardware-requirements?lang=en-US)）；本机 Apple M4 / 24 GB 合格，但**磁盘仅剩 35 GB**，UE + MetaHuman 核心数据需约 60 GB 以上；导出到 Unity 还需材质/绑定二次加工（[Game-Ace](https://game-ace.com/blog/how-metahuman-changes-game-character-development/)）；WebGL 端需降级 LOD | 效果最好，但当前被磁盘和工作量卡住；作为"主角近景"的升级选项保留 |
+| **MakeHuman / MPFB2（CC0）** | 中等写实：参数化真人比例、独立眼/眉/睫/齿/舌、表情单元、服装发型库；皮肤贴图是手绘级而非扫描级 | 全部资产 CC0，生成角色归作者所有，无任何署名/商用限制（[MakeHuman 许可](https://static.makehumancommunity.org/about/license.html)、[MPFB2](https://github.com/makehumancommunity/mpfb2/)） | **已在沙箱 Blender 5.0 无头跑通**（E33）；自带 `mixamo_unity` 骨架 64 根骨，直接对应 Unity Humanoid；可完全脚本化、可复现 | **本轮主路线**：先把人体/面部/动捕三层补齐 |
+| **CMU 动捕库** | 真人走/跑/坐/弯腰等 2,500+ 段 BVH | 免费、任何用途（[CMU](http://mocap.cs.cmu.edu/)，[BVH 镜像](https://github.com/konyshevgmbh/cmu-mocap)） | 已下载 10 段（走 5、跑 3、坐/弯腰 2），120 fps，关节命名标准，可重定向到 mixamo 骨架 | 与 MakeHuman 配套 |
+| 继续 Tripo | 当前水平 | — | 已到上限 | 放弃作主角底座；道具/场景继续用 |
+
+### 8.4 追赶原型（已做，证据 E33）
+
+`tools/character/build_ye.py`（Blender 5.0 + MPFB2 2.0.18，全程脚本、无 GUI）生成叶文洁 1971 原型：
+
+- 宏参数：gender 0.08 / age 0.52（约 28 岁）/ muscle 0.45 / weight 0.44 / proportions 0.75 / 亚洲 1.0；身高 1.666 m。
+- 皮肤 `young_asian_female`（ENHANCED_SSS 用于离线渲染；导 Unity 时改 GAMEENGINE）；独立高模眼球（棕色）、眉 003、睫毛 02、牙、舌。
+- 发型 `braid01`（单辫，年代感）；外套 `male_casualsuit05` 蓝色夹克按 HSV 整体改为橄榄灰绿（`suit_olive.png`，接近当年军便装），裤同步变灰绿，鞋 `shoes03`。
+- 表情单元：`eyebrows-left/right-down 0.25`、微闭眼 0.05（专注、略忧），可按剧情实时驱动。
+- 骨架 `mixamo_unity`，64 根 `mixamorig:*` 骨，FBX 导出 11.4 MB，总三角面 62,782（在 2077 玩家角色 4 万–12 万区间内）。
+
+与现用 Tripo 主角同灯光、同机位的对比见 `docs/rea_evidence/E33_character_compare.jpg`，三视图见 `E33b_mh_turntable.jpg`。
+
+**诚实的读图**：
+- 原型明显赢的地方：五官是真实几何（眼球会反光、有睫毛、嘴唇有体积），比例是真人比例（臂长、肩宽、头身比），表情和视线可以被程序驱动，骨架是标准人形——这些正是用户三次批评的核心。
+- 原型没赢的地方：头发是低面数发片，静止特写下偏"塑料"；皮肤贴图不是扫描级；服装不是为 1971 定制。Tripo 那版靠一张 2048 烘焙贴图，静止正面特写反而"顺眼"，但一动就露馅（短臂、驼背、无表情）。
+- **离 3A 还有多远**：第二层（面部系统）和第三层（动捕）补齐后能到"扎实的独立游戏写实角色"；第四层（扫描皮肤、发丝、SSS/ACES）在 WebGL 预算内只能做一半；真正的 3A 面部要走 MetaHuman 路线。
+
+### 8.5 v0.4 行动（可核验）
+
+| # | 改动 | 核验 |
+|---|---|---|
+| R1 | 原型导出 FBX（GAMEENGINE 皮肤材质）进 Unity，Rig 设为 Humanoid；替换 `char_player`，身高表改 1.666 | Unity Avatar 配置全绿；真机 FaceShot 看到独立眼球高光与睫毛 |
+| R2 | CMU 07_01 / 02_01 走、16_35 跑、13_05 待机重定向到 mixamo 骨架（bpy，世界旋转差值法），导出带动画 FBX；`CharacterAnimator` 改 1D Blend Tree | `gait_check.py` 三剪辑 PASS；侧视 8 帧着地脚漂移 <0.1 m/s |
+| R3 | 表情单元接 `FaceExpression`：对话时按角色台词情绪切换 3–4 组预设；视线 IK 看向最近线索/NPC | FaceShot 连续 3 s 内出现眨眼；对话帧眉/嘴与待机帧不同 |
+| R4 | URP 后处理：ACES 色调映射、Bloom、Vignette、SSAO；主角材质皮肤加简化 SSS（URP 的 Subsurface 近似）；头发材质双面 + 各向异性高光 | 同机位前后对比图（E34），直方图中间调抬升、高光不溢出 |
+| R5 | 镜头：对话触发时切过肩近景（距 1.2 m，焦距 50 mm 等效），结束回第三人称 | 真机截图对话中脸部占画面高度 >35% |
+| R6 | NPC（汪淼之外的红岸人员/士兵）同管线批量生成，按年龄/性别宏参数区分 | 每个 NPC 一张三视图进台账 |
+| R7（可选） | 若用户愿意清出 ≥60 GB 磁盘并安装 UE 5.7：用 MetaHuman Creator 做叶文洁头部，导出 FBX 进 Unity 作主角近景 LOD0 | 对比 E33 做第三列 |
+
+优先级：R1 → R2 → R4 → R3 → R5 → R6；每条完成后台账新增 E 条目。

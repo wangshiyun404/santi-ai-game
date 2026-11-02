@@ -57,6 +57,7 @@
 | E30 | `docs/rea_evidence/E30a_mac_round13_card_overlap.jpg`（失败对照）、`E30_mac_story_layer.jpg`（第 14 轮） | Mac 真机第 13/14 轮（`PlayCapture` 新增 `UiShot` 含 HUD） | 第 13 轮：章节卡标题压在正文第二行上、左上 HUD 贴亮天空发虚 → 标题上移/正文下移 + 半透明底板；第 14 轮：章节卡、目标行（0/3）、路标「» 吉普车旁的电台 · 20 m >」均正确，步态侧视抬头直立 |
 | E31 | 部署前视觉校验截图（`docs/rea_evidence/E31_webgl_cjk_font.jpg`，修复前后） | 网页版（WebGL）真机 | 修复前：章节卡只剩「·  · 1971」、HUD 汉字全部空白——WebGL 没有系统字体回退，内置 LegacyRuntime(Arial) 不含汉字，**此前所有网页版字幕都是空白**（Mac 版靠系统字体回退所以看得见）；修复：随包 Noto Sans CJK SC 子集 0.8 MB |
 | E32 | 第 11 版宣传片抽帧看板（`docs/rea_evidence/E32_promo11_contact.jpg`，每 6 s 一帧）+ 全片 ASR | Mac 真机录屏（build 75176a7，320 s）→ 组装 4:06 | 新流程完整入镜：章节卡 → 目标/路标 → 线索门控 → 三日凌空 → 尾声章节卡 → 主控室台词 → 结束卡「按 R 重新开始」；时间线对齐 offset 3.10 s（白光→场景亮度骤降法，与 v10 的 2.85 同法）；说明字幕与游戏字幕无重叠；旁白 ASR 复核「系统总线」「脱水」读音正确。已补：全片加一层合成环境底噪（低频和弦 pad + 滤波风声，`santi_promo/bed.pcm` 由 numpy 生成，无版权问题），均值约 −39 dBFS，旁白出现时侧链压缩自动压低；快进段不再静音 |
+| E33 | 角色底座对比（`docs/rea_evidence/E33_character_compare.jpg`、`E33b_mh_turntable.jpg`）：现用 Tripo 主角 vs MakeHuman/MPFB2 参数化原型，同 Cycles 三灯、同机位 | 沙箱 Blender 5.0 无头 + MPFB2 2.0.18（`tools/character/build_ye.py`），CMU BVH 10 段已下载 | 原型：独立眼球/眉/睫/齿/舌 + 表情单元 + `mixamo_unity` 64 骨，62,782 三角面，FBX 11.4 MB；赢在五官几何、真人比例、可驱动表情；输在低面数发片与非扫描级皮肤。结论：Tripo 单网格不再作主角底座（详见《REA × 3A 设计研究》第 8 章）。MetaHuman 路线许可已可用于 Unity，但 Mac 磁盘仅剩 35 GB，暂列可选 R7 |
 
 ## 2. 问题清单与结论
 
@@ -208,6 +209,7 @@
 | Q9 | 真机第 12 轮核验通过（E27）；宣传片第 10 版复核通过（E28） | `scripts/tripo_hero.py`、`scripts/mesh_check.py`、`scripts/hero_expressions.py`、`FaceExpression` BlendShape 模式、`SceneBuilder` 身高表/表情分流 |
 | Q10 | 已实现（章节卡/目标行/路标/门控/尾声）+ 体态修正（E29），真机核验见 E30 | `StoryDirector.cs`、`SubtitleUI.cs` 重写、`Clue.final/story/order`、`ClueManager.Next/Active`、布局 `intro/ending/story`、`hero_expressions.py` POSTURE |
 | Q11 | 网页版中文空白（E31）已修：随包 CJK 子集字体 | `Assets/Resources/Fonts/NotoSansCJKsc_subset.otf`、`SubtitleUI.UiFont` |
+| Q12 | 用户第三次批评角色形象（"与 Steam 3A 相距甚远"）：已完成差距诊断与底座原型（E33），等待用户确认后执行 R1–R6（导入 Unity、CMU 动捕重定向、URP 后处理、对话近景） | `tools/character/*.py`、《REA × 3A 设计研究》第 8 章 |
 | Q7 | 第一批已实现，待录像核验 | `Clue.speaker`（字幕"说话人："）、字幕时长随字数、`Sfx` 运行时合成确认音/靠近提示音 |
 
 核验入口：Mac 上 `bash scripts/mac_verify.sh` → `~/santi_review.zip`（每场景 3 个时刻的全景 + 正面脸部特写）。
