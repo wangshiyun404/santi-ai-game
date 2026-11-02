@@ -65,7 +65,7 @@ namespace SanTi.Editor
             for (int i = 0; i < QualitySettings.names.Length; i++) { QualitySettings.SetQualityLevel(i, false); QualitySettings.renderPipeline = urp; }
             QualitySettings.SetQualityLevel(lvl, false);
 
-            PlayerSettings.productName = "三体：三体游戏";
+            PlayerSettings.productName = "三体游戏";
             PlayerSettings.companyName = "SanTi AI Lab (非官方同人改编，原著 © 刘慈欣)";
             PlayerSettings.colorSpace = ColorSpace.Linear;
             PlayerSettings.defaultScreenWidth = 1280; PlayerSettings.defaultScreenHeight = 720;
@@ -246,7 +246,7 @@ namespace SanTi.Editor
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);   // 免 IL2CPP 工具链，构建快
             PlayerSettings.SetArchitecture(NamedBuildTarget.Standalone, 2);                                   // 0=Intel 1=Apple Silicon 2=通用
             PlayerSettings.fullScreenMode = FullScreenMode.Windowed; PlayerSettings.resizableWindow = true;
-            var opts = new BuildPlayerOptions { scenes = scenes, locationPathName = Path.Combine(outDir, "三体：三体游戏.app"), target = BuildTarget.StandaloneOSX, options = BuildOptions.None };
+            var opts = new BuildPlayerOptions { scenes = scenes, locationPathName = Path.Combine(outDir, "三体游戏.app"), target = BuildTarget.StandaloneOSX, options = BuildOptions.None };
             var report = BuildPipeline.BuildPlayer(opts);
             Debug.Log($"[SanTi] macOS build {report.summary.result}: {report.summary.totalSize / 1024 / 1024} MB, {report.summary.totalErrors} errors, {report.summary.totalTime.TotalMinutes:F1} min → {outDir}");
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) EditorApplication.Exit(1);

@@ -1,4 +1,4 @@
-# 《三体：三体游戏》AI 制作工程
+# 《三体游戏》AI 制作工程
 
 逆向 Sac《小王子》管线（PRD → 视觉锚点 → Tripo 资产 → Blender 搭建 → Unity 打包）的《三体》低多边形 3D 剧情探索游戏。
 非官方同人改编，教学/研究用途，原著 © 刘慈欣。
@@ -47,7 +47,7 @@ santi/
 | 旁白音频（9 条，TTS，原著原句） | ✅ Assets/Resources/VO/*.wav |
 | Unity 真机：URP 配置、Legacy 动画、材质转换、曝光/环境光、第 5–6 轮盲审（review/round05_06_unity_real.md、round06_unity_board.jpg） | ✅ Mac 上 batchmode 一键流水线，三场景可玩 |
 | WebGL 打包 | ✅ dist/webgl/ 20 MB（贴图外置后从 145 MB 降下来），Gzip + 解压回退，任何静态托管可用 |
-| macOS 打包 | ✅ Pipeline.BuildMac → Builds/macOS/三体：三体游戏.app（通用二进制，135 MB；课堂离线兜底） |
+| macOS 打包 | ✅ Pipeline.BuildMac → Builds/macOS/三体游戏.app（通用二进制，135 MB；课堂离线兜底） |
 | 托管 | ✅ GitHub Pages：https://wangshiyun404.github.io/santi-ai-game/ （gh-pages 分支，`scripts/publish_pages.sh` 一键发布，源码仍私有）；Perplexity 预览链接并行。国内可达性待课堂实测；若慢则上腾讯云 COS |
 
 | 剧情层（REA Q10） | ✅ 章节卡（你是谁/在哪/做什么）、目标行 + 进度、屏幕路标、关键线索门控、解说行、三日凌空后回红岸的尾声与结束卡（`StoryDirector`、`SubtitleUI`；文案在 `layouts/*.json` 的 `intro/ending/clues[].story`） |
@@ -67,7 +67,7 @@ $U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.BuildSc
 $U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.CaptureReview -logFile ~/santi_cap.log     # 编辑态 5 机位截图 → review/unity/
 $U -batchmode       -projectPath $P -executeMethod SanTi.Editor.Pipeline.PlayCapture   -logFile ~/santi_play.log    # 运行态截图（自己退出）
 $U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.BuildWebGL    -logFile ~/santi_webgl.log   # → Builds/WebGL（首次 ~13 min，增量 ~1 min）
-$U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.BuildMac      -logFile ~/santi_mac.log     # → Builds/macOS/三体：三体游戏.app
+$U -batchmode -quit -projectPath $P -executeMethod SanTi.Editor.Pipeline.BuildMac      -logFile ~/santi_mac.log     # → Builds/macOS/三体游戏.app
 ```
 
 GUI 方式：Unity Hub → Add 选择 `unity/SanTiGame` → 菜单 **SanTi → Pipeline → 1…5**。

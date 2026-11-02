@@ -68,7 +68,7 @@ namespace SanTi
         {
             GameState.InputLocked = true;
             yield return new WaitForSeconds(9f);   // 让尾声字幕读完
-            SubtitleUI.Instance?.ShowEnd(string.IsNullOrEmpty(endText) ? "《三体：三体游戏》\n\n按 R 重新开始" : endText);
+            SubtitleUI.Instance?.ShowEnd(string.IsNullOrEmpty(endText) ? "《三体游戏》\n\n按 R 重新开始" : endText);
         }
     }
 

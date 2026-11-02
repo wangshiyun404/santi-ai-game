@@ -1,4 +1,4 @@
-# 《三体：三体游戏》REA 逆向台账
+# 《三体游戏》REA 逆向台账
 
 > 方法来源：[Reverse Engineer Anything（morluto/rea）](https://github.com/morluto/rea)。
 > 被逆向的"目标"不是别人的程序，而是我们自己的成品（take4 真机录像 + 仓库资产）。
