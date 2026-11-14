@@ -147,6 +147,7 @@ namespace SanTi
             if (_portraitBg == null) return;
             bool want = Time.time < _portraitUntil && !cardShowing && !_endShown;
             float target = want ? 1f : 0f;
+            if (want && !_portraitBg.gameObject.activeSelf) _portraitBg.gameObject.SetActive(true);   // 章节卡期间触发的立绘，卡片结束后再亮出
             _portraitAlpha = Mathf.MoveTowards(_portraitAlpha, target, Time.deltaTime / (want ? 0.3f : 0.5f));
             SetPortraitAlpha(_portraitAlpha);
             if (_portraitAlpha <= 0f && !want) _portraitBg.gameObject.SetActive(false);
