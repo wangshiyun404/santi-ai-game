@@ -61,6 +61,7 @@
 | E34 | 面部造型迭代（`docs/rea_evidence/E34_face_iteration.jpg`）：E33 原型 vs 造型 K/L，同人像布光同机位 | `tools/character/face_iter.py` 5 轮 11 变体；`make_skin.py` 自制皮肤；hair01/skins01 CC0 包 | 根因两条：默认五官参数（脸宽/眼小/唇薄）与"makeup"皮肤唇部色块越界；K 选定为 v2 主角脸。参考仅取东方古典型特征，不复刻真人肖像 |
 | E35 | 女主角面部第 6–7 轮（`docs/rea_evidence/E35_face_round6_7.jpg`）：K → M → O，用户改以清冷柔和型为参考 | `ye_face_variants_M_N.json`、`ye_face_variants_O_P.json`；新皮肤 ye_wenjie_fair | O 建议选定；只取类型特征不复刻真人；参数化造型接近收益递减，后续差距在渲染层 |
 | E36 | 锚点脸投射到标准头模（`docs/rea_evidence/E36_face_projection_views.jpg` 三视图同机位对照、`E36b_expressions_arkit.jpg` 7 表情、`E36c_body_front.jpg` 全身） | `tools/character/faceproj/` 10 步流水线（MediaPipe 关键点 + PnP + Cycles 烘焙投射），变体 `ye_face_variants_Q.json`，7 轮迭代 | 比例差表多数项 <5%；ARKit 52 + 口型 22 形态键可驱动，眉/睫/齿随动；FBX 17 MB/51k 面/64 骨，资产 `assets/character/ye_v4/`。未过关：双辫发型、发际线亮带、皮肤仅 diffuse |
+| E37 | 2D 立绘面板真机核验（`docs/rea_evidence/E37_portrait_panel_mac.jpg`：第一幕 t=4 s UI 截图 + 源图/面板并排） | Mac 第 14–16 轮 `mac_verify.sh`（`SANTI_TRIGGER_CLUE=1` 自动触发首条线索） | 方向改判：不做 3D 建模，脸用锚点立绘。两处缺陷并修复：NPOT 贴图被缩成 512×1024 致脸拉长（`PortraitImporter`）；章节卡期间触发的立绘被永久隐藏（重新激活）。第 16 轮通过 |
 
 ## 2. 问题清单与结论
 

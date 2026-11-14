@@ -285,3 +285,21 @@ Nesky 的规则同样适用于交互：**尊重意图**、不要替玩家做他�
 **踩过的坑**（写进流程，防复发）：Blender 5 合成器 API 改为 `compositing_node_group`；多材质槽必须全部烘焙否则唇/耳无贴图；AgX 会把肤色去饱和，对照渲染用 Standard；`ExportService.bake_modifiers_remove_helpers` 在 75 个形态键下会打乱顶点对应（表情出现碎片），改为 bmesh 直接删辅助顶点；渲染相机必须 `sensor_fit='HORIZONTAL'` 否则与 PnP 内参不一致。
 
 **仍未过关、下一步**：(1) 发型仍是 long01 直发，锚点是双辫——需要辫子资产或自建发片；(2) 发际线处有一条基础皮肤亮带，头发压低或贴图扩展可解；(3) 皮肤只有 diffuse，缺法线/粗糙度，Unity 侧需配 URP 皮肤着色；(4) 眉毛几何在愤怒表情下略显飘浮，可改为纯贴图眉。以上不影响 Unity 接入（R1：FBX → Humanoid 替换 `char_player`；R2：形态键驱动脚本 + 口型）。
+
+### 8.9 方向改判：不再做 3D 建模，脸用 2D 立绘呈现（E37）
+
+**用户决定（2026-11-15）**："不要做任何的 3D 建模"——E33–E36 的参数化头模、投射贴图、表情系统全部搁置（资产与脚本保留在仓库供查考，不再推进）。
+
+**为什么这在 3A 里也是正路**：视觉小说与大量 JRPG/叙事游戏（《逆转裁判》《女神异闻录》《极乐迪斯科》对话头像）都用 2D 立绘承担"脸与表情"，3D 场景里的小人只负责走位。在我们的镜头距离下（第三人称追尾，角色约 200 px 高）五官本来就不可辨，把表情预算投在玩家真正盯着看的地方——字幕旁的头像——性价比最高。
+
+**落地**（`unity/SanTiGame/Assets/Scripts/Runtime/SubtitleUI.cs`）：
+1. 立绘资源 `Resources/Portraits/ye_{calm,sad,resolve,surprise}.png`（600×800，来自锚点 A 棚拍图，只改表情不改其他）。
+2. 字幕面板：左下角 300×400 头像 + 姓名栏，0.3 s 淡入 / 0.5 s 淡出，显示期间字幕块右移 170 px、宽 1500→1240 让位。
+3. 章节卡：左侧 300×400 大图，标题与正文右移 200 px；随卡片透明度同步淡入淡出。
+4. 数据：布局 JSON 的 `intro.portrait / ending.portrait / clue.portrait / clue.endingPortrait / clue.portraitName`。第一幕：开场平静 → 收到回信惊讶 → 看天线平静 → 按下发射键决意 → 尾声哀伤。
+5. 盲审钩子：`SANTI_TRIGGER_CLUE=1` 时 `PlayCaptureRunner` 在第一幕 3.3 s 自动触发首条线索，使 t=4 s 的 UI 截图含"立绘 + 字幕"。
+
+**真机三轮**（E37）：第 14 轮章节卡立绘可见但脸被拉长——Unity 默认把 600×800 的非 2 次幂贴图缩到 512×1024，`PortraitImporter`（AssetPostprocessor，`GetVersion` 触发重导）关闭 NPOT 缩放后修复；第 15 轮有字幕无头像——立绘在章节卡期间触发时被 `SetActive(false)` 后再未激活，改为需要显示时重新激活；第 16 轮通过，面板与源图并排见 `docs/rea_evidence/E37_portrait_panel_mac.jpg`。
+
+**下一步**：其余两幕的 NPC（脱水者、冯·诺依曼等）若要头像，同法出 2D 立绘即可；WebGL 重建前先把四张立绘压到 1024 以内的 Crunch 压缩，控制包体。
+
