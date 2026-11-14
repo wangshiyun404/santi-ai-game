@@ -60,6 +60,7 @@
 | E33 | 角色底座对比（`docs/rea_evidence/E33_character_compare.jpg`、`E33b_mh_turntable.jpg`）：现用 Tripo 主角 vs MakeHuman/MPFB2 参数化原型，同 Cycles 三灯、同机位 | 沙箱 Blender 5.0 无头 + MPFB2 2.0.18（`tools/character/build_ye.py`），CMU BVH 10 段已下载 | 原型：独立眼球/眉/睫/齿/舌 + 表情单元 + `mixamo_unity` 64 骨，62,782 三角面，FBX 11.4 MB；赢在五官几何、真人比例、可驱动表情；输在低面数发片与非扫描级皮肤。结论：Tripo 单网格不再作主角底座（详见《REA × 3A 设计研究》第 8 章）。MetaHuman 路线许可已可用于 Unity，但 Mac 磁盘仅剩 35 GB，暂列可选 R7 |
 | E34 | 面部造型迭代（`docs/rea_evidence/E34_face_iteration.jpg`）：E33 原型 vs 造型 K/L，同人像布光同机位 | `tools/character/face_iter.py` 5 轮 11 变体；`make_skin.py` 自制皮肤；hair01/skins01 CC0 包 | 根因两条：默认五官参数（脸宽/眼小/唇薄）与"makeup"皮肤唇部色块越界；K 选定为 v2 主角脸。参考仅取东方古典型特征，不复刻真人肖像 |
 | E35 | 女主角面部第 6–7 轮（`docs/rea_evidence/E35_face_round6_7.jpg`）：K → M → O，用户改以清冷柔和型为参考 | `ye_face_variants_M_N.json`、`ye_face_variants_O_P.json`；新皮肤 ye_wenjie_fair | O 建议选定；只取类型特征不复刻真人；参数化造型接近收益递减，后续差距在渲染层 |
+| E36 | 锚点脸投射到标准头模（`docs/rea_evidence/E36_face_projection_views.jpg` 三视图同机位对照、`E36b_expressions_arkit.jpg` 7 表情、`E36c_body_front.jpg` 全身） | `tools/character/faceproj/` 10 步流水线（MediaPipe 关键点 + PnP + Cycles 烘焙投射），变体 `ye_face_variants_Q.json`，7 轮迭代 | 比例差表多数项 <5%；ARKit 52 + 口型 22 形态键可驱动，眉/睫/齿随动；FBX 17 MB/51k 面/64 骨，资产 `assets/character/ye_v4/`。未过关：双辫发型、发际线亮带、皮肤仅 diffuse |
 
 ## 2. 问题清单与结论
 
