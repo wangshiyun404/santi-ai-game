@@ -18,7 +18,7 @@ namespace SanTi
             var d = GameState.Ending && ending != null ? ending : intro;
             if (d == null) return;
             ui.objective = d.objective ?? "";
-            if (!string.IsNullOrEmpty(d.title)) ui.ShowCard(d.title, d.lines ?? "", holdOverride > 0 ? holdOverride : hold);
+            if (!string.IsNullOrEmpty(d.title)) ui.ShowCard(d.title, d.lines ?? "", holdOverride > 0 ? holdOverride : hold, d.portrait);
         }
     }
 }

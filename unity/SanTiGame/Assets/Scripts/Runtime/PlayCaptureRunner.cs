@@ -19,14 +19,16 @@ namespace SanTi
         public float walkFrom = 4.0f;
         public bool autoWalk = true;
 
-        int _sceneIdx = -1, _shotIdx; float _t;
+        int _sceneIdx = -1, _shotIdx; float _t; bool _clueFired;
+        // 盲审时在第一幕 3.3 s 自动触发首条线索，让"立绘 + 字幕"进入 UI 截图（环境变量 SANTI_TRIGGER_CLUE=1）
+        static readonly bool TriggerClue = System.Environment.GetEnvironmentVariable("SANTI_TRIGGER_CLUE") == "1";
 
         void Awake() { DontDestroyOnLoad(gameObject); Application.targetFrameRate = 30; StoryDirector.holdOverride = 2.0f; }
         void Start() { Next(); }
 
         void Next()
         {
-            _sceneIdx++; _shotIdx = 0; _t = 0f;
+            _sceneIdx++; _shotIdx = 0; _t = 0f; _clueFired = false;
             if (scenePaths == null || _sceneIdx >= scenePaths.Length) { Debug.Log("[SanTi] PlayCapture finished"); OnFinished?.Invoke(); enabled = false; return; }
             Debug.Log("[SanTi] PlayCapture loading " + scenePaths[_sceneIdx]);
             SceneManager.LoadScene(scenePaths[_sceneIdx]);
@@ -37,6 +39,7 @@ namespace SanTi
             if (_sceneIdx < 0 || _sceneIdx >= scenePaths.Length) return;
             _t += Time.deltaTime;
             GameState.AutoMove = (autoWalk && _t > walkFrom) ? new Vector2(0, 1) : Vector2.zero;
+            if (TriggerClue && !_clueFired && _sceneIdx == 0 && _t > 3.3f) { _clueFired = true; ClueManager.Instance?.Next?.Trigger(); }
 
             if (_shotIdx < times.Length && _t >= times[_shotIdx])
             {

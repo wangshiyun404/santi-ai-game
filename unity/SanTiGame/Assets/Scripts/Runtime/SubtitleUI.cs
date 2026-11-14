@@ -23,6 +23,11 @@ namespace SanTi
         Image _whiteout, _card, _end, _controlsBg;
         float _subtitleUntil, _hintUntil, _controlsUntil;
         bool _endShown;
+        // 2D 立绘（方向决定 2026-11-15：不做 3D 建模，角色的脸用锚点立绘呈现）：底部字幕左侧的头像面板 + 章节卡左侧大图
+        Image _portraitBg, _portrait, _cardPortraitBg, _cardPortrait; Text _portraitName;
+        float _portraitUntil, _portraitAlpha; string _portraitId;
+        static readonly System.Collections.Generic.Dictionary<string, Sprite> _portraitCache = new();
+        const float PortraitW = 300f, PortraitH = 400f;
 
         void Awake()
         {
@@ -58,6 +63,15 @@ namespace SanTi
             _hint = MakeText(canvasGo.transform, "Hint", 22, TextAnchor.LowerCenter, new Vector2(0.5f, 0), new Vector2(0, 40), new Vector2(900, 40));
             _hint.color = new Color(1, 1, 1, 0.6f);
 
+            // 立绘面板：左下角，字幕显示期间与字幕同寿命；面板显示时字幕右移让位
+            _portraitBg = MakeImage(canvasGo.transform, "PortraitBg"); _portraitBg.color = new Color(0.02f, 0.03f, 0.05f, 0.85f); _portraitBg.raycastTarget = false;
+            var pb = _portraitBg.rectTransform; pb.anchorMin = pb.anchorMax = pb.pivot = new Vector2(0, 0); pb.anchoredPosition = new Vector2(36, 40); pb.sizeDelta = new Vector2(PortraitW + 16, PortraitH + 16 + 44);
+            _portrait = MakeImage(_portraitBg.transform, "Portrait"); _portrait.raycastTarget = false; _portrait.preserveAspect = true;
+            var pr = _portrait.rectTransform; pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(0.5f, 1); pr.anchoredPosition = new Vector2(0, -8); pr.sizeDelta = new Vector2(PortraitW, PortraitH);
+            _portraitName = MakeText(_portraitBg.transform, "PortraitName", 26, TextAnchor.MiddleCenter, new Vector2(0.5f, 0), new Vector2(0, 22), new Vector2(PortraitW, 40));
+            _portraitName.color = new Color(1f, 0.92f, 0.7f, 1f);
+            SetPortraitAlpha(0f); _portraitBg.gameObject.SetActive(false);
+
             _whiteout = MakeImage(canvasGo.transform, "Whiteout");
             _whiteout.color = new Color(1, 1, 1, 0);
             _whiteout.raycastTarget = false;
@@ -71,6 +85,12 @@ namespace SanTi
             _cardLines.lineSpacing = 1.35f;
             _cardSkip = MakeText(_card.transform, "CardSkip", 22, TextAnchor.LowerCenter, new Vector2(0.5f, 0), new Vector2(0, 60), new Vector2(600, 40));
             _cardSkip.text = "按任意键继续";
+            // 章节卡左侧立绘（有 portrait 时标题/正文整体右移 200）
+            _cardPortraitBg = MakeImage(_card.transform, "CardPortraitBg"); _cardPortraitBg.color = new Color(0.08f, 0.09f, 0.12f, 1f); _cardPortraitBg.raycastTarget = false;
+            var cpb = _cardPortraitBg.rectTransform; cpb.anchorMin = cpb.anchorMax = cpb.pivot = new Vector2(0.5f, 0.5f); cpb.anchoredPosition = new Vector2(-560, 10); cpb.sizeDelta = new Vector2(316, 416);
+            _cardPortrait = MakeImage(_cardPortraitBg.transform, "CardPortrait"); _cardPortrait.raycastTarget = false; _cardPortrait.preserveAspect = true;
+            var cpr = _cardPortrait.rectTransform; cpr.anchorMin = cpr.anchorMax = cpr.pivot = new Vector2(0.5f, 0.5f); cpr.anchoredPosition = Vector2.zero; cpr.sizeDelta = new Vector2(300, 400);
+            _cardPortraitBg.gameObject.SetActive(false);
             SetCardAlpha(0f); _card.gameObject.SetActive(false);
 
             // 结束卡
@@ -84,6 +104,7 @@ namespace SanTi
         {
             if (Time.time > _subtitleUntil) _subtitle.text = "";
             if (Time.time > _hintUntil) _hint.text = "";
+            UpdatePortrait();
             _title.text = eraTitle;
             var cm = ClueManager.Instance;
             _objective.text = string.IsNullOrEmpty(objective) ? "" : $"目标：{objective}{(cm != null && cm.Total > 0 ? $"（{cm.DoneCount}/{cm.Total}）" : "")}";
@@ -112,16 +133,61 @@ namespace SanTi
         }
 
         public void ShowSubtitle(string s, float seconds) { _subtitle.text = s; _subtitleUntil = Time.time + seconds; }
+
+        /// <summary>显示 2D 立绘（Resources/Portraits/&lt;id&gt;.png）于字幕左侧，seconds 后淡出。</summary>
+        public void ShowPortrait(string id, string name, float seconds)
+        {
+            var sp = LoadPortrait(id); if (sp == null) return;
+            _portrait.sprite = sp; _portraitName.text = name ?? ""; _portraitId = id;
+            _portraitUntil = Time.time + seconds; _portraitBg.gameObject.SetActive(true);
+        }
+
+        void UpdatePortrait()
+        {
+            if (_portraitBg == null) return;
+            bool want = Time.time < _portraitUntil && !cardShowing && !_endShown;
+            float target = want ? 1f : 0f;
+            _portraitAlpha = Mathf.MoveTowards(_portraitAlpha, target, Time.deltaTime / (want ? 0.3f : 0.5f));
+            SetPortraitAlpha(_portraitAlpha);
+            if (_portraitAlpha <= 0f && !want) _portraitBg.gameObject.SetActive(false);
+            // 字幕让位：面板可见时字幕块右移、变窄
+            float k = _portraitAlpha; var rt = _subtitle.rectTransform;
+            rt.anchoredPosition = new Vector2(Mathf.Lerp(0f, 170f, k), 86f); rt.sizeDelta = new Vector2(Mathf.Lerp(1500f, 1240f, k), 220f);
+            _hint.rectTransform.anchoredPosition = new Vector2(Mathf.Lerp(0f, 170f, k), 40f);
+        }
+
+        void SetPortraitAlpha(float a)
+        {
+            var c = _portraitBg.color; c.a = 0.85f * a; _portraitBg.color = c;
+            var cp = _portrait.color; cp.a = a; _portrait.color = cp;
+            var cn = _portraitName.color; cn.a = a; _portraitName.color = cn;
+        }
+
+        static Sprite LoadPortrait(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
+            if (_portraitCache.TryGetValue(id, out var sp) && sp != null) return sp;
+            var tex = Resources.Load<Texture2D>("Portraits/" + id);
+            if (tex == null) { Debug.LogWarning("[SanTi] portrait missing: " + id); return null; }
+            sp = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+            _portraitCache[id] = sp; return sp;
+        }
         public void ShowHint(string s) { _hint.text = s; _hintUntil = Time.time + 0.2f; }
         public void SetWhiteout(float a) { var c = _whiteout.color; c.a = a; _whiteout.color = c; }
 
         /// <summary>章节卡：淡入 0.5 s → 停留 → 淡出 0.7 s；期间锁输入；1 s 后按任意键可跳过。</summary>
-        public void ShowCard(string title, string lines, float hold) { StartCoroutine(CardRoutine(title, lines, hold)); }
+        public void ShowCard(string title, string lines, float hold, string portrait = null) { StartCoroutine(CardRoutine(title, lines, hold, portrait)); }
 
-        IEnumerator CardRoutine(string title, string lines, float hold)
+        IEnumerator CardRoutine(string title, string lines, float hold, string portrait)
         {
             cardShowing = true; GameState.InputLocked = true;
             _cardTitle.text = title; _cardLines.text = lines; _card.gameObject.SetActive(true);
+            var sp = LoadPortrait(portrait); bool hasP = sp != null;
+            _cardPortraitBg.gameObject.SetActive(hasP); if (hasP) _cardPortrait.sprite = sp;
+            // 有立绘：标题与正文右移、正文变窄，给左侧 316 px 的图让位
+            _cardTitle.rectTransform.anchoredPosition = new Vector2(hasP ? 200f : 0f, 200f);
+            _cardLines.rectTransform.anchoredPosition = new Vector2(hasP ? 200f : 0f, -60f);
+            _cardLines.rectTransform.sizeDelta = new Vector2(hasP ? 1000f : 1300f, 300f);
             float t = 0; while (t < 0.5f) { t += Time.deltaTime; SetCardAlpha(t / 0.5f); yield return null; }
             SetCardAlpha(1f);
             t = 0; while (t < hold) { t += Time.deltaTime; if (t > 1f && Input.anyKeyDown) break; yield return null; }
@@ -136,6 +202,7 @@ namespace SanTi
             var ct = _cardTitle.color; ct.a = a; _cardTitle.color = ct;
             var cl = _cardLines.color; cl.a = 0.9f * a; _cardLines.color = cl;
             var cs = _cardSkip.color; cs.a = 0.55f * a; _cardSkip.color = cs;
+            if (_cardPortrait != null) { var pc = _cardPortrait.color; pc.a = a; _cardPortrait.color = pc; var pbc = _cardPortraitBg.color; pbc.a = a; _cardPortraitBg.color = pbc; }
         }
 
         public void ShowEnd(string text)

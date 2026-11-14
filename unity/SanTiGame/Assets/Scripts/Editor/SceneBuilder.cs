@@ -28,6 +28,8 @@ namespace SanTi.Editor
             if (cd == null) return;
             clue.story = cd.story; clue.final = cd.final; clue.order = data.clues.IndexOf(cd);
             clue.endingSubtitle = cd.endingSubtitle; clue.endingStory = cd.endingStory;
+            clue.portrait = cd.portrait; clue.portraitName = cd.portraitName; clue.endingPortrait = cd.endingPortrait;
+            if (!string.IsNullOrEmpty(cd.speaker)) clue.speaker = cd.speaker;
             clue.displayName = ClueDisplayName.TryGetValue(cd.id, out var n) ? n : "线索";
         }
         static readonly System.Collections.Generic.Dictionary<string, string> ClueDisplayName = new()
@@ -158,7 +160,7 @@ namespace SanTi.Editor
                     var clue = go.AddComponent<Clue>();
                     clue.clueId = o.clue; clue.subtitle = cd?.subtitle ?? o.clue; clue.narrationClip = cd?.narration;
                     FillStory(clue, cd, data);
-                    clue.speaker = CharDisplayName.TryGetValue(o.asset, out var dn) ? dn : "";   // REA Q7：字幕前加说话人
+                    if (string.IsNullOrEmpty(clue.speaker)) clue.speaker = CharDisplayName.TryGetValue(o.asset, out var dn) ? dn : "";   // REA Q7：字幕前加说话人（layout 里 speaker 可覆盖）
                     clue.triggerRadius = o.asset == "pyramid" || o.asset == "dish_tower" || o.asset == "platform" ? 18f : 3.5f;
                 }
             }

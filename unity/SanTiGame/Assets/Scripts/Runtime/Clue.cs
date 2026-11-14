@@ -14,6 +14,7 @@ namespace SanTi
         public bool final;                // 关键线索：其他线索看完才能触发
         public int order;                 // 布局中的顺序（路标按此顺序指引）
         [TextArea] public string endingSubtitle, endingStory;   // 尾声替换文案（scene_00 主控台）
+        public string portrait, portraitName, endingPortrait;   // 2D 立绘（方向决定：不做 3D 建模，脸用锚点图）
         public float triggerRadius = 3.5f;
         public bool oneShot = true;
 
@@ -64,6 +65,8 @@ namespace SanTi
             string text = string.IsNullOrEmpty(speaker) ? line : $"{speaker}：{line}";
             if (!string.IsNullOrEmpty(expl)) text += $"\n<size=28><color=#D8D8D8>{expl}</color></size>";
             SubtitleUI.Instance?.ShowSubtitle(text, secs);
+            string pid = ending && !string.IsNullOrEmpty(endingPortrait) ? endingPortrait : portrait;
+            if (!string.IsNullOrEmpty(pid)) SubtitleUI.Instance?.ShowPortrait(pid, string.IsNullOrEmpty(portraitName) ? "叶文洁" : portraitName, secs);
             Sfx.Confirm();
             // 线索挂在 NPC 身上时切对话近景 + 表情（REA Q2）
             if (GetComponent<NpcLookAt>() != null)

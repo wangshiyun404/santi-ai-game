@@ -26,6 +26,7 @@ namespace SanTi
         public string lines;           // 两三句前情（\n 换行）
         public string objective;
         public string endText;    // 仅尾声：结束卡文字（按 R 重新开始）
+        public string portrait;   // 章节卡左侧立绘 id（Resources/Portraits/<id>.png，如 ye_calm）
     }
 
     [Serializable]
@@ -88,6 +89,10 @@ namespace SanTi
         public bool final;        // 本幕的"关键线索"：其他线索看完才能触发（触发后切幕）
         public string endingSubtitle;  // 尾声时替换台词（仅 scene_00 主控台）
         public string endingStory;
+        public string speaker;         // 可选：说话人覆盖（默认由 NPC 资产名推出）
+        public string portrait;        // 可选：触发时显示的 2D 立绘 id（Resources/Portraits/<id>.png）
+        public string portraitName;    // 立绘下方的名字（默认"叶文洁"）
+        public string endingPortrait;  // 尾声时替换的立绘 id
     }
 
     [Serializable]

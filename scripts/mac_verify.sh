@@ -18,7 +18,7 @@ echo "scenes_rc=$? built=$(grep -c '\[SanTi\] Built Assets' "$HOME/santi_scenes.
 echo "compile_errors=$(grep -c 'error CS' "$HOME/santi_scenes.log")" >> "$S"
 grep -m3 'error CS' "$HOME/santi_scenes.log" | sed 's/^.*Assets/Assets/' >> "$S"
 grep -o '\[SanTi\] snap-dbg.*' "$HOME/santi_scenes.log" | head -40 >> "$S"
-SANTI_REVIEW_DIR="$R" "$U" -batchmode -projectPath "$P" -executeMethod SanTi.Editor.Pipeline.PlayCapture -logFile "$HOME/santi_play.log"
+SANTI_TRIGGER_CLUE=1 SANTI_REVIEW_DIR="$R" "$U" -batchmode -projectPath "$P" -executeMethod SanTi.Editor.Pipeline.PlayCapture -logFile "$HOME/santi_play.log"
 echo "play_rc=$? shots=$(ls "$R" | wc -l | tr -d ' ') facewarn=$(grep -c 'FaceExpression' "$HOME/santi_play.log")" >> "$S"
 grep -m3 'error CS\|Exception' "$HOME/santi_play.log" | cut -c1-160 >> "$S"
 rm -f "$HOME/santi_review.zip"; (cd "$HOME" && zip -qr santi_review.zip santi_review)
